@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
+    <ScrollView
+        android:id="@+id/add_feed_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+            <TextView
+                android:id="@+id/feed_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/feed_title"
+                android:text="@string/feed_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:id="@+id/feed_title_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_title_info"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+            <EditText
+                android:id="@+id/feed_title"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords"
+                android:lines="1"
+                android:maxLength="14"
+                android:textSize="@dimen/text_field" />
+
+            <TextView
+                android:id="@+id/feed_url_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:labelFor="@+id/feed_url"
+                android:text="@string/feed_url"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+            <TextView
+                android:id="@+id/feed_url_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/feed_url_info"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+            <EditText
+                android:id="@+id/feed_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:hint="@string/feed_url_hint"
+                android:imeOptions="actionDone"
+                android:inputType="textUri"
+                android:lines="1"
+                android:maxWidth="480dp"
+                android:textSize="@dimen/text_field" />
+
+            <Button
+                android:id="@+id/btn_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="32dp"
+                android:paddingEnd="12dp"
+                android:paddingStart="12dp"
+                android:text="@string/btn_add_feed"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

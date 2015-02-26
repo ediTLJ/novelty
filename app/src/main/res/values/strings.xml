@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Novelty</string>
+    <!-- TOOLBAR ACTIONS -->
+    <string name="menu_about">About</string>
+    <string name="menu_bookmark">Bookmark</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_manage_feeds">Manage feeds</string>
+    <!-- TABS -->
+    <string name="tab_my_news">MY NEWS</string>
+    <string name="tab_bookmarks">BOOKMARKS</string>
+    <!-- BUTTONS -->
+    <string name="btn_ok">OK</string>
+    <string name="btn_rate">RATE APP</string>
+    <string name="btn_other_apps">OTHER APPS</string>
+    <string name="btn_add_feed">ADD FEED</string>
+    <!-- TOASTS -->
+    <string name="error_news">Error getting the news!</string>
+    <!-- ADD FEED -->
+    <string name="feed_title">Title</string>
+    <string name="feed_title_info">max. 14 characters</string>
+    <string name="feed_title_too_long">Title too long!</string>
+    <string name="feed_title_required">Title is required!</string>
+    <string name="feed_title_duplicate">This title exists already!</string>
+    <string name="feed_url">Link</string>
+    <string name="feed_url_hint">web site or feed</string>
+    <string name="feed_url_info">e.g. www.nytimes.com\nIf a web site is used, we\'ll try to find a feed for it.</string>
+    <string name="feed_url_required">Link is required!</string>
+    <string name="feed_url_duplicate">This feed exists already!</string>
+    <!-- ABOUT -->
+    <string name="about_app"><b>Novelty</b> is a simple news reader with a nice &amp; clean UI.\n\nv</string>
+    <!-- EMPTY VIEWS -->
+    <string name="loading">Loading…</string>
+    <string name="add_feed_info">Hey, you have no news feeds!\nTap here to add one.</string>
+    <string name="empty_bookmarks">No bookmarked news.</string>
+    <string name="empty_news">No news.\nTry refreshing.</string>
+    <!-- ACCESSIBILITY -->
+    <string name="description_add_feed">Add feed</string>
+    <string name="description_open_in_browser">Open in browser</string>
+
+</resources>
