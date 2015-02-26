@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="vpi__background_holo_dark">#ff000000</color>
+    <color name="vpi__background_holo_light">#fff3f3f3</color>
+    <color name="vpi__bright_foreground_holo_dark">@color/vpi__background_holo_light</color>
+    <color name="vpi__bright_foreground_holo_light">@color/vpi__background_holo_dark</color>
+    <color name="vpi__bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
+    <color name="vpi__bright_foreground_disabled_holo_light">#ffb2b2b2</color>
+    <color name="vpi__bright_foreground_inverse_holo_dark">
+        @color/vpi__bright_foreground_holo_light
+    </color>
+    <color name="vpi__bright_foreground_inverse_holo_light">
+        @color/vpi__bright_foreground_holo_dark
+    </color>
+
+    <!-- material design -->
+    <!-- see colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
+
+    <color name="material_brown_100">#d7ccc8</color>
+    <color name="material_brown_500">#795548</color>
+    <color name="material_brown_700">#5d4037</color>
+    <color name="material_teal_a700">#00bfa5</color>
+    <!--<color name="material_red_a700">#d50000</color>-->
+
+    <color name="text_tab">#99ffffff</color>
+    <color name="text_tab_selected">#fff</color>
+
+    <color name="bkg_drag">#60a1887f</color>
+</resources>
