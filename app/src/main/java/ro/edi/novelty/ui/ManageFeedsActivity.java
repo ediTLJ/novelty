@@ -138,6 +138,11 @@ public class ManageFeedsActivity extends BaseActivity {
 
         final OnRecyclerDragItemListener onRecyclerDragItemListener = new OnRecyclerDragItemListener(recyclerView, this) {
             @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+            }
+
+            @Override
             protected void onItemSwitch(RecyclerView recyclerView, int from, int to) {
                 if (from == to) {
                     return;
@@ -157,6 +162,11 @@ public class ManageFeedsActivity extends BaseActivity {
         recyclerView.addOnItemTouchListener(onRecyclerDragItemListener);
 
         recyclerView.addOnItemTouchListener(new OnRecyclerClickItemListener(recyclerView) {
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+
+            }
+
             @Override
             public void onItemClick(RecyclerView parent, View clickedView, int position) {
                 // Log.i(TAG, "onItemClick()");

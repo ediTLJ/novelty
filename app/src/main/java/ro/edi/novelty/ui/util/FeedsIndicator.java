@@ -17,7 +17,9 @@ package ro.edi.novelty.ui.util;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import ro.edi.util.Log;
 import ro.edi.util.ui.TitlePageIndicator;
 
@@ -38,7 +40,7 @@ public class FeedsIndicator extends TitlePageIndicator {
         EventBus.getDefault().register(this);
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(FeedTitlesEvent event) {
         Log.i(TAG, "FeedTitlesEvent");
 
@@ -60,7 +62,7 @@ public class FeedsIndicator extends TitlePageIndicator {
         }
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(FeedEvent event) {
         switch (event.getType()) {
             case FeedEvent.TYPE_SHOW_NEW:

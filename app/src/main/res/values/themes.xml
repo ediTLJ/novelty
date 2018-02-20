@@ -25,6 +25,4 @@
     <style name="Theme.Light" parent="Theme.Base.Light" />
 
     <style name="Theme.Dark" parent="Theme.Base.Dark" />
-
-    <style name="SettingsTheme" parent="android:Theme.Holo" />
 </resources>

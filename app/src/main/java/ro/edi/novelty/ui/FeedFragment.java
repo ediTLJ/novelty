@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 import ro.edi.novelty.R;
 import ro.edi.novelty.data.DB;
 import ro.edi.novelty.data.DbProvider;

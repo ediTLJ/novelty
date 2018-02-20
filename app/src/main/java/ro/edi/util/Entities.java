@@ -50,7 +50,7 @@ public class Entities {
     };
 
     // package scoped for testing
-    static final String[][] ISO8859_1_ARRAY = {{"nbsp", "160"}, // non-breaking space
+    private static final String[][] ISO8859_1_ARRAY = {{"nbsp", "160"}, // non-breaking space
             {"iexcl", "161"}, // inverted exclamation mark
             {"cent", "162"}, // cent sign
             {"pound", "163"}, // pound sign
@@ -150,7 +150,7 @@ public class Entities {
 
     // http://www.w3.org/TR/REC-html40/sgml/entities.html
     // package scoped for testing
-    static final String[][] HTML40_ARRAY = {
+    private static final String[][] HTML40_ARRAY = {
             // <!-- Latin Extended-B -->
             {"fnof", "402"}, // latin small f with hook = function= florin, U+0192 ISOtech -->
             // <!-- Greek -->
@@ -825,8 +825,8 @@ public class Entities {
      *
      * @param writer The <code>Writer</code> to write the results of the escaping to. Assumed to be a non-null value.
      * @param str    The <code>String</code> to escape. Assumed to be a non-null value.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      * @see #escape(String)
      * @see java.io.Writer
      */
@@ -899,8 +899,8 @@ public class Entities {
      *
      * @param writer The <code>Writer</code> to write the results to; assumed to be non-null.
      * @param str    The source <code>String</code> to unescape; assumed to be non-null.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      * @see #escape(String)
      * @see java.io.Writer
      */
@@ -919,8 +919,8 @@ public class Entities {
      * @param writer   The <code>Writer</code> to write the results to; assumed to be non-null.
      * @param str      The source <code>String</code> to unescape; assumed to be non-null.
      * @param firstAmp The <code>int</code> index of the first ampersand in the source String.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      */
     private void doUnescape(Writer writer, String str, int firstAmp) throws IOException {
         writer.write(str, 0, firstAmp);

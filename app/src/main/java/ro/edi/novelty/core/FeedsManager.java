@@ -18,7 +18,7 @@ package ro.edi.novelty.core;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 import ro.edi.novelty.MyApp;
 import ro.edi.novelty.data.Feed;
 import ro.edi.novelty.data.Keys;

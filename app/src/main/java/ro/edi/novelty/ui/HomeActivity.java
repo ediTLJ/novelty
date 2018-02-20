@@ -32,7 +32,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import ro.edi.novelty.R;
 import ro.edi.novelty.core.FeedsManager;
 import ro.edi.novelty.core.OnAlarmReceiver;
@@ -179,7 +181,7 @@ public class HomeActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(FeedsEvent event) {
         Log.i(TAG, "FeedsEvent");
         supportInvalidateOptionsMenu();

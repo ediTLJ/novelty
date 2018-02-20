@@ -22,7 +22,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import ro.edi.novelty.R;
 import ro.edi.novelty.data.Feed;
 import ro.edi.novelty.core.FeedsManager;
@@ -171,7 +173,7 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
         return feed.getTitle().toUpperCase();
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(FeedsEvent event) {
         Log.i(TAG, "FeedsEvent");
 

@@ -20,6 +20,7 @@ import android.content.res.Resources;
 import android.database.CharArrayBuffer;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
@@ -39,10 +40,11 @@ public class BinderNews implements ViewBinder {
         Resources.Theme theme = context.getTheme();
 
         theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-        colorNew = context.getResources().getColor(typedValue.resourceId);
+        colorNew = ContextCompat.getColor(context, typedValue.resourceId);
 
         theme.resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
-        colorRead = context.getResources().getColor(typedValue.resourceId);
+        colorRead = ContextCompat.getColor(context, typedValue.resourceId);
+        // context.getResources().getColor(typedValue.resourceId);
     }
 
     @Override

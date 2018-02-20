@@ -20,7 +20,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import ro.edi.novelty.R;
 import ro.edi.util.Utils;
@@ -28,7 +28,7 @@ import ro.edi.util.Utils;
 /**
  * A base activity that implements common functionality across app activities.
  */
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
     protected SharedPreferences sharedPrefs;
 
     /**
