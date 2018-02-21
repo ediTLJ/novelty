@@ -37,7 +37,7 @@ public class FeedEvent {
         return mPosition;
     }
 
-    public int getCountNew() {
+    int getCountNew() {
         return mCountNew;
     }
 }

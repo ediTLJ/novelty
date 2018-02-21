@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.format.Time;
+
 import ro.edi.util.Log;
 
 public class OnAlarmReceiver extends BroadcastReceiver {
@@ -49,8 +50,10 @@ public class OnAlarmReceiver extends BroadcastReceiver {
             Log.i("ON.ALARM.RECEIVER", "Waking the CleanupService to do its job!");
 
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true), PendingIntent.getBroadcast(
-                    context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+            if (am != null) {
+                am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true), PendingIntent.getBroadcast(
+                        context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+            }
         } else if (action.equals(Intent.ACTION_BOOT_COMPLETED)) {
             // schedule cleanup service
             Time time = new Time();
@@ -65,8 +68,10 @@ public class OnAlarmReceiver extends BroadcastReceiver {
             iAlarm.setAction(OnAlarmReceiver.ACTION_CLEANUP);
 
             AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true), PendingIntent.getBroadcast(
-                    context.getApplicationContext(), 0, iAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+            if (am != null) {
+                am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true), PendingIntent.getBroadcast(
+                        context.getApplicationContext(), 0, iAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+            }
         }
     }
 }

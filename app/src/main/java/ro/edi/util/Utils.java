@@ -18,9 +18,6 @@ package ro.edi.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.StrictMode;
-import ro.edi.novelty.BuildConfig;
 
 /**
  * Copyright 2015 Eduard Scarlat
@@ -41,35 +38,6 @@ public class Utils {
             // should never happen
             Log.printStackTrace(TAG, e);
             return "0.0";
-        }
-    }
-
-    public static void setStrictMode(final boolean enable) {
-        if (!BuildConfig.DEBUG) {
-            return;
-        }
-
-        doSetStrictMode(enable);
-
-        // fix for http://code.google.com/p/android/issues/detail?id=35298
-        // restore strict mode after onCreate() returns.
-        new Handler().postAtFrontOfQueue(new Runnable() {
-            @Override
-            public void run() {
-                doSetStrictMode(enable);
-            }
-        });
-    }
-
-    private static void doSetStrictMode(boolean enable) {
-        if (enable) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
-                    .penaltyLog().build()); // .penaltyDialog()
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog()
-                    .build());
-        } else {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().permitAll().build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().penaltyLog().build());
         }
     }
 }

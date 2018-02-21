@@ -21,22 +21,25 @@ package ro.edi.util.ui;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewConfigurationCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import ro.edi.novelty.R;
-import ro.edi.util.Log;
 
 import java.util.ArrayList;
+
+import ro.edi.novelty.R;
+import ro.edi.util.Log;
 
 /**
  * A TitlePageIndicator is a PageIndicator which displays the title of left view (if exist), the title of the current
@@ -183,14 +186,14 @@ public class TitlePageIndicator extends View implements PageIndicator {
         a.recycle();
 
         ViewConfiguration configuration = ViewConfiguration.get(context);
-        mTouchSlop = ViewConfigurationCompat.getScaledPagingTouchSlop(configuration);
+        mTouchSlop = configuration.getScaledPagingTouchSlop();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        if (mViewPager == null) {
+        if (mViewPager == null || mViewPager.getAdapter() == null) {
             return;
         }
 
@@ -367,20 +370,20 @@ public class TitlePageIndicator extends View implements PageIndicator {
         if (super.onTouchEvent(ev)) {
             return true;
         }
-        if (mViewPager == null || mViewPager.getAdapter().getCount() == 0) {
+        if (mViewPager == null || mViewPager.getAdapter() == null || mViewPager.getAdapter().getCount() == 0) {
             return false;
         }
 
         int action = ev.getAction();
 
-        switch (action & MotionEventCompat.ACTION_MASK) {
+        switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
+                mActivePointerId = ev.getPointerId(0);
                 mLastMotionX = ev.getX();
                 break;
             case MotionEvent.ACTION_MOVE:
-                int activePointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
-                float x = MotionEventCompat.getX(ev, activePointerIndex);
+                int activePointerIndex = ev.findPointerIndex(mActivePointerId);
+                float x = ev.getX(activePointerIndex);
                 float deltaX = x - mLastMotionX;
 
                 if (!mIsDragging) {
@@ -432,19 +435,19 @@ public class TitlePageIndicator extends View implements PageIndicator {
                     mViewPager.endFakeDrag();
                 }
                 break;
-            case MotionEventCompat.ACTION_POINTER_DOWN:
-                int index = MotionEventCompat.getActionIndex(ev);
-                mLastMotionX = MotionEventCompat.getX(ev, index);
-                mActivePointerId = MotionEventCompat.getPointerId(ev, index);
+            case MotionEvent.ACTION_POINTER_DOWN:
+                int index = ev.getActionIndex();
+                mLastMotionX = ev.getX(index);
+                mActivePointerId = ev.getPointerId(index);
                 break;
-            case MotionEventCompat.ACTION_POINTER_UP:
-                int pointerIndex = MotionEventCompat.getActionIndex(ev);
-                int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+            case MotionEvent.ACTION_POINTER_UP:
+                int pointerIndex = ev.getActionIndex();
+                int pointerId = ev.getPointerId(pointerIndex);
                 if (pointerId == mActivePointerId) {
                     int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                    mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+                    mActivePointerId = ev.getPointerId(newPointerIndex);
                 }
-                mLastMotionX = MotionEventCompat.getX(ev, MotionEventCompat.findPointerIndex(ev, mActivePointerId));
+                mLastMotionX = ev.getX(ev.findPointerIndex(mActivePointerId));
                 break;
             default:
                 break;
@@ -479,7 +482,12 @@ public class TitlePageIndicator extends View implements PageIndicator {
      * Calculate views bounds and scroll them according to the current index
      */
     private ArrayList<Rect> calculateAllBounds(Paint paint) {
-        ArrayList<Rect> list = new ArrayList<Rect>();
+        ArrayList<Rect> list = new ArrayList<>();
+
+        if (mViewPager.getAdapter() == null) {
+            return list;
+        }
+
         // for each views (if no values then add a fake one)
         int count = mViewPager.getAdapter().getCount();
         int width = getWidth();
@@ -520,13 +528,13 @@ public class TitlePageIndicator extends View implements PageIndicator {
         }
         if (mViewPager != null) {
             // clear us from the old pager
-            mViewPager.setOnPageChangeListener(null);
+            mViewPager.removeOnPageChangeListener(this);
         }
         if (viewPager.getAdapter() == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
         mViewPager = viewPager;
-        mViewPager.setOnPageChangeListener(this);
+        mViewPager.addOnPageChangeListener(this);
 
         mNotifications = new int[viewPager.getAdapter().getCount()];
 
@@ -638,6 +646,10 @@ public class TitlePageIndicator extends View implements PageIndicator {
     }
 
     private CharSequence getTitle(int index) {
+        if (mViewPager.getAdapter() == null) {
+            return EMPTY_TITLE;
+        }
+
         CharSequence title = mViewPager.getAdapter().getPageTitle(index);
         if (title == null) {
             title = EMPTY_TITLE;
@@ -688,7 +700,7 @@ public class TitlePageIndicator extends View implements PageIndicator {
     static class SavedState extends BaseSavedState {
         int currentPage;
 
-        public SavedState(Parcelable superState) {
+        SavedState(Parcelable superState) {
             super(superState);
         }
 

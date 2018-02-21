@@ -17,12 +17,14 @@ package ro.edi.novelty.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -32,9 +34,8 @@ import java.util.Collections;
 import java.util.List;
 
 import ro.edi.novelty.R;
-import ro.edi.novelty.data.Feed;
 import ro.edi.novelty.core.FeedsManager;
-import ro.edi.util.recyclerview.DividerItemDecoration;
+import ro.edi.novelty.data.Feed;
 import ro.edi.util.recyclerview.OnRecyclerClickItemListener;
 import ro.edi.util.recyclerview.OnRecyclerDragItemListener;
 import ro.edi.util.recyclerview.OnRecyclerSwipeItemListener;
@@ -57,7 +58,7 @@ public class ManageFeedsActivity extends BaseActivity {
     @Override
     protected Toolbar initToolbar() {
         Toolbar toolbar = super.initToolbar();
-        if (toolbar != null) {
+        if (toolbar != null && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             toolbar.setTitle(R.string.menu_manage_feeds);
         }
@@ -68,15 +69,15 @@ public class ManageFeedsActivity extends BaseActivity {
     protected void initUI() {
         super.initUI();
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(android.R.id.list);
+        RecyclerView recyclerView = findViewById(android.R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
         recyclerView.setHasFixedSize(true);
 
         // populate list with our feeds
         FeedsManager feedsManager = FeedsManager.getInstance();
         int count = feedsManager.getFeedsCount();
-        ArrayList<Feed> feedsList = new ArrayList<Feed>(count);
+        ArrayList<Feed> feedsList = new ArrayList<>(count);
         for (int k = 1; k < count + 1; ++k) {
             feedsList.add(feedsManager.getFeed(k));
         }
@@ -84,7 +85,7 @@ public class ManageFeedsActivity extends BaseActivity {
         mAdapter = new ManageAdapter(feedsList);
         recyclerView.setAdapter(mAdapter);
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add_feed);
+        final FloatingActionButton fab = findViewById(R.id.fab_add_feed);
 
         OnRecyclerSwipeItemListener swipeListener = new OnRecyclerSwipeItemListener(recyclerView,
                 new OnRecyclerSwipeItemListener.DismissCallbacks() {
@@ -108,12 +109,9 @@ public class ManageFeedsActivity extends BaseActivity {
                             if (mAdapter.getItemCount() == FeedsManager.MAX_FEEDS_COUNT - 1) {
                                 // we were at MAX_FEEDS_COUNT previously, so the FAB was hidden
                                 fab.setVisibility(View.VISIBLE);
-                                fab.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
-                                        startActivityForResult(iAdd, 201);
-                                    }
+                                fab.setOnClickListener(v -> {
+                                    Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
+                                    startActivityForResult(iAdd, 201);
                                 });
                                 fab.attachToRecyclerView(view);
                             }
@@ -181,12 +179,9 @@ public class ManageFeedsActivity extends BaseActivity {
 
         if (FeedsManager.getInstance().canAddFeed()) {
             fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
-                    startActivityForResult(iAdd, 201);
-                }
+            fab.setOnClickListener(v -> {
+                Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
+                startActivityForResult(iAdd, 201);
             });
             fab.attachToRecyclerView(recyclerView);
         } else {
@@ -207,7 +202,7 @@ public class ManageFeedsActivity extends BaseActivity {
     }
 
     private class ManageAdapter extends RecyclerView.Adapter<FeedHolder> {
-        ArrayList<Feed> feedsList = new ArrayList<Feed>();
+        ArrayList<Feed> feedsList = new ArrayList<>();
 
         ManageAdapter(ArrayList<Feed> feedsList) {
             setHasStableIds(true);
@@ -240,12 +235,12 @@ public class ManageFeedsActivity extends BaseActivity {
             return feedsList.get(position).getTitle().hashCode();
         }
 
-        public void swapPositions(int from, int to) {
+        void swapPositions(int from, int to) {
             Collections.swap(feedsList, from, to);
             FeedsManager.getInstance().swapFeeds(from + 1, to + 1);
         }
 
-        public void removeItem(int pos) {
+        void removeItem(int pos) {
             feedsList.remove(pos);
             FeedsManager.getInstance().removeFeed(pos + 1);
         }
@@ -255,11 +250,11 @@ public class ManageFeedsActivity extends BaseActivity {
         TextView tvTitle;
         TextView tvUrl;
 
-        public FeedHolder(View v) {
+        FeedHolder(View v) {
             super(v);
 
-            tvTitle = (TextView) v.findViewById(R.id.feed_title);
-            tvUrl = (TextView) v.findViewById(R.id.feed_url);
+            tvTitle = v.findViewById(R.id.feed_title);
+            tvUrl = v.findViewById(R.id.feed_url);
         }
     }
 }

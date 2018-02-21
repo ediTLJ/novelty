@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -9,12 +10,12 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+            layout="@layout/toolbar"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
     </LinearLayout>
 
     <com.melnykov.fab.FloatingActionButton
@@ -30,5 +31,5 @@
         app:fab_colorPressed="?attr/colorPrimaryDark"
         app:fab_colorRipple="?attr/colorPrimaryDark"
         app:fab_shadow="true"
-        app:fab_type="normal" />
+        app:fab_type="normal"/>
 </merge>

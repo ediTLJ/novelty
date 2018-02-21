@@ -37,7 +37,7 @@ public class FeedsManager {
     // private constructor prevents instantiation from other classes
     private FeedsManager() {
         mPrefs = PreferenceManager.getDefaultSharedPreferences(MyApp.getContext());
-        mFeeds = new LinkedHashMap<Integer, Feed>(MAX_FEEDS_COUNT);
+        mFeeds = new LinkedHashMap<>(MAX_FEEDS_COUNT);
 
         for (int k = 1; k < MAX_FEEDS_COUNT + 1; ++k) {
             String feedData = mPrefs.getString(Keys.FEED_PREFIX + k, null);
@@ -59,7 +59,7 @@ public class FeedsManager {
      * or the first access to FeedsManagerHolder.INSTANCE, not before.
      */
     private static class FeedsManagerHolder {
-        public static final FeedsManager INSTANCE = new FeedsManager();
+        static final FeedsManager INSTANCE = new FeedsManager();
     }
 
     /**

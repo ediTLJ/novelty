@@ -26,7 +26,7 @@ import android.view.View;
 public abstract class OnRecyclerClickItemListener implements RecyclerView.OnItemTouchListener {
     private GestureDetector mGestureDetector;
 
-    public OnRecyclerClickItemListener(final RecyclerView recyclerView) {
+    protected OnRecyclerClickItemListener(final RecyclerView recyclerView) {
         if (recyclerView == null) {
             throw new IllegalArgumentException("RecyclerView is null");
         }
@@ -48,7 +48,7 @@ public abstract class OnRecyclerClickItemListener implements RecyclerView.OnItem
                 }
 
                 view.setPressed(false);
-                onItemClick(recyclerView, view, recyclerView.getChildPosition(view));
+                onItemClick(recyclerView, view, recyclerView.getChildAdapterPosition(view));
                 return true;
             }
 
@@ -60,7 +60,7 @@ public abstract class OnRecyclerClickItemListener implements RecyclerView.OnItem
                 }
 
                 view.setPressed(false);
-                onItemLongClick(recyclerView, view, recyclerView.getChildPosition(view));
+                onItemLongClick(recyclerView, view, recyclerView.getChildAdapterPosition(view));
             }
         });
     }

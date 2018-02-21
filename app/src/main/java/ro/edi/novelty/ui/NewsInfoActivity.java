@@ -32,9 +32,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ObservableScrollView;
+
 import org.xml.sax.XMLReader;
+
+import java.lang.ref.WeakReference;
+
 import ro.edi.novelty.R;
 import ro.edi.novelty.data.DB;
 import ro.edi.novelty.data.DbProvider;
@@ -67,7 +71,7 @@ public class NewsInfoActivity extends BaseActivity {
     @Override
     protected Toolbar initToolbar() {
         Toolbar toolbar = super.initToolbar();
-        if (toolbar != null) {
+        if (toolbar != null && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             toolbar.setTitle(getIntent().getStringExtra(EXTRA_FEED_ID));
         }
@@ -88,13 +92,13 @@ public class NewsInfoActivity extends BaseActivity {
         }
         txtCaption.append(DateTime.formatDateTime(this, intent.getLongExtra(EXTRA_DATE, 0), ", "));
 
-        TextView tvDate = (TextView) findViewById(R.id.news_caption);
+        TextView tvDate = findViewById(R.id.news_caption);
         tvDate.setText(txtCaption);
 
-        TextView tvTitle = (TextView) findViewById(R.id.news_title);
+        TextView tvTitle = findViewById(R.id.news_title);
         tvTitle.setText(intent.getStringExtra(EXTRA_TITLE));
 
-        TextView tvContent = (TextView) findViewById(R.id.news_content);
+        TextView tvContent = findViewById(R.id.news_content);
 
         String txt = intent.getStringExtra(EXTRA_CONTENT_VALUES);
         tvContent.setText(Html.fromHtml(txt, null, new HtmlTagHandler()));
@@ -108,21 +112,18 @@ public class NewsInfoActivity extends BaseActivity {
         // Log.i("NOVELTY", "id: ", intent.getStringExtra(EXTRA_ID));
 
         final String url = getIntent().getStringExtra(EXTRA_URL);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_open_in_browser);
+        FloatingActionButton fab = findViewById(R.id.fab_open_in_browser);
 
         if (TextUtils.isEmpty(url)) {
             fab.setVisibility(View.GONE);
         } else {
             fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent iBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    iBrowser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(iBrowser);
-                }
+            fab.setOnClickListener(v -> {
+                Intent iBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                iBrowser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(iBrowser);
             });
-            fab.attachToScrollView((ObservableScrollView) findViewById(R.id.news_container));
+            fab.attachToScrollView(findViewById(R.id.news_container));
         }
     }
 
@@ -174,30 +175,10 @@ public class NewsInfoActivity extends BaseActivity {
 
     private final LoaderManager.LoaderCallbacks<LoaderPayload> loaderCallbacks = new LoaderCallbacks<LoaderPayload>() {
         @Override
-        public Loader<LoaderPayload> onCreateLoader(int id, final Bundle data) {
+        public Loader<LoaderPayload> onCreateLoader(int id, Bundle data) {
             switch (id) {
                 case LoaderIds.ASYNC_STAR:
-                    return new AsyncLoader<LoaderPayload>(NewsInfoActivity.this) {
-                        @Override
-                        public LoaderPayload loadInBackground() {
-                            String newsId = getIntent().getStringExtra(EXTRA_ID);
-                            String feedId = getIntent().getStringExtra(EXTRA_FEED_ID);
-
-                            ContentValues v = new ContentValues(2);
-                            v.put(DB.MyNews.IS_BOOKMARK, data.getBoolean("is_bookmark") ? 0 : 1);
-
-                            if (DbProvider.contentResolver.update(DB.MyNews.URI, v,
-                                    DB.MyNews.ID + "=? AND " + DB.MyNews.FEED_ID + "=?",
-                                    new String[]{newsId, feedId}) > 0) {
-                                DbProvider.contentResolver.notifyChange(DB.MyNews.URI, null, false);
-                                return new LoaderPayload(LoaderPayload.STATUS_OK,
-                                        data.getBoolean("is_bookmark") ? 0 : 1);
-                            }
-
-                            return new LoaderPayload(LoaderPayload.STATUS_ERROR,
-                                    data.getBoolean("is_bookmark") ? 1 : 0);
-                        }
-                    };
+                    return new StarLoader(NewsInfoActivity.this, data);
                 default:
                     return null;
             }
@@ -221,9 +202,46 @@ public class NewsInfoActivity extends BaseActivity {
         }
     };
 
+    private static class StarLoader extends AsyncLoader<LoaderPayload> {
+        private WeakReference<BaseActivity> activityRef;
+        private Bundle data;
+
+        // only retain a weak reference to the activity
+        StarLoader(BaseActivity activity, Bundle data) {
+            super(activity);
+            activityRef = new WeakReference<>(activity);
+            this.data = data;
+        }
+
+        @Override
+        public LoaderPayload loadInBackground() {
+            BaseActivity activity = activityRef.get();
+            if (activity == null || activity.isFinishing()) {
+                return null;
+            }
+
+            String newsId = activity.getIntent().getStringExtra(EXTRA_ID);
+            String feedId = activity.getIntent().getStringExtra(EXTRA_FEED_ID);
+
+            ContentValues v = new ContentValues(2);
+            v.put(DB.MyNews.IS_BOOKMARK, data.getBoolean("is_bookmark") ? 0 : 1);
+
+            if (DbProvider.contentResolver.update(DB.MyNews.URI, v,
+                    DB.MyNews.ID + "=? AND " + DB.MyNews.FEED_ID + "=?",
+                    new String[]{newsId, feedId}) > 0) {
+                DbProvider.contentResolver.notifyChange(DB.MyNews.URI, null, false);
+                return new LoaderPayload(LoaderPayload.STATUS_OK,
+                        data.getBoolean("is_bookmark") ? 0 : 1);
+            }
+
+            return new LoaderPayload(LoaderPayload.STATUS_ERROR,
+                    data.getBoolean("is_bookmark") ? 1 : 0);
+        }
+    }
+
     // this adds support for ordered and unordered lists to Html.fromHtml()
     private class HtmlTagHandler implements Html.TagHandler {
-        int index;
+        private int index;
 
         @Override
         public void handleTag(boolean opening, String tag, Editable output, XMLReader reader) {

@@ -26,6 +26,7 @@ import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
+
 import ro.edi.novelty.R;
 import ro.edi.novelty.data.DB;
 import ro.edi.util.ui.AltCursorAdapter.ViewBinder;
@@ -35,7 +36,7 @@ public class BinderNews implements ViewBinder {
 
     private final int colorNew, colorRead;
 
-    public BinderNews(Context context) {
+    BinderNews(Context context) {
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = context.getTheme();
 

@@ -211,13 +211,16 @@ public class DbProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         Context ctx = getContext();
+        if (ctx == null) {
+            return false;
+        }
         contentResolver = ctx.getContentResolver();
         mOpenHelper = new DbHelper(ctx);
         return true;
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 
         switch (sURIMatcher.match(uri)) {
@@ -242,12 +245,12 @@ public class DbProvider extends ContentProvider {
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         int rowCount = values.length;
 
         if (rowCount == 0) {
@@ -296,11 +299,11 @@ public class DbProvider extends ContentProvider {
         return okCount;
     }
 
-    public static int bulkReplace(Uri uri, ContentValues[] values) {
+    public static void bulkReplace(Uri uri, ContentValues[] values) {
         int rowCount = values.length;
 
         if (rowCount == 0) {
-            return 0;
+            return;
         }
 
         Log.i(TAG, "bulk replace");
@@ -349,11 +352,10 @@ public class DbProvider extends ContentProvider {
         Log.i("TIME", "REPLACE table: ", tableName);
         Log.i("TIME", "REPLACE time (ms): ", System.currentTimeMillis() - t);
 
-        return okCount;
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase dbWritable = mOpenHelper.getWritableDatabase();
 
         dbWritable.beginTransaction();
@@ -364,14 +366,14 @@ public class DbProvider extends ContentProvider {
         dbWritable.endTransaction();
 
         // Log.i(TAG, "Updated rows: " + count);
-        if (count > 0) {
+        if (count > 0 && getContext() != null) {
             BackupManager.dataChanged(getContext().getPackageName());
         }
         return count;
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase dbWritable = mOpenHelper.getWritableDatabase();
 
         int count = dbWritable.delete(getTableName(uri), selection, selectionArgs);
@@ -386,7 +388,7 @@ public class DbProvider extends ContentProvider {
      * Get query type for this provider...
      */
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri) {
         switch (sURIMatcher.match(uri)) {
             case NEWS:
                 return News.TYPE;
@@ -397,7 +399,7 @@ public class DbProvider extends ContentProvider {
         }
     }
 
-    private static String getTableName(Uri uri) {
+    private static String getTableName(@NonNull Uri uri) {
         switch (sURIMatcher.match(uri)) {
             case NEWS:
                 return News.TABLE_NAME;

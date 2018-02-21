@@ -269,7 +269,7 @@ public class AltCursorAdapter extends CursorAdapter {
      * @param v     ImageView to receive an image
      * @param value the value retrieved from the cursor
      */
-    public void setViewImage(ImageView v, String value) {
+    void setViewImage(ImageView v, String value) {
         try {
             v.setImageResource(Integer.parseInt(value));
         } catch (NumberFormatException nfe) {
@@ -286,7 +286,7 @@ public class AltCursorAdapter extends CursorAdapter {
      * @param v    TextView to receive text
      * @param text the text to be set for the TextView
      */
-    public void setViewText(TextView v, String text) {
+    void setViewText(TextView v, String text) {
         v.setText(text);
     }
 
@@ -468,7 +468,7 @@ public class AltCursorAdapter extends CursorAdapter {
      * @see AltCursorAdapter#setViewImage(ImageView, String)
      * @see AltCursorAdapter#setViewText(TextView, String)
      */
-    public static interface ViewBinder {
+    public interface ViewBinder {
         /**
          * Binds the Cursor column defined by the specified index to the specified view.
          * <p/>
@@ -491,7 +491,7 @@ public class AltCursorAdapter extends CursorAdapter {
      *
      * @see android.widget.CursorAdapter#convertToString(android.database.Cursor)
      */
-    public static interface CursorToStringConverter {
+    public interface CursorToStringConverter {
         /**
          * Returns a CharSequence representing the specified Cursor.
          *

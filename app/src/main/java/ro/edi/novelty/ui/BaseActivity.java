@@ -17,13 +17,12 @@ package ro.edi.novelty.ui;
 
 import android.app.backup.BackupManager;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import ro.edi.novelty.R;
-import ro.edi.util.Utils;
 
 /**
  * A base activity that implements common functionality across app activities.
@@ -39,14 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
-        sharedPrefs.registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                BackupManager.dataChanged(getPackageName());
-            }
-        });
-
-        Utils.setStrictMode(true);
+        sharedPrefs.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> BackupManager.dataChanged(getPackageName()));
 
         setContentView(getLayoutResource());
         initUI();
@@ -59,9 +51,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected Toolbar initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
+            // noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         return toolbar;

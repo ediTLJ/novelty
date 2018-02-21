@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,7 +10,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar"/>
 
     <ro.edi.novelty.ui.util.FeedsIndicator
         android:id="@+id/tabs"
@@ -28,10 +29,10 @@
         app:textColor="@color/text_tab"
         app:textSize="@dimen/text_tab"
         app:titlePadding="@dimen/activity_horizontal_margin"
-        app:topPadding="-1dp" />
+        app:topPadding="-1dp"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 </LinearLayout>

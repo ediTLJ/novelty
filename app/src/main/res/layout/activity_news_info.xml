@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -10,7 +11,7 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/toolbar" />
+            layout="@layout/toolbar"/>
 
         <com.melnykov.fab.ObservableScrollView
             android:id="@+id/news_container"
@@ -35,7 +36,7 @@
                     android:paddingStart="@dimen/activity_horizontal_margin"
                     android:paddingTop="@dimen/activity_vertical_margin"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    tools:text="date" />
+                    tools:text="date"/>
 
                 <TextView
                     android:id="@+id/news_title"
@@ -47,7 +48,7 @@
                     android:paddingTop="8dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     android:textIsSelectable="true"
-                    tools:text="News title" />
+                    tools:text="News title"/>
 
                 <TextView
                     android:id="@+id/news_content"
@@ -62,7 +63,7 @@
                     android:paddingTop="24dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textIsSelectable="true"
-                    tools:text="Extra! Extra! Read all about it!" />
+                    tools:text="Extra! Extra! Read all about it!"/>
             </LinearLayout>
         </com.melnykov.fab.ObservableScrollView>
     </LinearLayout>
@@ -80,5 +81,5 @@
         app:fab_colorPressed="?attr/colorPrimaryDark"
         app:fab_colorRipple="?attr/colorPrimaryDark"
         app:fab_shadow="true"
-        app:fab_type="normal" />
+        app:fab_type="normal"/>
 </merge>
