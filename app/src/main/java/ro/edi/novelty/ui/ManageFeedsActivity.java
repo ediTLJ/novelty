@@ -17,6 +17,7 @@ package ro.edi.novelty.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,7 +112,6 @@ public class ManageFeedsActivity extends BaseActivity {
                                     Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
                                     startActivityForResult(iAdd, 201);
                                 });
-                                fab.attachToRecyclerView(view);
                             }
 
                             // TODO snackbar with undo
@@ -183,7 +181,6 @@ public class ManageFeedsActivity extends BaseActivity {
                 Intent iAdd = new Intent(getApplication(), AddFeedActivity.class);
                 startActivityForResult(iAdd, 201);
             });
-            fab.attachToRecyclerView(recyclerView);
         } else {
             fab.setVisibility(View.GONE);
         }

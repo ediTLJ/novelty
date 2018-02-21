@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginTop="?attr/actionBarSize"/>
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/toolbar"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
-
-    <com.melnykov.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add_feed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,10 +23,11 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:contentDescription="@string/description_add_feed"
+        app:rippleColor="?attr/colorPrimaryDark"
         android:src="@drawable/ic_add_white_24dp"
-        app:fab_colorNormal="?attr/colorPrimary"
-        app:fab_colorPressed="?attr/colorPrimaryDark"
-        app:fab_colorRipple="?attr/colorPrimaryDark"
-        app:fab_shadow="true"
-        app:fab_type="normal"/>
-</merge>
+        app:backgroundTint="?attr/colorPrimary"
+        app:fabSize="normal"
+        app:layout_anchor="@android:id/list"
+        app:layout_anchorGravity="bottom|end"
+        app:layout_behavior="ro.edi.util.ui.ScrollAwareFABBehavior"/>
+</android.support.design.widget.CoordinatorLayout>

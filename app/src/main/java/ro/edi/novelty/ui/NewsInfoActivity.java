@@ -19,6 +19,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -32,8 +33,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
-import com.melnykov.fab.FloatingActionButton;
 
 import org.xml.sax.XMLReader;
 
@@ -123,7 +122,6 @@ public class NewsInfoActivity extends BaseActivity {
                 iBrowser.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(iBrowser);
             });
-            fab.attachToScrollView(findViewById(R.id.news_container));
         }
     }
 

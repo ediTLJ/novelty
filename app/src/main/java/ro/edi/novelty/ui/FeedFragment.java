@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -42,7 +43,6 @@ import android.widget.TextView;
 
 import com.escape.synder.DefaultContext;
 import com.escape.synder.DefaultParseContext;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -361,9 +361,8 @@ public class FeedFragment extends ListFragment implements AbsListView.OnScrollLi
                     // FIXME empty view not shown
                     hideLoading();
                     if (getActivity() != null && getView() != null) {
-                        new SnackBar.Builder(getActivity().getApplicationContext(), getView())
-                                .withMessageId(R.string.error_news)
-                                .show();
+                        // TODO add retry action?
+                        Snackbar.make(getView(), R.string.error_news, Snackbar.LENGTH_LONG).show();
                     }
                 }
             } else if (id == LoaderIds.ASYNC_UPDATE_READ) {
