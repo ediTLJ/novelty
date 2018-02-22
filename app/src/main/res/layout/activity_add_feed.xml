@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar"/>
 
     <ScrollView
         android:id="@+id/add_feed_container"
@@ -29,14 +30,14 @@
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/feed_title"
                 android:text="@string/feed_title"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
             <TextView
                 android:id="@+id/feed_title_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/feed_title_info"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
             <EditText
                 android:id="@+id/feed_title"
@@ -47,7 +48,7 @@
                 android:inputType="textCapWords"
                 android:lines="1"
                 android:maxLength="14"
-                android:textSize="@dimen/text_field" />
+                android:textSize="@dimen/text_field"/>
 
             <TextView
                 android:id="@+id/feed_url_text"
@@ -56,14 +57,14 @@
                 android:layout_marginTop="16dp"
                 android:labelFor="@+id/feed_url"
                 android:text="@string/feed_url"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
             <TextView
                 android:id="@+id/feed_url_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/feed_url_info"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
 
             <EditText
                 android:id="@+id/feed_url"
@@ -75,7 +76,7 @@
                 android:inputType="textUri"
                 android:lines="1"
                 android:maxWidth="480dp"
-                android:textSize="@dimen/text_field" />
+                android:textSize="@dimen/text_field"/>
 
             <Button
                 android:id="@+id/btn_add"
@@ -86,7 +87,7 @@
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
                 android:text="@string/btn_add_feed"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

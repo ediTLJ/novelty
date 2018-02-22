@@ -17,20 +17,24 @@ package ro.edi.novelty.ui.util;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import java.util.HashMap;
+
 import ro.edi.novelty.R;
-import ro.edi.novelty.data.Feed;
 import ro.edi.novelty.core.FeedsManager;
+import ro.edi.novelty.data.Feed;
 import ro.edi.novelty.ui.BookmarksFragment;
 import ro.edi.novelty.ui.FeedFragment;
 import ro.edi.util.Log;
-
-import java.util.HashMap;
 
 public class FeedsAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = "FEEDS.ADAPTER";
@@ -57,14 +61,15 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
         mTxtMyNews = context.getText(R.string.tab_my_news);
 
         mFeedsManager = FeedsManager.getInstance();
-        mFragments = new SparseArray<Fragment>(mFeedsManager.getFeedsCount() + 1);
-        mFeedState = new HashMap<String, Integer>(mFeedsManager.getFeedsCount() + 1);
+        mFragments = new SparseArray<>(mFeedsManager.getFeedsCount() + 1);
+        mFeedState = new HashMap<>(mFeedsManager.getFeedsCount() + 1);
 
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    @NonNull
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         Fragment fragment = (Fragment) super.instantiateItem(container, position);
         mFragments.put(position, fragment);
         return fragment;
@@ -103,7 +108,7 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
         }
 
         FeedFragment f = (FeedFragment) getFragment(position);
-        if (f == null) {
+        if (f == null || f.getArguments() == null) {
             Log.i(TAG, "refresh denied: ", position);
             return;
         }
@@ -121,7 +126,7 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(@NonNull Object object) {
         if (object instanceof BookmarksFragment) {
             if (mFeedsManager.getFeedsCount() < 2) {
                 return POSITION_NONE; // the fragment will be re-created
@@ -131,6 +136,10 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
 
         FeedFragment f = (FeedFragment) object;
         Bundle args = f.getArguments();
+        if (args == null) {
+            return POSITION_NONE; // this should never happen
+        }
+
         int fPosition = args.getInt("position");
         String fTitle = args.getString("feedId");
 
@@ -171,7 +180,7 @@ public class FeedsAdapter extends FragmentStatePagerAdapter {
         return feed.getTitle().toUpperCase();
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(FeedsEvent event) {
         Log.i(TAG, "FeedsEvent");
 

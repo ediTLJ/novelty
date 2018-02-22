@@ -22,7 +22,7 @@ import android.app.backup.SharedPreferencesBackupHelper;
 public class BackupAgent extends BackupAgentHelper {
     private static final String DEFAULT_SHARED_PREFS_NAME = "ro.edi.novelty_preferences";
     private static final String SHARED_PREFS_BACKUP_KEY = "sharedPrefsBackup";
-    private static final String DATABASE_BACKUP_KEY = "databaseBackup";
+    // private static final String DATABASE_BACKUP_KEY = "databaseBackup";
 
     public BackupAgent() {
         super();

@@ -21,7 +21,7 @@ public class FeedTitlesEvent {
      */
     private int mType;
 
-    public FeedTitlesEvent(int type) {
+    FeedTitlesEvent(int type) {
         mType = type;
     }
 

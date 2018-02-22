@@ -16,6 +16,8 @@
  */
 package ro.edi.util;
 
+import android.util.SparseArray;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -50,7 +52,7 @@ public class Entities {
     };
 
     // package scoped for testing
-    static final String[][] ISO8859_1_ARRAY = {{"nbsp", "160"}, // non-breaking space
+    private static final String[][] ISO8859_1_ARRAY = {{"nbsp", "160"}, // non-breaking space
             {"iexcl", "161"}, // inverted exclamation mark
             {"cent", "162"}, // cent sign
             {"pound", "163"}, // pound sign
@@ -150,7 +152,7 @@ public class Entities {
 
     // http://www.w3.org/TR/REC-html40/sgml/entities.html
     // package scoped for testing
-    static final String[][] HTML40_ARRAY = {
+    private static final String[][] HTML40_ARRAY = {
             // <!-- Latin Extended-B -->
             {"fnof", "402"}, // latin small f with hook = function= florin, U+0192 ISOtech -->
             // <!-- Greek -->
@@ -395,14 +397,14 @@ public class Entities {
      *
      * @param entities the instance to be filled.
      */
-    static void fillWithHtml40Entities(Entities entities) {
+    private static void fillWithHtml40Entities(Entities entities) {
         entities.addEntities(BASIC_ARRAY);
         entities.addEntities(APOS_ARRAY); // added by Edi
         entities.addEntities(ISO8859_1_ARRAY);
         entities.addEntities(HTML40_ARRAY);
     }
 
-    static interface EntityMap {
+    interface EntityMap {
         /**
          * <p>
          * Add an entry to this entity map.
@@ -435,8 +437,8 @@ public class Entities {
     }
 
     static class PrimitiveEntityMap implements EntityMap {
-        private final HashMap<String, Integer> mapNameToValue = new HashMap<String, Integer>();
-        private final HashMap<Integer, String> mapValueToName = new HashMap<Integer, String>();
+        private final HashMap<String, Integer> mapNameToValue = new HashMap<>();
+        private final SparseArray<String> mapValueToName = new SparseArray<>();
 
         /**
          * {@inheritDoc}
@@ -467,8 +469,8 @@ public class Entities {
     }
 
     static abstract class MapIntMap implements EntityMap {
-        protected final Map mapNameToValue;
-        protected final Map mapValueToName;
+        final Map mapNameToValue;
+        final Map mapValueToName;
 
         /**
          * Construct a new instance with specified maps.
@@ -485,7 +487,9 @@ public class Entities {
          * {@inheritDoc}
          */
         public void add(String name, int value) {
+            // noinspection unchecked
             mapNameToValue.put(name, value);
+            // noinspection unchecked
             mapValueToName.put(value, name);
         }
 
@@ -508,6 +512,7 @@ public class Entities {
         }
     }
 
+    @SuppressWarnings("unused")
     static class HashEntityMap extends MapIntMap {
         /**
          * Constructs a new instance of <code>HashEntityMap</code>.
@@ -517,6 +522,7 @@ public class Entities {
         }
     }
 
+    @SuppressWarnings("unused")
     static class TreeEntityMap extends MapIntMap {
         /**
          * Constructs a new instance of <code>TreeEntityMap</code>.
@@ -571,18 +577,18 @@ public class Entities {
 
     static class ArrayEntityMap implements EntityMap {
         // TODO this class is not thread-safe
-        protected final int growBy;
+        final int growBy;
 
-        protected int size = 0;
+        int size = 0;
 
-        protected String[] names;
+        String[] names;
 
         protected int[] values;
 
         /**
          * Constructs a new instance of <code>ArrayEntityMap</code>.
          */
-        public ArrayEntityMap() {
+        ArrayEntityMap() {
             this.growBy = 100;
             names = new String[growBy];
             values = new int[growBy];
@@ -593,7 +599,7 @@ public class Entities {
          *
          * @param growBy array will be initialized to and will grow by this amount
          */
-        public ArrayEntityMap(int growBy) {
+        ArrayEntityMap(int growBy) {
             this.growBy = growBy;
             names = new String[growBy];
             values = new int[growBy];
@@ -614,7 +620,7 @@ public class Entities {
          *
          * @param capacity size the array should be
          */
-        protected void ensureCapacity(int capacity) {
+        void ensureCapacity(int capacity) {
             if (capacity > names.length) {
                 int newSize = Math.max(capacity, size + growBy);
                 String[] newNames = new String[newSize];
@@ -651,6 +657,7 @@ public class Entities {
         }
     }
 
+    @SuppressWarnings("unused")
     static class BinaryEntityMap extends ArrayEntityMap {
         // TODO - not thread-safe, because parent is not. Also references size.
 
@@ -731,7 +738,7 @@ public class Entities {
     /**
      * Default constructor.
      */
-    public Entities() {
+    private Entities() {
         map = new LookupEntityMap();
     }
 
@@ -740,6 +747,7 @@ public class Entities {
      *
      * @param emap entity map.
      */
+    @SuppressWarnings("unused")
     Entities(EntityMap emap) {
         map = emap;
     }
@@ -751,7 +759,7 @@ public class Entities {
      *
      * @param entityArray array of entities to be added
      */
-    public void addEntities(String[][] entityArray) {
+    private void addEntities(String[][] entityArray) {
         for (String[] anEntityArray : entityArray) {
             addEntity(anEntityArray[0], Integer.parseInt(anEntityArray[1]));
         }
@@ -765,7 +773,7 @@ public class Entities {
      * @param name  name of the entity
      * @param value vale of the entity
      */
-    public void addEntity(String name, int value) {
+    private void addEntity(String name, int value) {
         map.add(name, value);
     }
 
@@ -777,7 +785,7 @@ public class Entities {
      * @param value the value to locate
      * @return entity name associated with the specified value
      */
-    public String entityName(int value) {
+    private String entityName(int value) {
         return map.name(value);
     }
 
@@ -789,7 +797,7 @@ public class Entities {
      * @param name the name to locate
      * @return entity value associated with the specified name
      */
-    public int entityValue(String name) {
+    private int entityValue(String name) {
         return map.value(name);
     }
 
@@ -806,7 +814,8 @@ public class Entities {
      * @param str The <code>String</code> to escape.
      * @return A new escaped <code>String</code>.
      */
-    public String escape(String str) {
+    @SuppressWarnings("unused")
+    private String escape(String str) {
         StringWriter stringWriter = createStringWriter(str);
         try {
             this.escape(stringWriter, str);
@@ -825,12 +834,12 @@ public class Entities {
      *
      * @param writer The <code>Writer</code> to write the results of the escaping to. Assumed to be a non-null value.
      * @param str    The <code>String</code> to escape. Assumed to be a non-null value.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      * @see #escape(String)
      * @see java.io.Writer
      */
-    public void escape(Writer writer, String str) throws IOException {
+    private void escape(Writer writer, String str) throws IOException {
         int len = str.length();
         for (int i = 0; i < len; i++) {
             char c = str.charAt(i);
@@ -899,11 +908,12 @@ public class Entities {
      *
      * @param writer The <code>Writer</code> to write the results to; assumed to be non-null.
      * @param str    The source <code>String</code> to unescape; assumed to be non-null.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      * @see #escape(String)
      * @see java.io.Writer
      */
+    @SuppressWarnings("unused")
     public void unescape(Writer writer, String str) throws IOException {
         int firstAmp = str.indexOf('&');
         if (firstAmp < 0) {
@@ -919,8 +929,8 @@ public class Entities {
      * @param writer   The <code>Writer</code> to write the results to; assumed to be non-null.
      * @param str      The source <code>String</code> to unescape; assumed to be non-null.
      * @param firstAmp The <code>int</code> index of the first ampersand in the source String.
-     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the {@link java.io.Writer#write(int)}
-     *                             methods.
+     * @throws java.io.IOException when <code>Writer</code> passed throws the exception from calls to the
+     *                             {@link java.io.Writer#write(int)} methods.
      */
     private void doUnescape(Writer writer, String str, int firstAmp) throws IOException {
         writer.write(str, 0, firstAmp);

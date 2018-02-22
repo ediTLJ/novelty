@@ -16,6 +16,7 @@
 package ro.edi.novelty.ui;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -23,16 +24,18 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import ro.edi.novelty.R;
+import ro.edi.novelty.core.FeedsManager;
 import ro.edi.novelty.data.DB;
 import ro.edi.novelty.data.DbProvider;
-import ro.edi.novelty.core.FeedsManager;
 import ro.edi.novelty.ui.util.LoaderIds;
 import ro.edi.util.ui.AltCursorAdapter;
 import ro.edi.util.ui.AsyncLoader;
@@ -110,18 +113,17 @@ public class BookmarksFragment extends ListFragment {
         TextView tvEmpty = (TextView) listView.getEmptyView();
         tvEmpty.setTextAppearance(getActivity(), R.style.TextAppearance_AppCompat_Title);
 
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getActivity().getTheme();
-        theme.resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
-        tvEmpty.setTextColor(getResources().getColor(typedValue.resourceId));
+        if (getActivity() != null) {
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = getActivity().getTheme();
+            theme.resolveAttribute(android.R.attr.textColorSecondary, typedValue, true);
+            tvEmpty.setTextColor(ContextCompat.getColor(getActivity(), typedValue.resourceId));
+        }
 
         if (feedsManager.getFeedsCount() == 0) {
-            tvEmpty.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent iAdd = new Intent(getActivity(), AddFeedActivity.class);
-                    getActivity().startActivityForResult(iAdd, 101);
-                }
+            tvEmpty.setOnClickListener(v -> {
+                Intent iAdd = new Intent(getActivity(), AddFeedActivity.class);
+                getActivity().startActivityForResult(iAdd, 101);
             });
         }
     }
@@ -136,6 +138,10 @@ public class BookmarksFragment extends ListFragment {
                             DB.News.URL, DB.MyNews.IS_READ, DB.MyNews.IS_BOOKMARK, DB.MyNews.FEED_ID};
                     String selection = DB.MyNews.IS_BOOKMARK + "='1'";
                     String sortOrder = DB.News.PUBLISHED_DATE + " DESC";
+
+                    if (getActivity() == null) {
+                        return null;
+                    }
 
                     return new CursorLoader(getActivity(), DB.MyNews.URI, projection, selection, null,
                             sortOrder);
@@ -166,27 +172,10 @@ public class BookmarksFragment extends ListFragment {
 
     private final LoaderManager.LoaderCallbacks<LoaderPayload> loaderCallbacks = new LoaderCallbacks<LoaderPayload>() {
         @Override
-        public Loader<LoaderPayload> onCreateLoader(int id, final Bundle data) {
+        public Loader<LoaderPayload> onCreateLoader(int id, Bundle data) {
             switch (id) {
                 case LoaderIds.ASYNC_UPDATE_READ:
-                    return new AsyncLoader<LoaderPayload>(getActivity().getApplication()) {
-                        @Override
-                        public LoaderPayload loadInBackground() {
-                            String newsId = data.getString("newsId");
-                            String feedId = data.getString("feedId");
-
-                            ContentValues v = new ContentValues(2);
-                            v.put(DB.MyNews.IS_READ, 1);
-
-                            if (DbProvider.contentResolver.update(DB.MyNews.URI, v, DB.MyNews.ID + "=? AND "
-                                    + DB.MyNews.FEED_ID + "=?", new String[]{newsId, feedId}) > 0) {
-                                DbProvider.contentResolver.notifyChange(DB.MyNews.URI, null, false);
-                                return new LoaderPayload(LoaderPayload.STATUS_OK);
-                            }
-
-                            return new LoaderPayload(LoaderPayload.STATUS_ERROR);
-                        }
-                    };
+                    return new MyLoader(getActivity(), data);
                 default:
                     return null;
             }
@@ -211,4 +200,33 @@ public class BookmarksFragment extends ListFragment {
 
         }
     };
+
+    private static class MyLoader extends AsyncLoader<LoaderPayload> {
+        // private WeakReference<Context> activityRef;
+        private Bundle data;
+
+        // only retain a weak reference to the activity
+        MyLoader(Context context, Bundle data) {
+            super(context);
+            // activityRef = new WeakReference<>(context);
+            this.data = data;
+        }
+
+        @Override
+        public LoaderPayload loadInBackground() {
+            String newsId = data.getString("newsId");
+            String feedId = data.getString("feedId");
+
+            ContentValues v = new ContentValues(2);
+            v.put(DB.MyNews.IS_READ, 1);
+
+            if (DbProvider.contentResolver.update(DB.MyNews.URI, v, DB.MyNews.ID + "=? AND "
+                    + DB.MyNews.FEED_ID + "=?", new String[]{newsId, feedId}) > 0) {
+                DbProvider.contentResolver.notifyChange(DB.MyNews.URI, null, false);
+                return new LoaderPayload(LoaderPayload.STATUS_OK);
+            }
+
+            return new LoaderPayload(LoaderPayload.STATUS_ERROR);
+        }
+    }
 }

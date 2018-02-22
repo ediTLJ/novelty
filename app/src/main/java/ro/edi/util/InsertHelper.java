@@ -42,8 +42,8 @@ public class InsertHelper {
      * <p/>
      * These are the columns returned by sqlite's "PRAGMA table_info(...)" command that we depend on.
      */
-    public static final int TABLE_INFO_PRAGMA_COLUMNNAME_INDEX = 1;
-    public static final int TABLE_INFO_PRAGMA_DEFAULT_INDEX = 4;
+    private static final int TABLE_INFO_PRAGMA_COLUMNNAME_INDEX = 1;
+    private static final int TABLE_INFO_PRAGMA_DEFAULT_INDEX = 4;
 
     /**
      * @param db        the SQLiteDatabase to insert into
@@ -67,7 +67,7 @@ public class InsertHelper {
         Cursor cur = null;
         try {
             cur = mDb.rawQuery("PRAGMA table_info(" + mTableName + ')', null);
-            mColumns = new HashMap<String, Integer>(cur.getCount());
+            mColumns = new HashMap<>(cur.getCount());
             while (cur.moveToNext()) {
                 String columnName = cur.getString(TABLE_INFO_PRAGMA_COLUMNNAME_INDEX);
                 String defaultValue = cur.getString(TABLE_INFO_PRAGMA_DEFAULT_INDEX);

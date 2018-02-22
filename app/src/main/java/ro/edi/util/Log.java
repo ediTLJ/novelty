@@ -18,8 +18,6 @@ package ro.edi.util;
 import ro.edi.novelty.BuildConfig;
 
 /**
- * Copyright 2015 Eduard Scarlat
- * <p/>
  * Prints out logging info.<br />
  * This should be used instead of Log methods.
  */

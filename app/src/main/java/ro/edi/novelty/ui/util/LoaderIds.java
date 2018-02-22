@@ -20,13 +20,13 @@ public interface LoaderIds {
     // As LoaderManager uses these IDs to manage loaders' lifecycle, these values must be unique per activity.
 
     // FeedFragment
-    final int ASYNC_GET_FEED = 100; // reserved until 199
-    final int CURSOR_GET_FEED = 200; // reserved until 299
-    final int ASYNC_UPDATE_READ = 300;
+    int ASYNC_GET_FEED = 100; // reserved until 199
+    int CURSOR_GET_FEED = 200; // reserved until 299
+    int ASYNC_UPDATE_READ = 300;
 
     // StarredFragment
-    final int CURSOR_GET_STARRED = 310;
+    int CURSOR_GET_STARRED = 310;
 
     // NewsInfoActivity
-    final int ASYNC_STAR = 320;
+    int ASYNC_STAR = 320;
 }

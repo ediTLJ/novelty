@@ -126,7 +126,6 @@ public final class DateTime {
      *
      * @param format see FORMAT_ constants in DateTime
      * @return time in milliseconds
-     * @throws IllegalArgumentException
      */
     public static long parse(String timeString, int format) throws IllegalArgumentException {
         int date;

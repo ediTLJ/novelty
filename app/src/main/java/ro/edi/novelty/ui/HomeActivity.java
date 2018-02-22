@@ -32,7 +32,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import ro.edi.novelty.R;
 import ro.edi.novelty.core.FeedsManager;
 import ro.edi.novelty.core.OnAlarmReceiver;
@@ -41,7 +43,6 @@ import ro.edi.novelty.ui.util.FeedsEvent;
 import ro.edi.novelty.ui.util.FeedsIndicator;
 import ro.edi.util.Log;
 import ro.edi.util.ui.AltListView;
-import ro.edi.util.ui.TitlePageIndicator;
 
 public class HomeActivity extends BaseActivity {
     private static final String TAG = "HOME.ACTIVITY";
@@ -72,8 +73,10 @@ public class HomeActivity extends BaseActivity {
         intent.setAction(OnAlarmReceiver.ACTION_CLEANUP);
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true),
-                PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+        if (am != null) {
+            am.set(AlarmManager.RTC_WAKEUP, time.toMillis(true),
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+        }
         // }
 
         EventBus.getDefault().register(this);
@@ -87,7 +90,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected Toolbar initToolbar() {
         Toolbar toolbar = super.initToolbar();
-        if (toolbar != null) {
+        if (toolbar != null && getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             toolbar.setLogo(R.drawable.logo);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -101,10 +104,10 @@ public class HomeActivity extends BaseActivity {
 
         final FeedsAdapter adapter = new FeedsAdapter(getApplication(), getSupportFragmentManager());
 
-        final ViewPager pager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager pager = findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
-        FeedsIndicator indicator = (FeedsIndicator) findViewById(R.id.tabs);
+        FeedsIndicator indicator = findViewById(R.id.tabs);
         indicator.setViewPager(pager, adapter.getCount() > 1 ? 1 : 0);
         indicator.setOnPageChangeListener(new OnPageChangeListener() {
             @Override
@@ -129,18 +132,15 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
-        indicator.setOnCenterItemClickListener(new TitlePageIndicator.OnCenterItemClickListener() {
-            @Override
-            public void onCenterItemClick(int position) {
-                Fragment f = adapter.getFragment(position);
-                if (f != null) {
-                    ListView l = ((ListFragment) f).getListView();
+        indicator.setOnCenterItemClickListener(position -> {
+            Fragment f = adapter.getFragment(position);
+            if (f != null) {
+                ListView l = ((ListFragment) f).getListView();
 
-                    if (position == 0) {
-                        l.smoothScrollToPosition(0);
-                    } else {
-                        ((AltListView) l).requestPositionToScreen(0, true);
-                    }
+                if (position == 0) {
+                    l.smoothScrollToPosition(0);
+                } else {
+                    ((AltListView) l).requestPositionToScreen(0, true);
                 }
             }
         });
@@ -179,6 +179,7 @@ public class HomeActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Subscribe
     @SuppressWarnings("unused")
     public void onEvent(FeedsEvent event) {
         Log.i(TAG, "FeedsEvent");

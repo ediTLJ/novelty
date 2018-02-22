@@ -22,7 +22,7 @@ import android.provider.BaseColumns;
  * Convenience definitions for DbProvider.
  */
 public final class DB {
-    public static final String AUTHORITY = "ro.edi.novelty";
+    static final String AUTHORITY = "ro.edi.novelty";
 
     // this class cannot be instantiated
     private DB() {
@@ -35,7 +35,7 @@ public final class DB {
     public static final class News implements BaseColumns {
         public static final String TABLE_NAME = "news";
         public static final Uri URI = Uri.parse("content://" + AUTHORITY + '/' + TABLE_NAME);
-        public static final String TYPE = "vnd.android.cursor.dir/vnd.edi.novelty." + TABLE_NAME;
+        static final String TYPE = "vnd.android.cursor.dir/vnd.edi.novelty." + TABLE_NAME;
 
         public static final String ID = TABLE_NAME + "_id"; // TEXT
         public static final String AUTHOR = TABLE_NAME + "_author"; // TEXT
@@ -54,7 +54,7 @@ public final class DB {
     public static final class MyNews implements BaseColumns {
         public static final String TABLE_NAME = "my_news";
         public static final Uri URI = Uri.parse("content://" + AUTHORITY + '/' + TABLE_NAME);
-        public static final String TYPE = "vnd.android.cursor.dir/vnd.edi.novelty." + TABLE_NAME;
+        static final String TYPE = "vnd.android.cursor.dir/vnd.edi.novelty." + TABLE_NAME;
 
         public static final String ID = TABLE_NAME + "_id"; // TEXT
         public static final String FEED_ID = TABLE_NAME + "_feed_id"; // TEXT

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.Base.Light" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.Light" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
         <!--<item name="android:windowBackground">@android:color/white</item>-->
         <item name="windowActionModeOverlay">true</item>
@@ -16,15 +15,19 @@
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
         <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_thumb</item>
         <item name="android:scrollbarSize">3dp</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
 
-    <style name="Theme.Base.Dark" parent="Theme.AppCompat.NoActionBar">
-
+    <style name="Theme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
-
-    <style name="Theme.Light" parent="Theme.Base.Light" />
-
-    <style name="Theme.Dark" parent="Theme.Base.Dark" />
-
-    <style name="SettingsTheme" parent="android:Theme.Holo" />
 </resources>
