@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- These are for 7"+ tablets only.  -->
+    <dimen name="activity_margin">24dp</dimen>
 
     <dimen name="tab_item_padding">24dp</dimen>
-
-    <dimen name="news_item_height">88dp</dimen>
 </resources>

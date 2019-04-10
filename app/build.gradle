@@ -1,53 +1,99 @@
-apply plugin: "com.android.application"
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
 
     defaultConfig {
-        applicationId "ro.edi.novelty"
+        applicationId 'ro.edi.novelty'
         minSdkVersion 22 // Android 5.1
-        targetSdkVersion 27 // Android 8.1
-        versionCode 7
-        versionName "1.1"
+        targetSdkVersion 28 // Android 9
+        versionCode 10
+        versionName '2.0'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         debug {
-            buildConfigField "boolean", "LOGS_ENABLED", "true"
+
         }
         release {
-            buildConfigField "boolean", "LOGS_ENABLED", "false"
             minifyEnabled true
-            proguardFiles "proguard.cfg"
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-}
 
-ext {
-    supportLibVersion = "27.0.2"
+    dataBinding {
+        enabled = true
+    }
+
+    packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
 }
 
 dependencies {
-    compile "com.android.support:support-compat:${supportLibVersion}"
-    compile "com.android.support:support-core-utils:${supportLibVersion}"
-    compile "com.android.support:support-core-ui:${supportLibVersion}"
-    compile "com.android.support:support-media-compat:${supportLibVersion}"
-    compile "com.android.support:support-fragment:${supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    // compile "com.android.support:cardview-v7:${supportLibVersion}"
-    // compile "com.android.support:palette-v7:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.android.support:support-v13:${supportLibVersion}"
-    compile "com.android.support:support-annotations:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile "org.greenrobot:eventbus:3.1.1"
+    // Kotlin
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.0'
 
-    // compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('libs/Synder-r107.jar')
+    // AndroidX
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.core:core-ktx:1.0.1'
+    implementation 'androidx.preference:preference-ktx:1.1.0-alpha04'
+    // implementation 'android.arch.work:work-runtime-ktx:2.0.0'
+    // androidTestImplementation 'android.arch.work:work-testing:2.0.0'
+
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha04'
+
+    // Architecture Components: LiveData, ViewModel...
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
+    testImplementation 'androidx.arch.core:core-testing:2.0.1'
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.0.0'
+    kapt 'androidx.room:room-compiler:2.0.0'
+    testImplementation 'androidx.room:room-testing:2.0.0'
+
+    // Material Design
+    implementation 'com.google.android.material:material:1.1.0-alpha05'
+
+    // OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:3.14.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.0'
+    implementation 'com.squareup.okio:okio:2.2.2'
+
+    // RSS & Atom library
+    implementation 'com.ouattararomuald:syndication:1.1.0'
+
+    // Glide
+    // implementation 'com.github.bumptech.glide:glide:4.9.0'
+    // implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
+    // kapt 'com.github.bumptech.glide:compiler:4.9.0'
+
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // ThreeTen Android Backport - remove this when reaching minSdkVersion 27 (Android 8)
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.0'
+
+    // testing dependencies
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.1'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    testImplementation 'junit:junit:4.12'
 }

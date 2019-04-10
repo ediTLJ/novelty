@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/App.Theme.Toolbar"
+        app:liftOnScroll="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            app:logo="@drawable/logo" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--<noveltyui.util.FeedsIndicator-->
+    <!--android:id="@+id/tabs"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="48dp"-->
+    <!--android:background="?attr/colorPrimary"-->
+    <!--android:paddingTop="@dimen/tab_item_padding"-->
+    <!--android:paddingBottom="@dimen/tab_item_padding"-->
+    <!--app:clipPadding="@dimen/activity_horizontal_margin"-->
+    <!--app:footerColor="?android:attr/windowBackground"-->
+    <!--app:footerIndicatorHeight="6dp"-->
+    <!--app:footerIndicatorUnderlinePadding="@dimen/tab_item_padding"-->
+    <!--app:footerLineHeight="0dp"-->
+    <!--app:selectedBold="false"-->
+    <!--app:selectedColor="@color/text_tab_selected"-->
+    <!--app:textColor="@color/text_tab"-->
+    <!--app:textSize="@dimen/text_tab"-->
+    <!--app:titlePadding="@dimen/activity_horizontal_margin"-->
+    <!--app:topPadding="-1dp" />-->
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/empty_feeds"
+        android:textAppearance="@style/App.TextAppearance.Body1"
+        android:textColor="?android:attr/textColorSecondary"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="App.TextAppearance.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+    </style>
+
+    <style name="App.TextAppearance.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/fira_sans_condensed_medium</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
+    </style>
+
+    <style name="App.TextAppearance.Title" parent="App.TextAppearance.Headline6">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="App.TextAppearance.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+        <!--<item name="android:textSize">18sp</item>-->
+    </style>
+
+    <style name="App.TextAppearance.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="fontFamily">@font/fira_sans_condensed_medium</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
+    </style>
+
+    <style name="App.TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+        <!--<item name="android:letterSpacing">0.009375</item>-->
+    </style>
+
+    <style name="App.TextAppearance.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+        <!--<item name="android:letterSpacing">0.00714285714</item>-->
+    </style>
+
+    <style name="App.TextAppearance.Button" parent="TextAppearance.MaterialComponents.Button">
+        <item name="fontFamily">@font/fira_sans_condensed_medium</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
+    </style>
+
+    <style name="App.TextAppearance.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+    </style>
+
+    <style name="App.TextAppearance.Overline" parent="TextAppearance.MaterialComponents.Overline">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+    </style>
+
     <style name="TitlePageIndicator">
         <item name="clipPadding">@dimen/default_title_indicator_clip_padding</item>
         <item name="footerColor">@color/default_title_indicator_footer_color</item>

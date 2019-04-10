@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="textColorStarredPrimary" format="color" />
+    <attr name="textColorStarredSecondary" format="color" />
+
     <declare-styleable name="TitlePageIndicator">
         <!-- Screen edge padding. -->
         <attr name="clipPadding" format="dimension" />

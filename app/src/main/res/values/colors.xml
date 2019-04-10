@@ -13,14 +13,29 @@
         @color/vpi__bright_foreground_holo_dark
     </color>
 
-    <!-- material design -->
-    <!-- see colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
+    <color name="ic_launcher_background">@color/grey</color>
 
-    <color name="material_brown_100">#d7ccc8</color>
-    <color name="material_brown_500">#795548</color>
-    <color name="material_brown_700">#5d4037</color>
-    <color name="material_teal_a700">#00bfa5</color>
-    <!--<color name="material_red_a700">#d50000</color>-->
+    <color name="black">#000000</color>
+    <color name="grey">#1B1514</color>
+    <color name="grey_light">#423C3B</color>
+
+    <color name="white_dark">#9B9594</color>
+    <color name="white">#EBE5E4</color>
+
+    <color name="orange_900">#BF360C</color>
+    <color name="orange_700_dark">#AC0800</color>
+    <color name="orange_700">#E64A19</color>
+    <color name="orange_500_dark">#C41C00</color>
+    <color name="orange_500">#FF5722</color>
+    <color name="orange_300">#FF8A65</color>
+    <color name="orange_100">#FFCCBC</color>
+
+    <color name="brown_700">#5D4037</color>
+    <color name="brown_500">#795548</color>
+    <color name="brown_300">#A1887F</color>
+    <color name="brown_100">#D7CCC8</color>
+
+    <color name="action_tint">#CCFFFFFF</color>
 
     <color name="text_tab">#99ffffff</color>
     <color name="text_tab_selected">#fff</color>

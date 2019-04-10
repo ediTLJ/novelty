@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material Design guidelines -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
 
     <dimen name="text_tab">16sp</dimen>
-    <dimen name="text_field">16sp</dimen>
-
     <dimen name="tab_item_padding">12dp</dimen>
-
-    <dimen name="news_item_height">72dp</dimen>
 </resources>

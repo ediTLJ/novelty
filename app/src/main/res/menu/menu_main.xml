@@ -1,0 +1,14 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_feeds"
+        android:icon="@drawable/ic_action_view_carousel"
+        android:title="@string/action_feeds"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_info"
+        android:icon="@drawable/ic_action_info"
+        android:title="@string/action_info"
+        app:showAsAction="ifRoom" />
+</menu>

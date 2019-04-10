@@ -1,33 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Light" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
-        <!--<item name="android:windowBackground">@android:color/white</item>-->
-        <item name="windowActionModeOverlay">true</item>
-        <!-- colorPrimary is used for the default action bar background -->
-        <item name="colorPrimary">@color/material_brown_500</item>
-        <!-- colorPrimaryDark is used for the status bar -->
-        <item name="colorPrimaryDark">@color/material_brown_700</item>
-        <!-- colorAccent is used as the default value for colorControlActivated which is used to tint widgets -->
-        <item name="colorAccent">@color/material_teal_a700</item>
-        <!-- You can also set colorControlNormal, colorControlActivated, colorControlHighlight and colorSwitchThumbNormal. -->
-        <item name="colorControlHighlight">@color/material_brown_100</item>
+
+    <style name="App.Theme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!--<item name="windowActionModeOverlay">true</item>-->
+
+        <item name="colorPrimary">@color/brown_500</item>
+        <item name="colorPrimaryVariant">@color/brown_700</item>
+        <item name="colorSecondary">@color/brown_500</item>
+        <item name="colorControlHighlight">@color/brown_100</item>
+
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
         <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_thumb</item>
         <item name="android:scrollbarSize">3dp</item>
-
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
-        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
 
-    <style name="Theme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
-        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+    <style name="App.Theme.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:statusBarColor">@color/grey</item>
+
+        <item name="colorPrimary">@color/orange_500</item>
+        <item name="colorPrimaryVariant">@color/orange_700</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/orange_700</item>
+        <item name="colorSecondaryVariant">@color/orange_900</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorError">@color/orange_700_dark</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorSurface">@color/grey_dark</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:colorBackground">@color/grey</item>
+        <item name="colorOnBackground">@color/orange_500</item>
+
+        <!--<item name="colorControlNormal">@color/orange_500</item>-->
+        <!--<item name="colorControlActivated">@color/orange_500</item>-->
+        <item name="colorControlHighlight">@color/grey_light</item>
+
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white_dark</item>
+        <item name="textColorStarredPrimary">@color/orange_500</item>
+        <item name="textColorStarredSecondary">@color/orange_700</item>
+
+        <item name="textAppearanceHeadline5">@style/App.TextAppearance.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/App.TextAppearance.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/App.TextAppearance.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/App.TextAppearance.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/App.TextAppearance.Body1</item>
+        <item name="textAppearanceBody2">@style/App.TextAppearance.Body2</item>
+        <item name="textAppearanceButton">@style/App.TextAppearance.Button</item>
+        <item name="textAppearanceCaption">@style/App.TextAppearance.Caption</item>
+        <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
+
+        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
+        <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_thumb</item>
+        <item name="android:scrollbarSize">3dp</item>
+    </style>
+
+    <style name="App.Theme.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        <item name="android:background">@color/grey</item>
+
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white_dark</item>
     </style>
 </resources>
