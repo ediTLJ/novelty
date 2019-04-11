@@ -18,28 +18,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<androidx.core.widget.ContentLoadingProgressBar-->
-        <!--android:id="@+id/loading"-->
-        <!--style="?android:progressBarStyle"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:indeterminate="true"-->
-        <!--android:visibility="visible"-->
-        <!--tools:visibility="gone" />-->
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <!-- TODO add fastScroll? -->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/news"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:divider="?attr/colorControlHighlight"
-                android:dividerHeight="1px"
+                android:fadeScrollbars="true"
+                android:scrollbars="vertical"
                 android:visibility="visible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="8"

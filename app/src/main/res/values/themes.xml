@@ -8,10 +8,6 @@
         <item name="colorPrimaryVariant">@color/brown_700</item>
         <item name="colorSecondary">@color/brown_500</item>
         <item name="colorControlHighlight">@color/brown_100</item>
-
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarSize">3dp</item>
     </style>
 
     <style name="App.Theme.Dark" parent="Theme.MaterialComponents.NoActionBar">
@@ -49,10 +45,6 @@
         <item name="textAppearanceButton">@style/App.TextAppearance.Button</item>
         <item name="textAppearanceCaption">@style/App.TextAppearance.Caption</item>
         <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
-
-        <item name="android:scrollbarThumbVertical">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarThumbHorizontal">@drawable/scrollbar_thumb</item>
-        <item name="android:scrollbarSize">3dp</item>
     </style>
 
     <style name="App.Theme.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
