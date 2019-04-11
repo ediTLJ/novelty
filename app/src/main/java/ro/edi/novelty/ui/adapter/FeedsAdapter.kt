@@ -15,7 +15,7 @@
 */
 package ro.edi.novelty.ui.adapter
 
-import android.content.Context
+import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import ro.edi.novelty.R
@@ -35,14 +35,14 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         return R.layout.feed_item
     }
 
-    override fun onClick(context: Context, position: Int) {
+    override fun onClick(v: View, position: Int) {
         // FIXME edit feed
 //        val i = Intent(context, NewsInfoActivity::class.java)
 //        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
 //        context.startActivity(i)
     }
 
-    override fun onLongClick(context: Context, position: Int): Boolean {
+    override fun onLongClick(v: View, position: Int): Boolean {
         return false
     }
 

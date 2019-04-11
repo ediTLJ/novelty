@@ -15,8 +15,8 @@
 */
 package ro.edi.novelty.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -50,16 +50,33 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
 
     protected abstract fun bind(position: Int, binding: ViewDataBinding)
 
-    protected abstract fun onClick(context: Context, position: Int)
+    protected abstract fun onClick(v: View, position: Int)
 
-    protected abstract fun onLongClick(context: Context, position: Int): Boolean
+    protected abstract fun onLongClick(v: View, position: Int): Boolean
 
     inner class BaseViewHolder(private val binding: ViewDataBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
+
+        init {
+            binding.root.setOnClickListener(this)
+            binding.root.setOnLongClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            v?.let {
+                onClick(it, adapterPosition)
+            }
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            v?.let {
+                return onLongClick(it, adapterPosition)
+            }
+
+            return false
+        }
 
         fun bind(model: ViewModel, position: Int) {
-            binding.root.setOnClickListener { onClick(binding.root.context, position) }
-            binding.root.setOnLongClickListener { onLongClick(binding.root.context, position) }
             binding.setVariable(BR.model, model)
             binding.setVariable(BR.position, position)
             bind(position, binding)
