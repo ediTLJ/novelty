@@ -54,22 +54,4 @@
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
     </style>
-
-    <style name="TitlePageIndicator">
-        <item name="clipPadding">@dimen/default_title_indicator_clip_padding</item>
-        <item name="footerColor">@color/default_title_indicator_footer_color</item>
-        <item name="footerLineHeight">@dimen/default_title_indicator_footer_line_height</item>
-        <item name="footerIndicatorHeight">@dimen/default_title_indicator_footer_indicator_height
-        </item>
-        <item name="footerIndicatorUnderlinePadding">
-            @dimen/default_title_indicator_footer_indicator_underline_padding
-        </item>
-        <item name="footerPadding">@dimen/default_title_indicator_footer_padding</item>
-        <item name="selectedColor">@color/default_title_indicator_selected_color</item>
-        <item name="selectedBold">@bool/default_title_indicator_selected_bold</item>
-        <item name="textColor">@color/default_title_indicator_text_color</item>
-        <item name="textSize">@dimen/default_title_indicator_text_size</item>
-        <item name="titlePadding">@dimen/default_title_indicator_title_padding</item>
-        <item name="topPadding">@dimen/default_title_indicator_top_padding</item>
-    </style>
 </resources>
