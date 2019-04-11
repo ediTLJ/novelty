@@ -47,13 +47,13 @@ class FeedsActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val newsAdapter = FeedsAdapter(feedsModel).apply {
+        val feedsAdapter = FeedsAdapter(feedsModel).apply {
             setHasStableIds(true)
         }
 
         binding.feeds.apply {
             setHasFixedSize(true)
-            adapter = newsAdapter
+            adapter = feedsAdapter
         }
 
         feedsModel.feeds.observe(this, Observer { feeds ->
@@ -66,7 +66,7 @@ class FeedsActivity : AppCompatActivity() {
                 binding.empty.visibility = View.GONE
                 binding.feeds.visibility = View.VISIBLE
 
-                binding.feeds.adapter?.notifyDataSetChanged()
+                feedsAdapter.submitList(feeds)
             }
         })
     }

@@ -105,8 +105,7 @@ class MyFeedsFragment : Fragment() {
                 binding.empty.visibility = View.GONE
                 binding.news.visibility = View.VISIBLE
 
-                // FIXME keep scroll position
-                binding.news.adapter?.notifyDataSetChanged()
+                newsAdapter.submitList(newsList)
 
                 activity?.apply {
                     // FIXME show new items count in tab bar

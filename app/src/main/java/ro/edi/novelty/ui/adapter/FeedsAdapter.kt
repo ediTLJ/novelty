@@ -19,19 +19,16 @@ import android.content.Context
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import ro.edi.novelty.R
+import ro.edi.novelty.model.Feed
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
-class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter() {
-    override fun getItemId(position: Int): Long {
-        return feedsModel.getFeedId(position).toLong()
-    }
-
-    override fun getItemCount(): Int {
-        return feedsModel.feeds.value?.size ?: 0
-    }
-
+class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(FeedDiffCallback()) {
     override fun getModel(): ViewModel {
         return feedsModel
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).id.toLong()
     }
 
     override fun getItemLayoutId(position: Int): Int {
@@ -41,7 +38,7 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter() {
     override fun onClick(context: Context, position: Int) {
         // FIXME edit feed
 //        val i = Intent(context, NewsInfoActivity::class.java)
-//        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, feedsModel.getNewsId(position))
+//        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
 //        context.startActivity(i)
     }
 

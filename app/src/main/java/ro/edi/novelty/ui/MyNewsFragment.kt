@@ -78,14 +78,14 @@ class MyNewsFragment : Fragment() {
         newsModel.news.observe(viewLifecycleOwner, Observer { newsList ->
             logi("news changed: %d news", newsList.size)
 
+            newsAdapter.submitList(newsList)
+
             if (newsList.isEmpty()) {
                 binding.empty.visibility = View.VISIBLE
                 binding.news.visibility = View.GONE
             } else {
                 binding.empty.visibility = View.GONE
                 binding.news.visibility = View.VISIBLE
-
-                binding.news.adapter?.notifyDataSetChanged()
 
                 // FIXME on scroll: update items count in tab bar
             }

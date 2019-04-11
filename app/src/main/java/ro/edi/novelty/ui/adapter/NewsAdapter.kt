@@ -20,20 +20,17 @@ import android.content.Intent
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import ro.edi.novelty.R
+import ro.edi.novelty.model.News
 import ro.edi.novelty.ui.NewsInfoActivity
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 
-class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter() {
-    override fun getItemId(position: Int): Long {
-        return newsModel.getNewsId(position).toLong()
-    }
-
-    override fun getItemCount(): Int {
-        return newsModel.news.value?.size ?: 0
-    }
-
+class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(NewsDiffCallback()) {
     override fun getModel(): ViewModel {
         return newsModel
+    }
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position).id.toLong()
     }
 
     override fun getItemLayoutId(position: Int): Int {
@@ -44,7 +41,7 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter() {
         newsModel.setIsRead(position, true)
 
         val i = Intent(context, NewsInfoActivity::class.java)
-        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, newsModel.getNewsId(position))
+        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
         context.startActivity(i)
     }
 

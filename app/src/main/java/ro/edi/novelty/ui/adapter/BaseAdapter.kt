@@ -21,10 +21,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ro.edi.novelty.BR
 
-abstract class BaseAdapter : RecyclerView.Adapter<BaseAdapter.BaseViewHolder>() {
+abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
+    ListAdapter<T, BaseAdapter<T>.BaseViewHolder>(itemCallback) {
+    protected abstract fun getModel(): ViewModel
+
     final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
@@ -40,8 +45,6 @@ abstract class BaseAdapter : RecyclerView.Adapter<BaseAdapter.BaseViewHolder>() 
     final override fun getItemViewType(position: Int): Int {
         return getItemLayoutId(position)
     }
-
-    protected abstract fun getModel(): ViewModel
 
     protected abstract fun getItemLayoutId(position: Int): Int
 
