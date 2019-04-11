@@ -63,11 +63,6 @@ class MyNewsFragment : Fragment() {
 
         val newsAdapter = NewsAdapter(newsModel).apply {
             setHasStableIds(true)
-//            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-//                override fun onChanged() {
-//                    binding.news.layoutManager?.smoothScrollToPosition(binding.news, null, itemCount)
-//                }
-//            })
         }
 
         binding.news.apply {

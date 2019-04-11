@@ -22,7 +22,7 @@ import ro.edi.novelty.data.db.DB_NAME
 
 class BackupAgent : BackupAgentHelper() {
     companion object {
-        private const val DEFAULT_SHARED_PREFS_NAME = "ro.edi.noveltyy_preferences"
+        private const val DEFAULT_SHARED_PREFS_NAME = "ro.edi.novelty_preferences"
         private const val SHARED_PREFS_BACKUP_KEY = "sharedPrefsBackup"
     }
 

@@ -108,7 +108,7 @@ class AddFeedActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_OK)
                 finish()
 
-                // TODO display list of feeds to pick from, if more feeds found
+                // TODO FIXME list of feeds to pick from, if more feeds found
             }
         }
 
