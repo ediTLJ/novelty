@@ -26,6 +26,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
@@ -45,8 +46,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val adapter = FeedsPagerAdapter(supportFragmentManager, feedsModel)
-        // adapter.setHasStableIds(true)
+        val adapter = FeedsPagerAdapter(supportFragmentManager, application, feedsModel)
 
         val tvEmpty = findViewById<TextView>(R.id.empty)
 
@@ -54,15 +54,22 @@ class MainActivity : AppCompatActivity() {
         pager.adapter = adapter
         pager.currentItem = 1
 
+        val tabs = findViewById<TabLayout>(R.id.tabs)
+        tabs.selectTab(tabs.getTabAt(1))
+
+        // FIXME scroll to top @ selected tab tap
+
         feedsModel.feeds.observe(this, Observer { feeds ->
             logi("feeds changed: %d feeds", feeds.size)
 
             invalidateOptionsMenu()
 
             pager.adapter?.notifyDataSetChanged()
-            // pager.offscreenPageLimit = feeds.size
+            pager.offscreenPageLimit =
+                if (feeds.size > 8) feeds.size else 10 // FIXME temp cache up to 10 pages (until we fix the refresh issues)
 
             if (feeds.isEmpty()) {
+                tabs.visibility = View.GONE
                 pager.visibility = View.GONE
 
                 tvEmpty.visibility = View.VISIBLE
@@ -71,45 +78,11 @@ class MainActivity : AppCompatActivity() {
                     startActivity(iAdd)
                 }
             } else {
+                tabs.visibility = View.VISIBLE
                 pager.visibility = View.VISIBLE
                 tvEmpty.visibility = View.GONE
             }
         })
-
-//        val indicator = findViewById<FeedsIndicator>(R.id.tabs)
-//        indicator.setViewPager(pager, if (adapter.count > 1) 1 else 0)
-//        indicator.setOnPageChangeListener(object : OnPageChangeListener {
-//            override fun onPageSelected(position: Int) {
-//                logi("onPageSelected: %d", position)
-//                if (position > 1) { // first page is handled in onPageScrolled()
-//                    adapter.refreshFeed(position)
-//                }
-//            }
-//
-//            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-//                // workaround for onPageSelected not being called the first time
-//                if (position == 1 && positionOffsetPixels == 0) {
-//                    logi("onPageScrolled @ 0: %d", position)
-//                    adapter.refreshFeed(position)
-//                }
-//            }
-//
-//            override fun onPageScrollStateChanged(state: Int) {
-//
-//            }
-//        })
-//        indicator.setOnCenterItemClickListener({ position ->
-//            val f = adapter.getFragment(position)
-//            if (f != null) {
-//                val l = (f as ListFragment).listView
-//
-//                if (position == 0) {
-//                    l.smoothScrollToPosition(0)
-//                } else {
-//                    (l as AltListView).requestPositionToScreen(0, true)
-//                }
-//            }
-//        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

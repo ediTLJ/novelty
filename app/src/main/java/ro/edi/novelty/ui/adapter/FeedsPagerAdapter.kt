@@ -15,15 +15,20 @@
 */
 package ro.edi.novelty.ui.adapter
 
+import android.app.Application
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import ro.edi.novelty.ui.MyNewsFragment
+import ro.edi.novelty.R
 import ro.edi.novelty.ui.FeedFragment
 import ro.edi.novelty.ui.MyFeedsFragment
+import ro.edi.novelty.ui.MyNewsFragment
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
-class FeedsPagerAdapter(fm: FragmentManager, private val feedsModel: FeedsViewModel) : FragmentStatePagerAdapter(fm) {
+class FeedsPagerAdapter(fm: FragmentManager, application: Application, private val feedsModel: FeedsViewModel) :
+    FragmentStatePagerAdapter(fm) {
+    private val txtMyNews: CharSequence = application.getText(R.string.tab_my_news)
+    private val txtMyFeeds: CharSequence = application.getText(R.string.tab_my_feeds)
 
     override fun getCount(): Int {
         return feedsModel.feeds.value?.size?.plus(2) ?: 2
@@ -117,14 +122,11 @@ class FeedsPagerAdapter(fm: FragmentManager, private val feedsModel: FeedsViewMo
 //        return mFragments.get(position)
 //    }
 
-
-//    override fun getPageTitle(position: Int): CharSequence? {
-//        if (position == 0) {
-//            return if (mFeedsManager.feedsCount > 0) mTxtBookmarks else mTxtMyNews
-//        }
-//
-//        val feed = mFeedsManager.getFeed(position) ?: return null
-//
-//        return feed.title.toUpperCase()
-//    }
+    override fun getPageTitle(position: Int): CharSequence? {
+        return when (position) {
+            0 -> txtMyNews
+            1 -> txtMyFeeds
+            else -> feedsModel.getFeed(position - 2)?.title?.toUpperCase()
+        }
+    }
 }

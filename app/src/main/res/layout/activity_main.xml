@@ -19,30 +19,24 @@
             app:logo="@drawable/logo" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!--<noveltyui.util.FeedsIndicator-->
-    <!--android:id="@+id/tabs"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:background="?attr/colorPrimary"-->
-    <!--android:paddingTop="@dimen/tab_item_padding"-->
-    <!--android:paddingBottom="@dimen/tab_item_padding"-->
-    <!--app:clipPadding="@dimen/activity_horizontal_margin"-->
-    <!--app:footerColor="?android:attr/windowBackground"-->
-    <!--app:footerIndicatorHeight="6dp"-->
-    <!--app:footerIndicatorUnderlinePadding="@dimen/tab_item_padding"-->
-    <!--app:footerLineHeight="0dp"-->
-    <!--app:selectedBold="false"-->
-    <!--app:selectedColor="@color/text_tab_selected"-->
-    <!--app:textColor="@color/text_tab"-->
-    <!--app:textSize="@dimen/text_tab"-->
-    <!--app:titlePadding="@dimen/activity_horizontal_margin"-->
-    <!--app:topPadding="-1dp" />-->
-
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            style="@style/Widget.MaterialComponents.TabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="?android:colorBackground"
+            app:tabGravity="fill"
+            app:tabMode="scrollable"
+            app:tabPaddingEnd="24dp"
+            app:tabPaddingStart="24dp" />
+    </androidx.viewpager.widget.ViewPager>
 
     <TextView
         android:id="@+id/empty"

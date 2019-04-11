@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="activity_margin">24dp</dimen>
-
-    <dimen name="tab_item_padding">24dp</dimen>
 </resources>
