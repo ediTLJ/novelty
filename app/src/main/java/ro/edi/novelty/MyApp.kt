@@ -22,6 +22,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import ro.edi.util.ReleaseTree
 import timber.log.Timber
 
+@Suppress("unused")
 class MyApp : Application() {
 
     override fun onCreate() {

@@ -16,6 +16,7 @@
 package ro.edi.novelty.ui.viewmodel
 
 import android.app.Application
+import android.os.Build
 import android.text.Editable
 import android.text.Html
 import android.text.Spanned
@@ -53,7 +54,12 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
 
     fun getInfoDisplayText(): Spanned? {
         return getInfo()?.let {
-            Html.fromHtml(it.text, null, HtmlTagHandler())
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                @Suppress("deprecation")
+                Html.fromHtml(it.text, null, HtmlTagHandler())
+            } else {
+                Html.fromHtml(it.text, Html.FROM_HTML_MODE_COMPACT, null, null)
+            }
         }
     }
 

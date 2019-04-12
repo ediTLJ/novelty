@@ -20,6 +20,7 @@ import android.app.backup.FileBackupHelper
 import android.app.backup.SharedPreferencesBackupHelper
 import ro.edi.novelty.data.db.DB_NAME
 
+@Suppress("unused")
 class BackupAgent : BackupAgentHelper() {
     companion object {
         private const val DEFAULT_SHARED_PREFS_NAME = "ro.edi.novelty_preferences"

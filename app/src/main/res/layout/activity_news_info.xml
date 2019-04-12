@@ -35,7 +35,6 @@
             android:id="@+id/news_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="@dimen/activity_margin"
             app:layout_behavior="ro.edi.util.ui.FABAwareScrollingViewBehavior">
 
             <LinearLayout
