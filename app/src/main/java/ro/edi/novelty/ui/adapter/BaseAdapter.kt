@@ -48,29 +48,29 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
 
     protected abstract fun getItemLayoutId(position: Int): Int
 
+    protected abstract fun onItemClick(itemView: View, position: Int)
+
+    protected abstract fun onItemLongClick(itemView: View, position: Int): Boolean
+
     protected abstract fun bind(position: Int, binding: ViewDataBinding)
-
-    protected abstract fun onClick(v: View, position: Int)
-
-    protected abstract fun onLongClick(v: View, position: Int): Boolean
 
     inner class BaseViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
         init {
-            binding.root.setOnClickListener(this)
-            binding.root.setOnLongClickListener(this)
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
         }
 
         override fun onClick(v: View?) {
             v?.let {
-                onClick(it, adapterPosition)
+                onItemClick(it, adapterPosition)
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             v?.let {
-                return onLongClick(it, adapterPosition)
+                return onItemLongClick(it, adapterPosition)
             }
 
             return false

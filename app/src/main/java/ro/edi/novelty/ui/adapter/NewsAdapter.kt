@@ -19,6 +19,7 @@ import android.content.Intent
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
 import ro.edi.novelty.model.News
 import ro.edi.novelty.ui.NewsInfoActivity
@@ -37,19 +38,29 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         return R.layout.news_item
     }
 
-    override fun onClick(v: View, position: Int) {
+    override fun onItemClick(itemView: View, position: Int) {
         newsModel.setIsRead(position, true)
 
-        val i = Intent(v.context, NewsInfoActivity::class.java)
+        val i = Intent(itemView.context, NewsInfoActivity::class.java)
         i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
-        v.context.startActivity(i)
+        itemView.context.startActivity(i)
     }
 
-    override fun onLongClick(v: View, position: Int): Boolean {
+    override fun onItemLongClick(itemView: View, position: Int): Boolean {
         return false
     }
 
     override fun bind(position: Int, binding: ViewDataBinding) {
 
+    }
+
+    class NewsDiffCallback : DiffUtil.ItemCallback<News>() {
+        override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
+            return oldItem == newItem
+        }
     }
 }

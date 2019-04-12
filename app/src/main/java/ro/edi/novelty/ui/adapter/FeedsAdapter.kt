@@ -18,6 +18,7 @@ package ro.edi.novelty.ui.adapter
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
@@ -35,18 +36,28 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         return R.layout.feed_item
     }
 
-    override fun onClick(v: View, position: Int) {
+    override fun onItemClick(itemView: View, position: Int) {
         // FIXME edit feed
 //        val i = Intent(context, NewsInfoActivity::class.java)
 //        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
 //        context.startActivity(i)
     }
 
-    override fun onLongClick(v: View, position: Int): Boolean {
+    override fun onItemLongClick(itemView: View, position: Int): Boolean {
         return false
     }
 
     override fun bind(position: Int, binding: ViewDataBinding) {
 
+    }
+
+    class FeedDiffCallback : DiffUtil.ItemCallback<Feed>() {
+        override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
+            return oldItem == newItem
+        }
     }
 }
