@@ -22,8 +22,6 @@ import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.chrono.IsoChronology
 import org.threeten.bp.format.*
@@ -101,7 +99,7 @@ class DataManager private constructor(application: Application) {
         /**
          * [DateTimeFormatter.RFC_1123_DATE_TIME] with support for zone ids (e.g. PST).
          */
-        public val RFC_1123_DATE_TIME = DateTimeFormatterBuilder()
+        private val RFC_1123_DATE_TIME = DateTimeFormatterBuilder()
             .parseCaseInsensitive()
             .parseLenient()
             .optionalStart()
