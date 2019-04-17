@@ -13,8 +13,8 @@
     <string name="action_share">Share</string>
 
     <!-- TABS -->
-    <string name="tab_my_news">MY NEWS</string>
-    <string name="tab_my_feeds">MY FEEDS</string>
+    <string name="tab_my_news">BOOKMARKS</string>
+    <string name="tab_my_feeds">MY NEWS</string>
 
     <!-- BUTTONS -->
     <string name="btn_ok">OK</string>
