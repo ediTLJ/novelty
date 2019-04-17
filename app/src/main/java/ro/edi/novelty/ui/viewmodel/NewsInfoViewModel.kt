@@ -22,7 +22,9 @@ import android.text.Html
 import android.text.Spanned
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
 import org.xml.sax.XMLReader
@@ -46,9 +48,8 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
 
     fun getInfoDisplayDate(): String? {
         return getInfo()?.let {
-            // DateUtils.getRelativeTimeSpanString(LocalDateTime.parse(it.pubDate).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-            //    .toString()
-            LocalDateTime.parse(it.pubDate).format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
         }
     }
 

@@ -24,9 +24,9 @@ data class News(
     val title: String,
     val text: String,
     val author: String?,
-    @ColumnInfo(name = "pub_date") val pubDate: String,
+    @ColumnInfo(name = "pub_date") val pubDate: Long,
     val url: String,
-    @ColumnInfo(name = "saved_date") val savedDate: String,
+    @ColumnInfo(name = "saved_date") val savedDate: Long,
     @ColumnInfo(name = "is_read") val isRead: Boolean = false,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = false
 )

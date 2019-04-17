@@ -21,12 +21,12 @@ import android.util.SparseArray
 import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import org.threeten.bp.Instant
 import org.threeten.bp.LocalDateTime
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.chrono.IsoChronology
-import org.threeten.bp.format.DateTimeFormatterBuilder
-import org.threeten.bp.format.ResolverStyle
-import org.threeten.bp.format.SignStyle
-import org.threeten.bp.format.TextStyle
+import org.threeten.bp.format.*
 import org.threeten.bp.temporal.ChronoField
 import ro.edi.novelty.data.db.AppDatabase
 import ro.edi.novelty.data.db.entity.DbFeed
@@ -70,6 +70,64 @@ class DataManager private constructor(application: Application) {
             Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*")
         private val PATTERN_EMPTY_TAGS = Pattern.compile("<[^>]*>\\s*</[^>]*>")
         private val PATTERN_TAG_BR = Pattern.compile("<br\\s*/?>")
+
+        // manually code maps to ensure correct data always used (locale data can be changed by application code)
+        @SuppressLint("UseSparseArrays")
+        private val dow = HashMap<Long, String>().apply {
+            put(1L, "Mon")
+            put(2L, "Tue")
+            put(3L, "Wed")
+            put(4L, "Thu")
+            put(5L, "Fri")
+            put(6L, "Sat")
+            put(7L, "Sun")
+        }
+        @SuppressLint("UseSparseArrays")
+        private val moy = HashMap<Long, String>().apply {
+            put(1L, "Jan")
+            put(2L, "Feb")
+            put(3L, "Mar")
+            put(4L, "Apr")
+            put(5L, "May")
+            put(6L, "Jun")
+            put(7L, "Jul")
+            put(8L, "Aug")
+            put(9L, "Sep")
+            put(10L, "Oct")
+            put(11L, "Nov")
+            put(12L, "Dec")
+        }
+
+        /**
+         * [DateTimeFormatter.RFC_1123_DATE_TIME] with support for zone ids (e.g. PST).
+         */
+        public val RFC_1123_DATE_TIME = DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .parseLenient()
+            .optionalStart()
+            .appendText(ChronoField.DAY_OF_WEEK, dow)
+            .appendLiteral(", ")
+            .optionalEnd()
+            .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
+            .appendLiteral(' ')
+            .appendText(ChronoField.MONTH_OF_YEAR, moy)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.YEAR, 4)  // 2 digit year not handled
+            .appendLiteral(' ')
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .optionalStart()
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .optionalEnd()
+            .appendLiteral(' ')
+            .optionalStart()
+            .appendZoneText(TextStyle.SHORT) // optionally handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
+            .optionalEnd()
+            .optionalStart()
+            .appendOffset("+HHMM", "GMT")
+            .toFormatter().withResolverStyle(ResolverStyle.SMART).withChronology(IsoChronology.INSTANCE)
     }
 
     /**
@@ -172,7 +230,7 @@ class DataManager private constructor(application: Application) {
                     news.author,
                     news.pubDate,
                     news.url,
-                    LocalDateTime.now().toString(),
+                    Instant.now().toEpochMilli(),
                     news.isRead,
                     isStarred
                 )
@@ -191,7 +249,7 @@ class DataManager private constructor(application: Application) {
                     news.author,
                     news.pubDate,
                     news.url,
-                    LocalDateTime.now().toString(),
+                    Instant.now().toEpochMilli(),
                     isRead,
                     news.isStarred
                 )
@@ -243,10 +301,14 @@ class DataManager private constructor(application: Application) {
 
             val id = (entry.guid ?: entry.link).plus(feedId).hashCode()
             val title = entry.title!!.trim { it <= ' ' } // FIXME Entities.HTML40.unescape
-            val pubDate = if (entry.published == null) LocalDateTime.now().toString() else {
-                kotlin.runCatching {
-                    LocalDateTime.parse(entry.published, RFC_1123_DATE_TIME).toString()
-                }.getOrElse { LocalDateTime.now().toString() }
+            val pubDate = if (entry.published == null) Instant.now().toEpochMilli() else {
+                runCatching {
+                    // logi("published: %s", entry.published)
+                    ZonedDateTime.parse(entry.published, RFC_1123_DATE_TIME).toEpochSecond() * 1000
+                }.getOrElse {
+                    logi(it, "published parsing error... fallback to now()")
+                    Instant.now().toEpochMilli()
+                }
             }
 
             // some cleaning up... ugly name follows
@@ -318,7 +380,7 @@ class DataManager private constructor(application: Application) {
                     null,
                     pubDate,
                     entry.link!!,
-                    LocalDateTime.now().toString()
+                    Instant.now().toEpochMilli()
                 )
             )
         }
@@ -328,63 +390,4 @@ class DataManager private constructor(application: Application) {
 
         // isFetching.postValue(false)
     }
-
-    // manually code maps to ensure correct data always used (locale data can be changed by application code)
-    @SuppressLint("UseSparseArrays")
-    private val dow = HashMap<Long, String>().apply {
-        put(1L, "Mon")
-        put(2L, "Tue")
-        put(3L, "Wed")
-        put(4L, "Thu")
-        put(5L, "Fri")
-        put(6L, "Sat")
-        put(7L, "Sun")
-    }
-
-    @SuppressLint("UseSparseArrays")
-    private val moy = HashMap<Long, String>().apply {
-        put(1L, "Jan")
-        put(2L, "Feb")
-        put(3L, "Mar")
-        put(4L, "Apr")
-        put(5L, "May")
-        put(6L, "Jun")
-        put(7L, "Jul")
-        put(8L, "Aug")
-        put(9L, "Sep")
-        put(10L, "Oct")
-        put(11L, "Nov")
-        put(12L, "Dec")
-    }
-
-    /**
-     * DateTimeFormatter.RFC_1123_DATE_TIME with support for zone ids (e.g. PST).
-     */
-    private val RFC_1123_DATE_TIME = DateTimeFormatterBuilder()
-        .parseCaseInsensitive()
-        .parseLenient()
-        .optionalStart()
-        .appendText(ChronoField.DAY_OF_WEEK, dow)
-        .appendLiteral(", ")
-        .optionalEnd()
-        .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
-        .appendLiteral(' ')
-        .appendText(ChronoField.MONTH_OF_YEAR, moy)
-        .appendLiteral(' ')
-        .appendValue(ChronoField.YEAR, 4)  // 2 digit year not handled
-        .appendLiteral(' ')
-        .appendValue(ChronoField.HOUR_OF_DAY, 2)
-        .appendLiteral(':')
-        .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-        .optionalStart()
-        .appendLiteral(':')
-        .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
-        .optionalEnd()
-        .appendLiteral(' ')
-        .optionalStart()
-        .appendZoneText(TextStyle.SHORT) // optionally handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
-        .optionalEnd()
-        .optionalStart()
-        .appendOffset("+HHMM", "GMT")
-        .toFormatter().withResolverStyle(ResolverStyle.SMART).withChronology(IsoChronology.INSTANCE)
 }

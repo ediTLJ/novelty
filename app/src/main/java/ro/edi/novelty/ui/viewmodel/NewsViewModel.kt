@@ -21,8 +21,6 @@ import android.text.format.DateUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
@@ -52,8 +50,8 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         this.feedId = feedId
 
         val dataManager = DataManager.getInstance(getApplication())
-        isFetching = dataManager.isFetchingArray.get(feedId, MutableLiveData())
         news = dataManager.getNews(feedId)
+        isFetching = dataManager.isFetchingArray.get(feedId, MutableLiveData())
     }
 
     fun refresh(feedId: Int) {
@@ -74,10 +72,9 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         return -1
     }
 
-    fun getNewsDisplayDate(position: Int): String? {
+    fun getNewsDisplayDate(position: Int): CharSequence? {
         return getNews(position)?.let {
-            DateUtils.getRelativeTimeSpanString(LocalDateTime.parse(it.pubDate).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                .toString()
+            DateUtils.getRelativeTimeSpanString(it.pubDate)
         }
     }
 
