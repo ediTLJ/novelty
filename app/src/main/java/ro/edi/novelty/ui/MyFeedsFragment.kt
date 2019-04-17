@@ -36,7 +36,7 @@ import ro.edi.util.getColorRes
 import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
 import timber.log.Timber.w as logw
-import kotlinx.android.synthetic.main.fragment_feed.*
+
 
 class MyFeedsFragment : Fragment() {
     companion object {

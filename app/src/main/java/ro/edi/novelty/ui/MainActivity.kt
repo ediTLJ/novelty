@@ -17,14 +17,19 @@ package ro.edi.novelty.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
@@ -32,7 +37,7 @@ import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.i as logi
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProviders.of(this).get(FeedsViewModel::class.java)
     }
@@ -56,8 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
         tabs.selectTab(tabs.getTabAt(1))
-
-        // FIXME scroll to top @ selected tab tap
+        tabs.addOnTabSelectedListener(this)
 
         feedsModel.feeds.observe(this, Observer { feeds ->
             logi("feeds changed: %d feeds", feeds.size)
@@ -100,5 +104,38 @@ class MainActivity : AppCompatActivity() {
             R.id.action_info -> InfoDialogFragment().show(supportFragmentManager, "dialog_info")
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onTabSelected(tab: TabLayout.Tab) {
+
+    }
+
+    override fun onTabReselected(tab: TabLayout.Tab) {
+        val pager = findViewById<ViewPager>(R.id.pager)
+
+        val f = (pager.adapter as FeedsPagerAdapter).instantiateItem(pager, tab.position) as? Fragment
+        f ?: return
+
+        val rvNews = f.view?.findViewById<RecyclerView>(R.id.news) ?: return
+
+        val layoutManager = rvNews.layoutManager as LinearLayoutManager
+        val firstVisible = layoutManager.findFirstCompletelyVisibleItemPosition()
+
+        val smoothScroller = object : LinearSmoothScroller(this) {
+            override fun getVerticalSnapPreference(): Int {
+                return SNAP_TO_START
+            }
+
+            // item height: 88
+            override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics): Float {
+                return 300 / (88f * displayMetrics.density * firstVisible)
+            }
+        }
+        smoothScroller.targetPosition = 0
+        layoutManager.startSmoothScroll(smoothScroller)
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab) {
+
     }
 }
