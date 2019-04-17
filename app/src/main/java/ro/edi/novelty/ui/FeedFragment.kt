@@ -26,6 +26,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
@@ -58,9 +60,16 @@ class FeedFragment : Fragment() {
         val binding =
             DataBindingUtil.inflate<FragmentFeedBinding>(inflater, R.layout.fragment_feed, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
+    }
 
-        binding.swipeRefresh.setColorSchemeResources(getColorRes(binding.root.context, R.attr.colorPrimaryVariant))
-        binding.swipeRefresh.setOnRefreshListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
+        val vEmpty = view.findViewById<View>(R.id.empty)
+        val rvNews = view.findViewById<RecyclerView>(R.id.news)
+
+        vRefresh.setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
+        vRefresh.setOnRefreshListener {
             newsModel.refresh(arguments?.getInt(ARG_FEED_ID, 0) ?: 0)
         }
 
@@ -70,7 +79,7 @@ class FeedFragment : Fragment() {
             setHasStableIds(true)
         }
 
-        binding.news.apply {
+        rvNews.apply {
             setHasFixedSize(true)
             adapter = newsAdapter
             // TODO initial prefetch
@@ -81,18 +90,18 @@ class FeedFragment : Fragment() {
             logi("isFetching changed: %b", isFetching)
 
             if (isFetching) {
-                binding.swipeRefresh.isRefreshing = true
+                vRefresh.isRefreshing = true
             } else {
-                binding.swipeRefresh.isRefreshing = false
+                vRefresh.isRefreshing = false
 
                 if (newsModel.news.value.isNullOrEmpty()) {
                     logi("no news => show empty message")
-                    binding.empty.visibility = View.VISIBLE
-                    binding.news.visibility = View.GONE
+                    vEmpty.visibility = View.VISIBLE
+                    rvNews.visibility = View.GONE
                 } else {
                     logi("we have news! => show them")
-                    binding.empty.visibility = View.GONE
-                    binding.news.visibility = View.VISIBLE
+                    vEmpty.visibility = View.GONE
+                    rvNews.visibility = View.VISIBLE
                 }
             }
         })
@@ -101,11 +110,11 @@ class FeedFragment : Fragment() {
             logi("news changed: %d news", newsList.size)
 
             if (newsList.isEmpty()) {
-                binding.empty.visibility = if (newsModel.isFetching.value == false) View.VISIBLE else View.GONE
-                binding.news.visibility = View.GONE
+                vEmpty.visibility = if (newsModel.isFetching.value == false) View.VISIBLE else View.GONE
+                rvNews.visibility = View.GONE
             } else {
-                binding.empty.visibility = View.GONE
-                binding.news.visibility = View.VISIBLE
+                vEmpty.visibility = View.GONE
+                rvNews.visibility = View.VISIBLE
 
                 newsAdapter.submitList(newsList)
 
@@ -114,8 +123,6 @@ class FeedFragment : Fragment() {
                 }
             }
         })
-
-        return binding.root
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

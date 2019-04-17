@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,6 +27,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
@@ -52,12 +55,19 @@ class MyNewsFragment : Fragment() {
         val binding =
             DataBindingUtil.inflate<FragmentFeedBinding>(inflater, R.layout.fragment_feed, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        return binding.root
+    }
 
-        binding.swipeRefresh.setColorSchemeResources(getColorRes(binding.root.context, R.attr.colorPrimaryVariant))
-        binding.swipeRefresh.isRefreshing = false
-        binding.swipeRefresh.isEnabled = false
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
+        val vEmpty = view.findViewById<TextView>(R.id.empty)
+        val rvNews = view.findViewById<RecyclerView>(R.id.news)
 
-        binding.empty.setText(R.string.empty_bookmarks)
+        vRefresh.setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
+        vRefresh.isRefreshing = false
+        vRefresh.isEnabled = false
+
+        vEmpty.setText(R.string.empty_bookmarks)
 
         // listView.setVelocityScale(2.0f)
 
@@ -65,7 +75,7 @@ class MyNewsFragment : Fragment() {
             setHasStableIds(true)
         }
 
-        binding.news.apply {
+        rvNews.apply {
             setHasFixedSize(true)
             adapter = newsAdapter
         }
@@ -76,17 +86,15 @@ class MyNewsFragment : Fragment() {
             newsAdapter.submitList(newsList)
 
             if (newsList.isEmpty()) {
-                binding.empty.visibility = View.VISIBLE
-                binding.news.visibility = View.GONE
+                vEmpty.visibility = View.VISIBLE
+                rvNews.visibility = View.GONE
             } else {
-                binding.empty.visibility = View.GONE
-                binding.news.visibility = View.VISIBLE
+                vEmpty.visibility = View.GONE
+                rvNews.visibility = View.VISIBLE
 
                 // FIXME on scroll: update items count in tab bar
             }
         })
-
-        return binding.root
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
