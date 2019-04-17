@@ -7,8 +7,6 @@
 
     <data>
 
-        <import type="android.view.View" />
-
         <variable
             name="model"
             type="ro.edi.novelty.ui.viewmodel.FeedsViewModel" />
