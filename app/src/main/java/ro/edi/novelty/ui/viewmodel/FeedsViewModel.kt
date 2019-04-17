@@ -18,6 +18,7 @@ package ro.edi.novelty.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.Feed
 
@@ -38,7 +39,20 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         return -1
     }
 
+    fun getStarredImageRes(position: Int): Int {
+        getFeed(position)?.let {
+            return if (it.isStarred) R.drawable.ic_star else R.drawable.ic_star_border
+        }
+        return R.drawable.ic_star_border
+    }
+
     fun addFeed(name: String, url: String, position: Int, isStarred: Boolean) {
         DataManager.getInstance(getApplication()).insertFeed(name, url, position, isStarred)
+    }
+
+    fun setIsStarred(position: Int, isStarred: Boolean) {
+        getFeed(position)?.let {
+            DataManager.getInstance(getApplication()).updateFeedStarred(it, isStarred)
+        }
     }
 }

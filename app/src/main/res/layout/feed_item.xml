@@ -21,30 +21,47 @@
         android:layout_height="72dp"
         android:background="?selectableItemBackground"
         android:gravity="center_vertical"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:paddingStart="@dimen/activity_margin"
         android:paddingEnd="@dimen/activity_margin">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:text="@{model.getFeed(position).title}"
-            android:textAppearance="@style/App.TextAppearance.Subtitle1"
-            android:textColor="?android:textColorPrimary"
-            tools:text="Feed Title" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="?selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/url"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:lines="1"
-            android:text="@{model.getFeed(position).url}"
-            android:textAppearance="@style/App.TextAppearance.Body2"
-            android:textColor="?android:textColorSecondary"
-            tools:text="https://www.website.com/feeds/atom/my_news_feed" />
+            <TextView
+                android:id="@+id/feed_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{model.getFeed(position).title}"
+                android:textAppearance="@style/App.TextAppearance.Subtitle1"
+                android:textColor="?android:textColorPrimary"
+                tools:text="Feed Title" />
+
+            <TextView
+                android:id="@+id/feed_url"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{model.getFeed(position).url}"
+                android:textAppearance="@style/App.TextAppearance.Body2"
+                android:textColor="?android:textColorSecondary"
+                tools:text="https://www.website.com/feeds/atom/my_news_feed" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/feed_star"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:scaleType="centerInside"
+            android:src="@{ContextCompat.getDrawable(context, model.getStarredImageRes(position))}" />
     </LinearLayout>
 </layout>

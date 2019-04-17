@@ -16,7 +16,6 @@
 package ro.edi.novelty.ui.adapter
 
 import android.view.View
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
@@ -43,12 +42,17 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
 //        context.startActivity(i)
     }
 
-    override fun onItemLongClick(itemView: View, position: Int): Boolean {
-        return false
+    override fun getClickableViewIds(): IntArray? {
+        val ids = IntArray(1)
+        ids[0] = R.id.feed_star
+
+        return ids
     }
 
-    override fun bind(position: Int, binding: ViewDataBinding) {
-
+    override fun onClick(v: View, position: Int) {
+        if (v.id == R.id.feed_star) {
+            feedsModel.setIsStarred(position, !getItem(position).isStarred)
+        }
     }
 
     class FeedDiffCallback : DiffUtil.ItemCallback<Feed>() {
@@ -58,6 +62,12 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
 
         override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem == newItem
+        }
+
+        override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {
+            // FIXME return a Bundle with what actually changed, to be used in onBindViewHolder
+
+            return super.getChangePayload(oldItem, newItem)
         }
     }
 }

@@ -17,7 +17,6 @@ package ro.edi.novelty.ui.adapter
 
 import android.content.Intent
 import android.view.View
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
@@ -44,14 +43,6 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         val i = Intent(itemView.context, NewsInfoActivity::class.java)
         i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
         itemView.context.startActivity(i)
-    }
-
-    override fun onItemLongClick(itemView: View, position: Int): Boolean {
-        return false
-    }
-
-    override fun bind(position: Int, binding: ViewDataBinding) {
-
     }
 
     class NewsDiffCallback : DiffUtil.ItemCallback<News>() {

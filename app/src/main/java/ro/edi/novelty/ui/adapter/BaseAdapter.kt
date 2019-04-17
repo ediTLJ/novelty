@@ -48,11 +48,25 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
 
     protected abstract fun getItemLayoutId(position: Int): Int
 
-    protected abstract fun onItemClick(itemView: View, position: Int)
+    protected open fun onItemClick(itemView: View, position: Int) {
 
-    protected abstract fun onItemLongClick(itemView: View, position: Int): Boolean
+    }
 
-    protected abstract fun bind(position: Int, binding: ViewDataBinding)
+    protected open fun onItemLongClick(itemView: View, position: Int): Boolean {
+        return false
+    }
+
+    protected open fun getClickableViewIds(): IntArray? {
+        return null
+    }
+
+    protected open fun onClick(v: View, position: Int) {
+
+    }
+
+    protected open fun bind(position: Int, binding: ViewDataBinding) {
+
+    }
 
     inner class BaseViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
@@ -60,11 +74,21 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
         init {
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
+
+            getClickableViewIds()?.let { ids ->
+                for (id in ids) {
+                    itemView.findViewById<View>(id)?.setOnClickListener(this)
+                }
+            }
         }
 
         override fun onClick(v: View?) {
             v?.let {
-                onItemClick(it, adapterPosition)
+                if (v.id == itemView.id) {
+                    onItemClick(it, adapterPosition)
+                } else {
+                    onClick(it, adapterPosition)
+                }
             }
         }
 

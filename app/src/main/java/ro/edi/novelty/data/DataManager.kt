@@ -219,6 +219,34 @@ class DataManager private constructor(application: Application) {
         return db.newsDao().getInfo(newsId)
     }
 
+    fun updateFeedStarred(feed: Feed, isStarred: Boolean) {
+        AppExecutors.diskIO().execute {
+            val dbFeed =
+                DbFeed(
+                    feed.id,
+                    feed.title,
+                    feed.url,
+                    feed.tab,
+                    isStarred
+                )
+            db.feedDao().update(dbFeed)
+        }
+    }
+
+    fun updateFeedTab(feed: Feed, tab: Int) {
+        AppExecutors.diskIO().execute {
+            val dbFeed =
+                DbFeed(
+                    feed.id,
+                    feed.title,
+                    feed.url,
+                    tab,
+                    feed.isStarred
+                )
+            db.feedDao().update(dbFeed)
+        }
+    }
+
     fun updateNewsStarred(news: News, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbNews =
