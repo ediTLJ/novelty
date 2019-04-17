@@ -16,10 +16,10 @@
 package ro.edi.novelty.ui.viewmodel
 
 import android.app.Application
-import android.os.Build
 import android.text.Editable
 import android.text.Html
-import android.text.Spanned
+import androidx.core.text.HtmlCompat
+import androidx.core.text.parseAsHtml
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import org.threeten.bp.Instant
@@ -46,22 +46,15 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         return info.value
     }
 
-    fun getInfoDisplayDate(): String? {
+    fun getInfoDisplayDate(): CharSequence? {
         return getInfo()?.let {
             LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
         }
     }
 
-    fun getInfoDisplayText(): Spanned? {
-        return getInfo()?.let {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-                @Suppress("deprecation")
-                Html.fromHtml(it.text, null, HtmlTagHandler())
-            } else {
-                Html.fromHtml(it.text, Html.FROM_HTML_MODE_COMPACT, null, null)
-            }
-        }
+    fun getInfoDisplayText(): CharSequence? {
+        return getInfo()?.text?.parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, HtmlTagHandler())
     }
 
     fun getIsStarred(): Boolean? {

@@ -18,6 +18,8 @@ package ro.edi.novelty.data
 import android.annotation.SuppressLint
 import android.app.Application
 import android.util.SparseArray
+import androidx.core.text.HtmlCompat
+import androidx.core.text.parseAsHtml
 import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -275,7 +277,7 @@ class DataManager private constructor(application: Application) {
      * **Don't call this on the main UI thread!**
      */
     private fun fetchNews(feedId: Int, feedUrl: String) {
-        logi("fetching %s", feedUrl)
+        logi("fetching $feedUrl")
 
         // FIXME support for both RSS & Atom
         val rssFeed = runCatching { FeedService(feedUrl).getReader().readRss() }.getOrElse {
@@ -295,13 +297,14 @@ class DataManager private constructor(application: Application) {
             entry.description ?: continue
             entry.link ?: continue
 
-            logd("entry: %s", entry)
+            // logd("entry: $entry")
 
             val id = (entry.guid ?: entry.link).plus(feedId).hashCode()
-            val title = entry.title!!.trim { it <= ' ' } // FIXME Entities.HTML40.unescape
+            val title = entry.title!!.trim { it <= ' ' }
+                .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
             val pubDate = if (entry.published == null) Instant.now().toEpochMilli() else {
                 runCatching {
-                    // logi("published: %s", entry.published)
+                    // logi("published: $entry.published")
                     ZonedDateTime.parse(entry.published, RFC_1123_DATE_TIME).toEpochSecond() * 1000
                 }.getOrElse {
                     logi(it, "published parsing error... fallback to now()")
