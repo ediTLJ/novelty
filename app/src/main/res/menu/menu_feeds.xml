@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_action_add"
-        android:title="@string/action_feeds"
+        android:title="@string/action_add_feed"
         app:showAsAction="ifRoom" />
 </menu>

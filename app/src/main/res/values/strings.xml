@@ -48,5 +48,8 @@
 
     <!-- ACCESSIBILITY -->
     <string name="description_open_in_browser">Open in browser</string>
+    <string name="description_drag">Drag the item</string>
+    <string name="description_star">Add to favorites</string>
+    <string name="description_unstar">Remove from favorites</string>
 
 </resources>
