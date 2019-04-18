@@ -78,13 +78,17 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
                 tvEmpty.visibility = View.VISIBLE
                 tvEmpty.setOnClickListener {
-                    val iAdd = Intent(this, AddFeedActivity::class.java)
+                    val iAdd = Intent(this, FeedInfoActivity::class.java)
                     startActivity(iAdd)
                 }
             } else {
                 tabs.visibility = View.VISIBLE
                 pager.visibility = View.VISIBLE
                 tvEmpty.visibility = View.GONE
+
+                if (tabs.selectedTabPosition == -1) {
+                    tabs.selectTab(tabs.getTabAt(feeds.size + 1))
+                }
             }
         })
     }

@@ -37,6 +37,8 @@ abstract class FeedDao : BaseDao<DbFeed> {
      */
     fun getFeeds(): LiveData<List<Feed>> = queryAll().getDistinct()
 
+    // FIXME delete feed(s) should also delete all its news
+
     @Query("DELETE FROM feeds")
     abstract fun deleteAll()
 }

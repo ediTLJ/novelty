@@ -79,7 +79,7 @@ class FeedsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_add -> {
-                val iAdd = Intent(this, AddFeedActivity::class.java)
+                val iAdd = Intent(this, FeedInfoActivity::class.java)
                 startActivity(iAdd)
             }
         }

@@ -5,10 +5,12 @@
     <!-- TOOLBAR TITLES & ACTIONS -->
     <string name="title_add_feed">Add Feed</string>
     <string name="title_feeds">Feeds</string>
+    <string name="title_edit_feed">Edit Feed</string>
 
     <string name="action_feeds">Feeds</string>
     <string name="action_info">Info</string>
     <string name="action_add_feed">Add Feed</string>
+    <string name="action_delete_feed">Delete Feed</string>
     <string name="action_bookmark">Bookmark</string>
     <string name="action_share">Share</string>
 
@@ -21,6 +23,7 @@
     <string name="btn_rate">RATE APP</string>
     <!--<string name="btn_other_apps">OTHER APPS</string>-->
     <string name="btn_add_feed">ADD FEED</string>
+    <string name="btn_save">SAVE</string>
 
     <!-- SNACKBARS -->
     <string name="error_news">Error getting the news!</string>

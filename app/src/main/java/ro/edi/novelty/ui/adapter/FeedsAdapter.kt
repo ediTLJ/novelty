@@ -15,6 +15,7 @@
 */
 package ro.edi.novelty.ui.adapter
 
+import android.content.Intent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FeedItemBinding
 import ro.edi.novelty.model.Feed
+import ro.edi.novelty.ui.FeedInfoActivity
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
 class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(FeedDiffCallback()) {
@@ -44,10 +46,9 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
     }
 
     override fun onItemClick(itemView: View, position: Int) {
-        // FIXME edit feed
-//        val i = Intent(context, NewsInfoActivity::class.java)
-//        i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
-//        context.startActivity(i)
+        val i = Intent(itemView.context, FeedInfoActivity::class.java)
+        i.putExtra(FeedInfoActivity.EXTRA_FEED_ID, getItem(position).id)
+        itemView.context.startActivity(i)
     }
 
     override fun getClickableViewIds(): IntArray? {

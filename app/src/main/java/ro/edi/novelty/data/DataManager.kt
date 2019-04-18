@@ -285,17 +285,70 @@ class DataManager private constructor(application: Application) {
         }
     }
 
-    fun insertFeed(name: String, url: String, position: Int, isStarred: Boolean) {
+    fun insertFeed(title: String, url: String, tab: Int, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbFeed =
                 DbFeed(
                     url.hashCode(),
-                    name,
+                    title,
                     url,
-                    position,
+                    tab,
                     isStarred
                 )
             db.feedDao().insert(dbFeed)
+        }
+    }
+
+    fun updateFeed(feed: Feed, title: String, url: String) {
+        AppExecutors.diskIO().execute {
+            if (feed.url == url) {
+                val dbFeed =
+                    DbFeed(
+                        feed.id,
+                        title,
+                        feed.url,
+                        feed.tab,
+                        feed.isStarred
+                    )
+                db.feedDao().update(dbFeed)
+                return@execute
+            }
+
+            db.runInTransaction {
+                val dbFeedNew =
+                    DbFeed(
+                        url.hashCode(),
+                        title,
+                        url,
+                        feed.tab,
+                        feed.isStarred
+                    )
+                db.feedDao().insert(dbFeedNew)
+
+                val dbFeedOld =
+                    DbFeed(
+                        feed.id,
+                        feed.title,
+                        feed.url,
+                        feed.tab,
+                        feed.isStarred
+                    )
+                db.feedDao().delete(dbFeedOld)
+            }
+        }
+    }
+
+    fun deleteFeed(feed: Feed) {
+        AppExecutors.diskIO().execute {
+            val dbFeed =
+                DbFeed(
+                    feed.id,
+                    feed.title,
+                    feed.url,
+                    feed.tab,
+                    feed.isStarred
+                )
+            db.feedDao().delete(dbFeed)
         }
     }
 

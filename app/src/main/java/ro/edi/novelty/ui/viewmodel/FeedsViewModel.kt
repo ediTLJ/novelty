@@ -31,14 +31,6 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         return feeds.value?.getOrNull(position)
     }
 
-    fun getFeedId(position: Int): Int {
-        getFeed(position)?.let {
-            return it.id
-        }
-
-        return -1
-    }
-
     fun getStarredImageRes(position: Int): Int {
         getFeed(position)?.let {
             return if (it.isStarred) R.drawable.ic_star else R.drawable.ic_star_border
@@ -46,13 +38,21 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         return R.drawable.ic_star_border
     }
 
-    fun addFeed(name: String, url: String, position: Int, isStarred: Boolean) {
-        DataManager.getInstance(getApplication()).insertFeed(name, url, position, isStarred)
-    }
-
     fun setIsStarred(position: Int, isStarred: Boolean) {
         getFeed(position)?.let {
             DataManager.getInstance(getApplication()).updateFeedStarred(it, isStarred)
         }
+    }
+
+    fun addFeed(title: String, url: String, tab: Int, isStarred: Boolean) {
+        DataManager.getInstance(getApplication()).insertFeed(title, url, tab, isStarred)
+    }
+
+    fun updateFeed(feed: Feed, title: String, url: String) {
+        DataManager.getInstance(getApplication()).updateFeed(feed, title, url)
+    }
+
+    fun deleteFeed(feed: Feed) {
+        DataManager.getInstance(getApplication()).deleteFeed(feed)
     }
 }
