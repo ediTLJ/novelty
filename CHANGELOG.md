@@ -1,20 +1,23 @@
 ## next release(s)
-* NewsInfo: support for zoom in/out
+* NewsInfo: support for zoom in/out?
 * scroll toolbar when scrolling feed
-* AddFeed: use MaterialEditText library
-* widget
-* auto assign title to feed
-* tabs: pressed state
-* show Undo when deleting feeds
+* ~~AddFeed: use MaterialEditText library~~
+* widget?
+* auto assign title to feed?
+* ~~tabs: pressed state~~
 * better db cache cleanup policy
 * better feed refresh error handling (show Retry in snackbar)
 * better drag in ManageFeeds
-* edit feeds?
+* ~~edit feeds~~
 * add support for images?
 
 #Change Log
+## v2.0 [??? ??, 2019]
+* Kotlin, MVVM, Jetpack
+* UI refresh (including dark theme)
+* Android 5.1+ only
 
-## v1.0 [February 25, 2005]
+## v1.0 [February 25, 2015]
 * material design
 * code revamp
 * feeds backup
