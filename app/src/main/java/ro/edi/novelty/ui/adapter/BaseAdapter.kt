@@ -35,11 +35,16 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
             layoutInflater, viewType, parent, false
         )
+        binding.setVariable(BR.model, getModel())
         return BaseViewHolder(binding)
     }
 
     final override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        holder.bind(getModel(), position)
+        holder.bind(position)
+    }
+
+    final override fun onBindViewHolder(holder: BaseViewHolder, position: Int, payloads: MutableList<Any>) {
+        holder.bind(position, payloads)
     }
 
     final override fun getItemViewType(position: Int): Int {
@@ -64,7 +69,11 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
 
     }
 
-    protected open fun bind(position: Int, binding: ViewDataBinding) {
+    protected open fun bind(binding: ViewDataBinding, position: Int) {
+
+    }
+
+    protected open fun bind(binding: ViewDataBinding, position: Int, payloads: MutableList<Any>) {
 
     }
 
@@ -100,11 +109,20 @@ abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
             return false
         }
 
-        fun bind(model: ViewModel, position: Int) {
-            binding.setVariable(BR.model, model)
+        fun bind(position: Int) {
             binding.setVariable(BR.position, position)
-            bind(position, binding)
+            bind(binding, position)
             binding.executePendingBindings()
+        }
+
+        fun bind(position: Int, payloads: MutableList<Any>) {
+            if (payloads.isEmpty()) {
+                bind(position)
+                return
+            }
+
+            binding.setVariable(BR.position, position)
+            bind(binding, position, payloads)
         }
     }
 }

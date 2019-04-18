@@ -16,13 +16,21 @@
 package ro.edi.novelty.ui.adapter
 
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
+import ro.edi.novelty.databinding.FeedItemBinding
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
 class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(FeedDiffCallback()) {
+    companion object {
+        const val FEED_TITLE = "feed_title"
+        const val FEED_IS_STARRED = "feed_is_starred"
+    }
+
     override fun getModel(): ViewModel {
         return feedsModel
     }
@@ -55,6 +63,23 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         }
     }
 
+    override fun bind(binding: ViewDataBinding, position: Int, payloads: MutableList<Any>) {
+        val b = binding as FeedItemBinding
+
+        val payload = payloads.first() as Set<*>
+        payload.forEach {
+            when (it) {
+                FEED_TITLE -> b.feedTitle.text = getItem(position).title
+                FEED_IS_STARRED -> b.feedStar.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        binding.root.context,
+                        feedsModel.getStarredImageRes(position)
+                    )
+                )
+            }
+        }
+    }
+
     class FeedDiffCallback : DiffUtil.ItemCallback<Feed>() {
         override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.id == newItem.id
@@ -65,9 +90,20 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         }
 
         override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {
-            // FIXME return a Bundle with what actually changed, to be used in onBindViewHolder
+            val payload = mutableSetOf<String>()
 
-            return super.getChangePayload(oldItem, newItem)
+            if (oldItem.title != newItem.title) {
+                payload.add(FEED_TITLE)
+            }
+            if (oldItem.isStarred != newItem.isStarred) {
+                payload.add(FEED_IS_STARRED)
+            }
+
+            if (payload.isEmpty()) {
+                return null
+            }
+
+            return payload
         }
     }
 }
