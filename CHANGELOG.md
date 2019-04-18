@@ -11,7 +11,7 @@
 * ~~edit feeds~~
 * add support for images?
 
-#Change Log
+# Change Log
 ## v2.0 [??? ??, 2019]
 * Kotlin, MVVM, Jetpack
 * UI refresh (including dark theme)
