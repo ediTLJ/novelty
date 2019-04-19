@@ -3,6 +3,8 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/fira_sans_condensed</item>
         <item>@font/fira_sans_condensed_medium</item>
-        <item>@font/fira_sans</item>
+        <item>@font/comfortaa</item>
+        <item>@font/open_sans</item>
+        <item>@font/roboto</item>
     </array>
 </resources>

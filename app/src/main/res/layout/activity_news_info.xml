@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="@{model.getInfo().title}"
-                    android:textAppearance="@style/App.TextAppearance.Headline5"
+                    android:textAppearance="@style/App.TextAppearance.Title"
                     android:textIsSelectable="true"
                     tools:text="News title" />
 
@@ -70,9 +70,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="24dp"
-                    android:lineSpacingMultiplier="1.1"
                     android:text="@{model.getInfoDisplayText()}"
-                    android:textAppearance="@style/App.TextAppearance.Body1"
+                    android:textAppearance="@style/App.TextAppearance.Body"
                     android:textIsSelectable="true"
                     tools:text="Extra! Extra! Read all about it!" />
             </LinearLayout>

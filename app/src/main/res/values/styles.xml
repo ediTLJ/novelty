@@ -11,16 +11,15 @@
         <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
     </style>
 
-    <style name="App.TextAppearance.Title" parent="App.TextAppearance.Headline6">
-        <item name="fontFamily">@font/fira_sans_condensed</item>
-        <item name="android:fontFamily">@font/fira_sans_condensed</item>
-        <item name="android:textSize">18sp</item>
+    <style name="App.TextAppearance.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/comfortaa</item>
+        <item name="android:fontFamily">@font/comfortaa</item>
+        <!--<item name="android:textSize">22sp</item>-->
     </style>
 
     <style name="App.TextAppearance.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
-        <!--<item name="android:textSize">18sp</item>-->
     </style>
 
     <style name="App.TextAppearance.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2">
@@ -28,16 +27,19 @@
         <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
     </style>
 
+    <style name="App.TextAppearance.Body" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/open_sans</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
     <style name="App.TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
-        <!--<item name="android:letterSpacing">0.009375</item>-->
     </style>
 
     <style name="App.TextAppearance.Body2" parent="TextAppearance.MaterialComponents.Body2">
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
-        <!--<item name="android:letterSpacing">0.00714285714</item>-->
     </style>
 
     <style name="App.TextAppearance.Button" parent="TextAppearance.MaterialComponents.Button">
