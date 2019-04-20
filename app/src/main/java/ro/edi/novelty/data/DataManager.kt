@@ -36,8 +36,6 @@ import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.News
 import ro.edi.util.AppExecutors
 import ro.edi.util.Singleton
-import java.util.*
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import timber.log.Timber.d as logd
 import timber.log.Timber.e as loge
@@ -66,10 +64,10 @@ class DataManager private constructor(application: Application) {
     }
 
     companion object : Singleton<DataManager, Application>(::DataManager) {
-        private val PATTERN_TAG_IMG =
-            Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*")
-        private val PATTERN_EMPTY_TAGS = Pattern.compile("<[^>]*>\\s*</[^>]*>")
-        private val PATTERN_TAG_BR = Pattern.compile("<br\\s*/?>")
+        private val REGEX_TAG_IMG = Regex("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*", RegexOption.IGNORE_CASE)
+        private val REGEX_TAG_BR = Regex("<\\s*<br\\s*/?>\\s*", RegexOption.IGNORE_CASE)
+        // private val REGEX_BR_TAGS = Regex("(\\s*<br\\s*[/]*>\\s*){3,}", RegexOption.IGNORE_CASE)
+        private val REGEX_EMPTY_TAGS = Regex("(<[^>]*>\\s*</[^>]*>)+", RegexOption.IGNORE_CASE)
 
         // manually code maps to ensure correct data always used (locale data can be changed by application code)
         @SuppressLint("UseSparseArrays")
@@ -102,32 +100,32 @@ class DataManager private constructor(application: Application) {
          * [DateTimeFormatter.RFC_1123_DATE_TIME] with support for zone ids (e.g. PST).
          */
         private val RFC_1123_DATE_TIME = DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .parseLenient()
-            .optionalStart()
-            .appendText(ChronoField.DAY_OF_WEEK, dow)
-            .appendLiteral(", ")
-            .optionalEnd()
-            .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
-            .appendLiteral(' ')
-            .appendText(ChronoField.MONTH_OF_YEAR, moy)
-            .appendLiteral(' ')
-            .appendValue(ChronoField.YEAR, 4)  // 2 digit year not handled
-            .appendLiteral(' ')
-            .appendValue(ChronoField.HOUR_OF_DAY, 2)
-            .appendLiteral(':')
-            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
-            .optionalStart()
-            .appendLiteral(':')
-            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
-            .optionalEnd()
-            .appendLiteral(' ')
-            .optionalStart()
-            .appendZoneText(TextStyle.SHORT) // optionally handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
-            .optionalEnd()
-            .optionalStart()
-            .appendOffset("+HHMM", "GMT")
-            .toFormatter().withResolverStyle(ResolverStyle.SMART).withChronology(IsoChronology.INSTANCE)
+                .parseCaseInsensitive()
+                .parseLenient()
+                .optionalStart()
+                .appendText(ChronoField.DAY_OF_WEEK, dow)
+                .appendLiteral(", ")
+                .optionalEnd()
+                .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
+                .appendLiteral(' ')
+                .appendText(ChronoField.MONTH_OF_YEAR, moy)
+                .appendLiteral(' ')
+                .appendValue(ChronoField.YEAR, 4)  // 2 digit year not handled
+                .appendLiteral(' ')
+                .appendValue(ChronoField.HOUR_OF_DAY, 2)
+                .appendLiteral(':')
+                .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+                .optionalStart()
+                .appendLiteral(':')
+                .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+                .optionalEnd()
+                .appendLiteral(' ')
+                .optionalStart()
+                .appendZoneText(TextStyle.SHORT) // optionally handle UT/Z/EST/EDT/CST/CDT/MST/MDT/PST/MDT
+                .optionalEnd()
+                .optionalStart()
+                .appendOffset("+HHMM", "GMT")
+                .toFormatter().withResolverStyle(ResolverStyle.SMART).withChronology(IsoChronology.INSTANCE)
     }
 
     /**
@@ -222,13 +220,13 @@ class DataManager private constructor(application: Application) {
     fun updateFeedStarred(feed: Feed, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    feed.tab,
-                    isStarred
-                )
+                    DbFeed(
+                            feed.id,
+                            feed.title,
+                            feed.url,
+                            feed.tab,
+                            isStarred
+                    )
             db.feedDao().update(dbFeed)
         }
     }
@@ -236,13 +234,13 @@ class DataManager private constructor(application: Application) {
     fun updateFeedTab(feed: Feed, tab: Int) {
         AppExecutors.diskIO().execute {
             val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    tab,
-                    feed.isStarred
-                )
+                    DbFeed(
+                            feed.id,
+                            feed.title,
+                            feed.url,
+                            tab,
+                            feed.isStarred
+                    )
             db.feedDao().update(dbFeed)
         }
     }
@@ -250,18 +248,18 @@ class DataManager private constructor(application: Application) {
     fun updateNewsStarred(news: News, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbNews =
-                DbNews(
-                    news.id,
-                    news.feedId,
-                    news.title,
-                    news.text,
-                    news.author,
-                    news.pubDate,
-                    news.url,
-                    Instant.now().toEpochMilli(),
-                    news.isRead,
-                    isStarred
-                )
+                    DbNews(
+                            news.id,
+                            news.feedId,
+                            news.title,
+                            news.text,
+                            news.author,
+                            news.pubDate,
+                            news.url,
+                            Instant.now().toEpochMilli(),
+                            news.isRead,
+                            isStarred
+                    )
             db.newsDao().update(dbNews)
         }
     }
@@ -269,18 +267,18 @@ class DataManager private constructor(application: Application) {
     fun updateNewsRead(news: News, isRead: Boolean) {
         AppExecutors.diskIO().execute {
             val dbNews =
-                DbNews(
-                    news.id,
-                    news.feedId,
-                    news.title,
-                    news.text,
-                    news.author,
-                    news.pubDate,
-                    news.url,
-                    Instant.now().toEpochMilli(),
-                    isRead,
-                    news.isStarred
-                )
+                    DbNews(
+                            news.id,
+                            news.feedId,
+                            news.title,
+                            news.text,
+                            news.author,
+                            news.pubDate,
+                            news.url,
+                            Instant.now().toEpochMilli(),
+                            isRead,
+                            news.isStarred
+                    )
             db.newsDao().update(dbNews)
         }
     }
@@ -288,13 +286,13 @@ class DataManager private constructor(application: Application) {
     fun insertFeed(title: String, url: String, tab: Int, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbFeed =
-                DbFeed(
-                    url.hashCode(),
-                    title,
-                    url,
-                    tab,
-                    isStarred
-                )
+                    DbFeed(
+                            url.hashCode(),
+                            title,
+                            url,
+                            tab,
+                            isStarred
+                    )
             db.feedDao().insert(dbFeed)
         }
     }
@@ -303,51 +301,52 @@ class DataManager private constructor(application: Application) {
         AppExecutors.diskIO().execute {
             if (feed.url == url) {
                 val dbFeed =
-                    DbFeed(
-                        feed.id,
-                        title,
-                        feed.url,
-                        feed.tab,
-                        feed.isStarred
-                    )
+                        DbFeed(
+                                feed.id,
+                                title,
+                                feed.url,
+                                feed.tab,
+                                feed.isStarred
+                        )
                 db.feedDao().update(dbFeed)
                 return@execute
             }
 
             db.runInTransaction {
                 val dbFeedNew =
-                    DbFeed(
-                        url.hashCode(),
-                        title,
-                        url,
-                        feed.tab,
-                        feed.isStarred
-                    )
+                        DbFeed(
+                                url.hashCode(),
+                                title,
+                                url,
+                                feed.tab,
+                                feed.isStarred
+                        )
                 db.feedDao().insert(dbFeedNew)
 
                 val dbFeedOld =
-                    DbFeed(
-                        feed.id,
-                        feed.title,
-                        feed.url,
-                        feed.tab,
-                        feed.isStarred
-                    )
+                        DbFeed(
+                                feed.id,
+                                feed.title,
+                                feed.url,
+                                feed.tab,
+                                feed.isStarred
+                        )
                 db.feedDao().delete(dbFeedOld)
             }
         }
     }
 
     fun deleteFeed(feed: Feed) {
+        // FIXME update tab values in other feeds, if needed
         AppExecutors.diskIO().execute {
             val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    feed.tab,
-                    feed.isStarred
-                )
+                    DbFeed(
+                            feed.id,
+                            feed.title,
+                            feed.url,
+                            feed.tab,
+                            feed.isStarred
+                    )
             db.feedDao().delete(dbFeed)
         }
     }
@@ -371,7 +370,6 @@ class DataManager private constructor(application: Application) {
         news ?: return
 
         val dbNews = ArrayList<DbNews>(news.size)
-        val sb = StringBuilder()
 
         for (entry in news) {
             entry.title ?: continue
@@ -382,7 +380,7 @@ class DataManager private constructor(application: Application) {
 
             val id = (entry.guid ?: entry.link).plus(feedId).hashCode()
             val title = entry.title!!.trim { it <= ' ' }
-                .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
+                    .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
             val pubDate = if (entry.published == null) Instant.now().toEpochMilli() else {
                 runCatching {
                     // logi("published: $entry.published")
@@ -393,77 +391,17 @@ class DataManager private constructor(application: Application) {
                 }
             }
 
-            // some cleaning up... ugly name follows
-            var txt = PATTERN_TAG_IMG.matcher(entry.description).replaceAll("")
-            txt = PATTERN_TAG_BR.matcher(txt).replaceAll("\n")
-            txt = PATTERN_EMPTY_TAGS.matcher(txt).replaceAll("")
-            txt = PATTERN_EMPTY_TAGS.matcher(txt).replaceAll("") // pff...
-            txt = txt.trim { it <= ' ' }
-
-            val len = txt.length
-
-            sb.setLength(0)
-            for (i in 0 until len) {
-                val c = txt[i]
-
-                if (i < 2) {
-                    sb.append(c)
-                    continue
-                }
-
-                if (c != '\n') {
-                    sb.append(c)
-                    continue
-                } // else: we've reached a \n
-
-                if (c != txt[i - 1]) {
-                    if (i < 4
-                        || txt[i - 1] != '>'
-                        || txt[i - 2] != 'p'
-                        || txt[i - 3] != '/'
-                        || txt[i - 4] != '<'
-                    ) {
-                        if (i > len - 4
-                            || txt[i + 1] != '<'
-                            || txt[i + 2] != 'p'
-                            || txt[i + 3] != '>'
-                        ) {
-                            sb.append('<')
-                            sb.append('b')
-                            sb.append('r')
-                            sb.append('>')
-                        } // else skip \n if it's before <p>
-                    } // else skip \n if it's after </p>
-                    continue
-                }
-                // else: we've reached a 2nd consecutive \n
-
-                if (c != txt[i - 2]) {
-                    sb.append('<')
-                    sb.append('b')
-                    sb.append('r')
-                    sb.append('>')
-                } // else: we've reached the 3rd consecutive \n
-
-                // skip the 3rd consecutive \n
-            }
-
-            sb.append('<')
-            sb.append('b')
-            sb.append('r')
-            sb.append('>')
-
             dbNews.add(
-                DbNews(
-                    id,
-                    feedId,
-                    title,
-                    sb.toString(),
-                    null,
-                    pubDate,
-                    entry.link!!,
-                    Instant.now().toEpochMilli()
-                )
+                    DbNews(
+                            id,
+                            feedId,
+                            title,
+                            cleanHtml(entry.description),
+                            null,
+                            pubDate,
+                            entry.link!!,
+                            Instant.now().toEpochMilli()
+                    )
             )
         }
 
@@ -471,5 +409,72 @@ class DataManager private constructor(application: Application) {
         db.newsDao().insert(dbNews)
 
         // isFetching.postValue(false)
+    }
+
+    fun cleanHtml(html: String?): String {
+        html ?: return ""
+
+        var txt = html.trim { it <= ' ' }
+        txt = txt.replace(REGEX_TAG_IMG, "")
+        txt = txt.replace(REGEX_EMPTY_TAGS, "")
+        txt = txt.replace(REGEX_TAG_BR, "\n")
+        txt = txt.replace("\r\n", "\n", true)
+
+        val len = txt.length
+
+        val sb = StringBuilder(len)
+        for (i in 0 until len) {
+            val c = txt[i]
+
+            if (i < 2) {
+                sb.append(c)
+                continue
+            }
+
+            if (c != '\n') {
+                sb.append(c)
+                continue
+            } // else: we've reached a \n
+
+            if (c != txt[i - 1]) {
+                if (i < 4
+                        || txt[i - 1] != '>'
+                        || txt[i - 2] != 'p'
+                        || txt[i - 2] != 'P'
+                        || txt[i - 3] != '/'
+                        || txt[i - 4] != '<'
+                ) {
+                    if (i > len - 4
+                            || txt[i + 1] != '<'
+                            || txt[i + 2] != 'p'
+                            || txt[i + 2] != 'P'
+                            || txt[i + 3] != '>'
+                    ) {
+                        sb.append('<')
+                        sb.append('b')
+                        sb.append('r')
+                        sb.append('>')
+                    } // else skip \n if it's before <p>
+                } // else skip \n if it's after </p>
+                continue
+            }
+            // else: we've reached a 2nd consecutive \n
+
+            if (c != txt[i - 2]) {
+                sb.append('<')
+                sb.append('b')
+                sb.append('r')
+                sb.append('>')
+            } // else: we've reached the 3rd consecutive \n
+
+            // skip the 3rd consecutive \n
+        }
+
+        sb.append('<')
+        sb.append('b')
+        sb.append('r')
+        sb.append('>')
+
+        return sb.toString()
     }
 }
