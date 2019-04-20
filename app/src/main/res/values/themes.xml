@@ -20,7 +20,7 @@
         <item name="colorSecondary">@color/orange_700</item>
         <item name="colorSecondaryVariant">@color/orange_900</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="colorError">@color/orange_700_dark</item>
+        <item name="colorError">@color/red_900</item>
         <item name="colorOnError">@color/white</item>
         <item name="colorSurface">@color/grey_dark</item>
         <item name="colorOnSurface">@color/white</item>
@@ -34,7 +34,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/white_dark</item>
         <item name="textColorStarredPrimary">@color/orange_300</item>
-        <item name="textColorStarredSecondary">@color/orange_500</item>
+        <item name="textColorStarredSecondary">@color/orange_400</item>
 
         <item name="textAppearanceHeadline5">@style/App.TextAppearance.Headline5</item>
         <item name="textAppearanceHeadline6">@style/App.TextAppearance.Headline6</item>

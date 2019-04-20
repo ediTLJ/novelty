@@ -1,44 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="vpi__background_holo_dark">#ff000000</color>
-    <color name="vpi__background_holo_light">#fff3f3f3</color>
-    <color name="vpi__bright_foreground_holo_dark">@color/vpi__background_holo_light</color>
-    <color name="vpi__bright_foreground_holo_light">@color/vpi__background_holo_dark</color>
-    <color name="vpi__bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
-    <color name="vpi__bright_foreground_disabled_holo_light">#ffb2b2b2</color>
-    <color name="vpi__bright_foreground_inverse_holo_dark">
-        @color/vpi__bright_foreground_holo_light
-    </color>
-    <color name="vpi__bright_foreground_inverse_holo_light">
-        @color/vpi__bright_foreground_holo_dark
-    </color>
-
     <color name="ic_launcher_background">@color/grey</color>
 
     <color name="grey_dark">#191311</color>
-    <color name="grey">#292321</color>
-    <color name="grey_light">#4F4A48</color>
+    <color name="grey">#292321</color> <!-- based on grey_900 -->
+    <color name="grey_light">#4A4442</color> <!-- based on grey_800 -->
 
-    <color name="white_dark">#A9A3A1</color>
-    <color name="white">#F9F3F1</color>
+    <color name="white_dark">#A6A09E</color> <!-- based on grey_500 -->
+    <color name="white">#FDF7F5</color> <!-- based on grey_100 -->
 
     <color name="orange_900">#BF360C</color>
-    <color name="orange_700_dark">#AC0800</color>
+    <!--<color name="orange_700_dark">#AC0800</color>-->
     <color name="orange_700">#E64A19</color>
-    <color name="orange_500_dark">#C41C00</color>
+    <!--<color name="orange_500_dark">#C41C00</color>-->
     <color name="orange_500">#FF5722</color>
+    <color name="orange_400">#FF7043</color>
     <color name="orange_300">#FF8A65</color>
     <color name="orange_100">#FFCCBC</color>
+
+    <color name="red_900">#B71C1C</color>
+    <!--<color name="red_700">#D32F2F</color>-->
+    <!--<color name="red_500">#F44336</color>-->
+    <!--<color name="red_400">#EF5350</color>-->
+    <!--<color name="red_300">#E57373</color>-->
+    <!--<color name="red_200">#EF9A9A</color>-->
 
     <color name="brown_700">#5D4037</color>
     <color name="brown_500">#795548</color>
     <color name="brown_300">#A1887F</color>
     <color name="brown_100">#D7CCC8</color>
 
-    <color name="action_tint">#CCFFFFFF</color>
-
-    <color name="text_tab">#99ffffff</color>
-    <color name="text_tab_selected">#fff</color>
-
-    <color name="bkg_drag">#60a1887f</color>
+    <color name="action_tint">@color/white</color> <!--#CCFFFFFF-->
 </resources>
