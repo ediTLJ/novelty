@@ -15,11 +15,12 @@
 */
 package ro.edi.novelty.data.remote
 
+import com.ouattararomuald.syndication.Rss
 import com.ouattararomuald.syndication.atom.AtomFeed
-import com.ouattararomuald.syndication.rss.RssFeed
 
 interface FeedReader {
-    fun readRss(): RssFeed
+    @Rss(returnClass = BaseRssFeed::class)
+    fun readRss(): BaseRssFeed
 
     fun readAtom(): AtomFeed
 }

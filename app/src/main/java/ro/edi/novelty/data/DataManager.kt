@@ -371,20 +371,19 @@ class DataManager private constructor(application: Application) {
 
         val dbNews = ArrayList<DbNews>(news.size)
 
-        for (entry in news) {
-            entry.title ?: continue
-            entry.description ?: continue
-            entry.link ?: continue
+        for (item in news) {
+            item.title ?: continue
+            item.description ?: continue
 
-            // logd("entry: $entry")
+            // logd("item: $item")
 
-            val id = (entry.guid ?: entry.link).plus(feedId).hashCode()
-            val title = entry.title!!.trim { it <= ' ' }
+            val id = (item.guid ?: (item.link ?: item.title)).plus(feedId).hashCode()
+            val title = item.title.trim { it <= ' ' }
                     .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
-            val pubDate = if (entry.published == null) Instant.now().toEpochMilli() else {
+            val pubDate = if (item.pubDate == null) Instant.now().toEpochMilli() else {
                 runCatching {
-                    // logi("published: $entry.published")
-                    ZonedDateTime.parse(entry.published, RFC_1123_DATE_TIME).toEpochSecond() * 1000
+                    // logi("published: $item.pubDate")
+                    ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME).toEpochSecond() * 1000
                 }.getOrElse {
                     logi(it, "published parsing error... fallback to now()")
                     Instant.now().toEpochMilli()
@@ -396,10 +395,10 @@ class DataManager private constructor(application: Application) {
                             id,
                             feedId,
                             title,
-                            cleanHtml(entry.description),
-                            null,
+                            cleanHtml(item.description),
+                            item.author,
                             pubDate,
-                            entry.link!!,
+                            item.link,
                             Instant.now().toEpochMilli()
                     )
             )
@@ -411,9 +410,7 @@ class DataManager private constructor(application: Application) {
         // isFetching.postValue(false)
     }
 
-    fun cleanHtml(html: String?): String {
-        html ?: return ""
-
+    private fun cleanHtml(html: String): String {
         var txt = html.trim { it <= ' ' }
         txt = txt.replace(REGEX_TAG_IMG, "")
         txt = txt.replace(REGEX_EMPTY_TAGS, "")

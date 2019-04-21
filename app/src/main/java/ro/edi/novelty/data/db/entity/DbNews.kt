@@ -35,7 +35,7 @@ data class DbNews(
     val text: String,
     val author: String?,
     @ColumnInfo(name = "pub_date") val pubDate: Long,
-    val url: String,
+    val url: String?,
     @ColumnInfo(name = "saved_date") val savedDate: Long,
     @ColumnInfo(name = "is_read") val isRead: Boolean = false,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = false
