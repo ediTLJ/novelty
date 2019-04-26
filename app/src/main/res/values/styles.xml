@@ -11,9 +11,9 @@
         <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
     </style>
 
-    <style name="App.TextAppearance.Title" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="fontFamily">@font/comfortaa</item>
-        <item name="android:fontFamily">@font/comfortaa</item>
+    <style name="App.TextAppearance.Title" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
         <!--<item name="android:textSize">22sp</item>-->
     </style>
 
@@ -27,9 +27,10 @@
         <item name="android:fontFamily">@font/fira_sans_condensed_medium</item>
     </style>
 
-    <style name="App.TextAppearance.Body" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="fontFamily">@font/open_sans</item>
-        <item name="android:fontFamily">@font/open_sans</item>
+    <style name="App.TextAppearance.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/fira_sans</item>
+        <item name="android:fontFamily">@font/fira_sans</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="App.TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">
