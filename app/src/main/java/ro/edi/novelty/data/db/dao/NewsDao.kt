@@ -61,6 +61,15 @@ abstract class NewsDao : BaseDao<DbNews> {
      */
     fun getNews(feedId: Int): LiveData<List<News>> = query(feedId).getDistinct()
 
+    @Transaction
     @Query("DELETE FROM news")
     abstract fun deleteAll()
+
+    @Transaction
+    @Query("DELETE FROM news WHERE feed_id = :feedId AND saved_date < :untilDate AND is_starred == 0")
+    abstract fun deleteOlder(feedId: Int, untilDate: Long)
+
+    @Transaction
+    @Query("DELETE FROM news WHERE feed_id = :feedId AND is_starred == 0 AND pub_date NOT IN (SELECT pub_date FROM news WHERE feed_id = :feedId AND is_starred == 0 ORDER BY pub_date DESC LIMIT :keepCount)")
+    abstract fun deleteAllButLatest(feedId: Int, keepCount: Int)
 }
