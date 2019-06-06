@@ -51,7 +51,11 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         }
 
         override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
-            return oldItem == newItem
+            return oldItem.isRead == newItem.isRead
+                && oldItem.isStarred == newItem.isStarred
+                && oldItem.savedDate == newItem.savedDate
+                && oldItem.title == newItem.title
+                && oldItem.text == newItem.text
         }
     }
 }
