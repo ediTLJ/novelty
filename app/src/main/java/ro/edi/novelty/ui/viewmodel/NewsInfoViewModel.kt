@@ -46,10 +46,15 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         return info.value
     }
 
-    fun getInfoDisplayDate(): CharSequence? {
+    fun getInfoDisplayDateAndAuthor(): CharSequence? {
         return getInfo()?.let {
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
+            val date = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+            if (it.author == null) {
+                date
+            } else {
+                date.plus('\n').plus(it.author)
+            }
         }
     }
 
