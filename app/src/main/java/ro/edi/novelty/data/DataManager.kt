@@ -338,7 +338,6 @@ class DataManager private constructor(application: Application) {
     }
 
     fun deleteFeed(feed: Feed) {
-        // FIXME update tab values in other feeds, if needed
         AppExecutors.diskIO().execute {
             val dbFeed =
                 DbFeed(
@@ -349,6 +348,25 @@ class DataManager private constructor(application: Application) {
                     feed.isStarred
                 )
             db.feedDao().delete(dbFeed)
+
+            db.runInTransaction {
+                val feeds = db.feedDao().getFeedsAfter(feed.tab)
+                feeds?.let {
+                    for (f in it) {
+                        val dbF =
+                            DbFeed(
+                                f.id,
+                                f.title,
+                                f.url,
+                                f.tab - 1,
+                                f.isStarred
+                            )
+                        db.feedDao().update(dbF)
+                    }
+                }
+            }
+
+            db.newsDao().deleteAll(feed.id)
         }
     }
 

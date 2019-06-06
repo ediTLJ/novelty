@@ -66,6 +66,10 @@ abstract class NewsDao : BaseDao<DbNews> {
     abstract fun deleteAll()
 
     @Transaction
+    @Query("DELETE FROM news WHERE feed_id = :feedId")
+    abstract fun deleteAll(feedId: Int)
+
+    @Transaction
     @Query("DELETE FROM news WHERE feed_id = :feedId AND saved_date < :untilDate AND is_starred == 0")
     abstract fun deleteOlder(feedId: Int, untilDate: Long)
 

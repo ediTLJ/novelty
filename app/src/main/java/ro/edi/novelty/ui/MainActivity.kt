@@ -69,8 +69,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
             invalidateOptionsMenu()
 
             pager.adapter?.notifyDataSetChanged()
-            pager.offscreenPageLimit =
-                if (feeds.size > 8) feeds.size else 10 // FIXME temp cache up to 10 pages (until we fix the refresh issues)
+            pager.offscreenPageLimit = 2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
 
             if (feeds.isEmpty()) {
                 tabs.visibility = View.GONE

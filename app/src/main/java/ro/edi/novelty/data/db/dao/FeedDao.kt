@@ -18,27 +18,33 @@ package ro.edi.novelty.data.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.model.Feed
 
 @Dao
 abstract class FeedDao : BaseDao<DbFeed> {
+    @Transaction
     @Query("SELECT * FROM feeds ORDER BY tab ASC")
     protected abstract fun queryAll(): LiveData<List<Feed>>
 
+    @Transaction
     @Query("SELECT * FROM feeds WHERE is_starred ORDER BY tab ASC")
     abstract fun getMyFeeds(): List<Feed>?
 
     @Query("SELECT * FROM feeds WHERE id = :feedId")
     abstract fun getFeed(feedId: Int): Feed?
 
+    @Transaction
+    @Query("SELECT * FROM feeds WHERE tab > :tab")
+    abstract fun getFeedsAfter(tab: Int): List<Feed>?
+
     /**
      * Get all feeds.
      */
     fun getFeeds(): LiveData<List<Feed>> = queryAll().getDistinct()
 
-    // FIXME delete feed(s) should also delete all its news
-
+    @Transaction
     @Query("DELETE FROM feeds")
     abstract fun deleteAll()
 }
