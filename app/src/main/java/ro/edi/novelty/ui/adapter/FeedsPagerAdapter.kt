@@ -26,7 +26,7 @@ import ro.edi.novelty.ui.MyNewsFragment
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
 class FeedsPagerAdapter(fm: FragmentManager, application: Application, private val feedsModel: FeedsViewModel) :
-    FragmentStatePagerAdapter(fm) {
+    FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val txtMyNews: CharSequence = application.getText(R.string.tab_my_news)
     private val txtMyFeeds: CharSequence = application.getText(R.string.tab_my_feeds)
 

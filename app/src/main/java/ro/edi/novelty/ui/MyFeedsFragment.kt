@@ -78,6 +78,7 @@ class MyFeedsFragment : Fragment() {
         rvNews.apply {
             setHasFixedSize(true)
             adapter = newsAdapter
+
             // FIXME on scroll: update new items count in tab bar
         }
 
