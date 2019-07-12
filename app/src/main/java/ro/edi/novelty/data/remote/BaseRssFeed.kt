@@ -6,7 +6,7 @@ import java.io.Serializable
 
 @Root(name = "rss", strict = false)
 data class BaseRssFeed(
-        @field:Element(name = "channel")
-        @param:Element(name = "channel")
-        val channel: RssChannel
+    @field:Element(name = "channel")
+    @param:Element(name = "channel")
+    val channel: RssChannel
 ) : Serializable

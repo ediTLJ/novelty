@@ -17,10 +17,14 @@ package ro.edi.novelty.model
 
 import androidx.room.ColumnInfo
 
+const val TYPE_ATOM = 10
+const val TYPE_RSS = 20
+
 data class Feed(
     val id: Int,
     val title: String,
     val url: String,
+    val type: Int,
     val tab: Int,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = true
 )

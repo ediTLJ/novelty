@@ -44,8 +44,8 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addFeed(title: String, url: String, tab: Int, isStarred: Boolean) {
-        DataManager.getInstance(getApplication()).insertFeed(title, url, tab, isStarred)
+    fun addFeed(title: String, url: String, type: Int, tab: Int, isStarred: Boolean) {
+        DataManager.getInstance(getApplication()).insertFeed(title, url, type, tab, isStarred)
     }
 
     fun updateFeed(feed: Feed, title: String, url: String) {

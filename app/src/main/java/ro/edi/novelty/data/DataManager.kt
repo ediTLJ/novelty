@@ -183,7 +183,7 @@ class DataManager private constructor(application: Application) {
 
             val feed = db.feedDao().getFeed(feedId)
             feed?.let {
-                fetchNews(it.id, it.url)
+                fetchNews(it.id, it.url, it.type)
             }
 
             isFetching.postValue(false)
@@ -203,7 +203,7 @@ class DataManager private constructor(application: Application) {
             val feeds = db.feedDao().getMyFeeds()
             feeds?.let {
                 for (feed in it) {
-                    fetchNews(feed.id, feed.url)
+                    fetchNews(feed.id, feed.url, feed.type)
                 }
             }
 
@@ -225,6 +225,7 @@ class DataManager private constructor(application: Application) {
                     feed.id,
                     feed.title,
                     feed.url,
+                    feed.type,
                     feed.tab,
                     isStarred
                 )
@@ -239,10 +240,13 @@ class DataManager private constructor(application: Application) {
                     feed.id,
                     feed.title,
                     feed.url,
+                    feed.type,
                     tab,
                     feed.isStarred
                 )
             db.feedDao().update(dbFeed)
+
+            // FIXME update tab for other feeds
         }
     }
 
@@ -284,7 +288,7 @@ class DataManager private constructor(application: Application) {
         }
     }
 
-    fun insertFeed(title: String, url: String, tab: Int, isStarred: Boolean) {
+    fun insertFeed(title: String, url: String, type: Int, tab: Int, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbFeed =
                 DbFeed(
@@ -292,6 +296,7 @@ class DataManager private constructor(application: Application) {
                     title,
                     url,
                     tab,
+                    type,
                     isStarred
                 )
             db.feedDao().insert(dbFeed)
@@ -306,6 +311,7 @@ class DataManager private constructor(application: Application) {
                         feed.id,
                         title,
                         feed.url,
+                        feed.type,
                         feed.tab,
                         feed.isStarred
                     )
@@ -319,6 +325,7 @@ class DataManager private constructor(application: Application) {
                         url.hashCode(),
                         title,
                         url,
+                        feed.type,
                         feed.tab,
                         feed.isStarred
                     )
@@ -329,6 +336,7 @@ class DataManager private constructor(application: Application) {
                         feed.id,
                         feed.title,
                         feed.url,
+                        feed.type,
                         feed.tab,
                         feed.isStarred
                     )
@@ -339,29 +347,22 @@ class DataManager private constructor(application: Application) {
 
     fun deleteFeed(feed: Feed) {
         AppExecutors.diskIO().execute {
-            val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    feed.tab,
-                    feed.isStarred
-                )
-            db.feedDao().delete(dbFeed)
+            db.feedDao().delete(feed.id)
 
             db.runInTransaction {
                 val feeds = db.feedDao().getFeedsAfter(feed.tab)
                 feeds?.let {
                     for (f in it) {
-                        val dbF =
+                        val dbFeed =
                             DbFeed(
                                 f.id,
                                 f.title,
                                 f.url,
+                                f.type,
                                 f.tab - 1,
                                 f.isStarred
                             )
-                        db.feedDao().update(dbF)
+                        db.feedDao().update(dbFeed)
                     }
                 }
             }
@@ -375,10 +376,11 @@ class DataManager private constructor(application: Application) {
      *
      * **Don't call this on the main UI thread!**
      */
-    private fun fetchNews(feedId: Int, feedUrl: String) {
-        logi("fetching $feedUrl")
+    private fun fetchNews(feedId: Int, feedUrl: String, feedType: Int) {
+        logi("fetching $feedType feed: $feedUrl")
 
         // FIXME support for both RSS & Atom
+
         val rssFeed = runCatching { FeedService(feedUrl).getReader().readRss() }.getOrElse {
             loge(it, "error fetching or parsing feed")
             // isFetching.postValue(false)
@@ -396,7 +398,7 @@ class DataManager private constructor(application: Application) {
 
             // logd("item: $item")
 
-            val id = (item.guid ?: (item.link ?: item.title)).plus(feedId).hashCode()
+            val id = (item.id ?: (item.link ?: item.title)).plus(feedId).hashCode()
             val title = item.title.trim { it <= ' ' }
                 .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
             val pubDate = if (item.pubDate == null) Instant.now().toEpochMilli() else {

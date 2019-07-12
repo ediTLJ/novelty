@@ -27,6 +27,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedInfoBinding
+import ro.edi.novelty.model.TYPE_RSS
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.i as logi
 
@@ -127,8 +128,10 @@ class FeedInfoActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
+                        // FIXME feed type (currently assuming RSS)
+
                         // if 1 feed found
-                        feedsModel.addFeed(title, url, feeds.size + 2, true)
+                        feedsModel.addFeed(title, url, TYPE_RSS, feeds.size + 2, true)
                     }
 
                     finish()

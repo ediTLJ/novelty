@@ -47,4 +47,7 @@ abstract class FeedDao : BaseDao<DbFeed> {
     @Transaction
     @Query("DELETE FROM feeds")
     abstract fun deleteAll()
+
+    @Query("DELETE FROM feeds WHERE id = :feedId")
+    abstract fun delete(feedId: Int)
 }
