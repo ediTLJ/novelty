@@ -21,12 +21,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.DiffUtil.ItemCallback
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ro.edi.novelty.BR
 
-abstract class BaseAdapter<T>(itemCallback: ItemCallback<T>) :
+abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
     ListAdapter<T, BaseAdapter<T>.BaseViewHolder>(itemCallback) {
     protected abstract fun getModel(): ViewModel
 

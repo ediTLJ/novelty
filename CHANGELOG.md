@@ -1,14 +1,9 @@
 ## next release(s)
 * NewsInfo: support for zoom in/out?
 * scroll toolbar when scrolling feed
-* ~~AddFeed: use MaterialEditText library~~
-* widget?
 * auto assign title to feed?
-* ~~tabs: pressed state~~
-* better db cache cleanup policy
 * better feed refresh error handling (show Retry in snackbar)
 * better drag in ManageFeeds
-* ~~edit feeds~~
 * add support for images?
 
 # Change Log
