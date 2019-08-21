@@ -41,6 +41,7 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         newsModel.setIsRead(position, true)
 
         val i = Intent(itemView.context, NewsInfoActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
         itemView.context.startActivity(i)
     }

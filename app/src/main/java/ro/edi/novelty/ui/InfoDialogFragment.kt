@@ -35,14 +35,15 @@ class InfoDialogFragment : DialogFragment() {
 
         dialog.setPositiveButton(R.string.btn_ok, null)
         dialog.setNegativeButton(R.string.btn_rate) { _, _ ->
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("market://details?id=ro.edi.novelty")
-            startActivity(intent)
+            val i = Intent(Intent.ACTION_VIEW)
+            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            i.data = Uri.parse("market://details?id=ro.edi.novelty")
+            startActivity(i)
         }
 //        dialog.setNeutralButton(R.string.btn_other_apps) { _, _ ->
-//            val intent = Intent(Intent.ACTION_VIEW)
-//            intent.data = Uri.parse("market://search?q=pub:Eduard%20Scarlat")
-//            startActivity(intent)
+//            val i = Intent(Intent.ACTION_VIEW)
+//            i.data = Uri.parse("market://search?q=pub:Eduard%20Scarlat")
+//            startActivity(i)
 //        }
 
         return dialog.create()

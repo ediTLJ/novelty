@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         when (item.itemId) {
             R.id.action_feeds -> {
                 val iFeeds = Intent(application, FeedsActivity::class.java)
+                iFeeds.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(iFeeds)
             }
             R.id.action_info -> InfoDialogFragment().show(supportFragmentManager, "dialog_info")

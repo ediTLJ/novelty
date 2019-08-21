@@ -80,6 +80,7 @@ class FeedsActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_add -> {
                 val iAdd = Intent(this, FeedInfoActivity::class.java)
+                iAdd.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(iAdd)
             }
         }

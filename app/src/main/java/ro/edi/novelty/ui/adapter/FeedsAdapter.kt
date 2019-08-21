@@ -47,6 +47,7 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
 
     override fun onItemClick(itemView: View, position: Int) {
         val i = Intent(itemView.context, FeedInfoActivity::class.java)
+        i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         i.putExtra(FeedInfoActivity.EXTRA_FEED_ID, getItem(position).id)
         itemView.context.startActivity(i)
     }
