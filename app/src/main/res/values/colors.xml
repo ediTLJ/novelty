@@ -7,7 +7,10 @@
     <color name="grey_light">#4A4442</color> <!-- based on grey_800 -->
 
     <color name="white_dark">#A6A09E</color> <!-- based on grey_500 -->
-    <color name="white">#FDF7F5</color> <!-- based on grey_100 -->
+    <!--<color name="white_dark">#99FFFFFF</color>-->
+    <!--<color name="white">#FDF7F5</color> &lt;!&ndash; based on grey_100 &ndash;&gt;-->
+    <color name="white">#EDE7E5</color>
+    <!--<color name="white">#DEFFFFFF</color>-->
 
     <color name="orange_900">#BF360C</color>
     <!--<color name="orange_700_dark">#AC0800</color>-->
@@ -31,4 +34,7 @@
     <color name="brown_100">#D7CCC8</color>
 
     <color name="action_tint">@color/white</color> <!--#CCFFFFFF-->
+
+<!--    <color name="status_grey">#CC292321</color>-->
+    <color name="nav_grey">#80292321</color>
 </resources>

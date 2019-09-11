@@ -45,8 +45,32 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
+        setContentView(R.layout.activity_main)
+        initView()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        menu.findItem(R.id.action_feeds).isVisible = (feedsModel.feeds.value?.size ?: 0) > 0
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_feeds -> {
+                val iFeeds = Intent(application, FeedsActivity::class.java)
+                iFeeds.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(iFeeds)
+            }
+            R.id.action_info -> InfoDialogFragment().show(supportFragmentManager, "dialog_info")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initView() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -69,7 +93,8 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
             invalidateOptionsMenu()
 
             pager.adapter?.notifyDataSetChanged()
-            pager.offscreenPageLimit = 2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
+            pager.offscreenPageLimit =
+                2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
 
             if (feeds.isEmpty()) {
                 tabs.visibility = View.GONE
@@ -92,24 +117,6 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.action_feeds).isVisible = (feedsModel.feeds.value?.size ?: 0) > 0
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_feeds -> {
-                val iFeeds = Intent(application, FeedsActivity::class.java)
-                iFeeds.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                startActivity(iFeeds)
-            }
-            R.id.action_info -> InfoDialogFragment().show(supportFragmentManager, "dialog_info")
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     override fun onTabSelected(tab: TabLayout.Tab) {
 
     }
@@ -117,7 +124,8 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     override fun onTabReselected(tab: TabLayout.Tab) {
         val pager = findViewById<ViewPager>(R.id.pager)
 
-        val f = (pager.adapter as FeedsPagerAdapter).instantiateItem(pager, tab.position) as? Fragment
+        val f =
+            (pager.adapter as FeedsPagerAdapter).instantiateItem(pager, tab.position) as? Fragment
         f ?: return
 
         val rvNews = f.view?.findViewById<RecyclerView>(R.id.news) ?: return

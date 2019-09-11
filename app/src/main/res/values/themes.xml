@@ -2,7 +2,7 @@
 <resources>
 
     <style name="App.Theme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!--<item name="windowActionModeOverlay">true</item>-->
+        <item name="windowActionModeOverlay">true</item>
 
         <item name="colorPrimary">@color/brown_500</item>
         <item name="colorPrimaryVariant">@color/brown_700</item>
@@ -13,6 +13,7 @@
     <style name="App.Theme.Dark" parent="Theme.MaterialComponents.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:statusBarColor">@color/grey</item>
+        <item name="android:navigationBarColor">@color/nav_grey</item>
 
         <item name="colorPrimary">@color/orange_500</item>
         <item name="colorPrimaryVariant">@color/orange_700</item>

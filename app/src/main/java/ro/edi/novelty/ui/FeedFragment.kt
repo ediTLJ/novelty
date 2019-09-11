@@ -20,6 +20,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -81,6 +83,16 @@ class FeedFragment : Fragment() {
 
         val rvNews = view.findViewById<RecyclerView>(R.id.news)
         rvNews.apply {
+            ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+                updatePadding(
+                    0,
+                    0,
+                    0,
+                    insets.systemWindowInsetBottom
+                )
+                insets
+            }
+
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
             adapter = NewsAdapter(newsModel).apply {
@@ -132,6 +144,8 @@ class FeedFragment : Fragment() {
                 }
             }
         })
+
+        ViewCompat.requestApplyInsets(view)
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

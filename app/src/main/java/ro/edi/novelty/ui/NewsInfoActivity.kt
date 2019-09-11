@@ -22,7 +22,6 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -45,32 +44,12 @@ class NewsInfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityNewsInfoBinding = DataBindingUtil.setContentView(this, R.layout.activity_news_info)
+        val binding: ActivityNewsInfoBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_news_info)
         binding.lifecycleOwner = this
         binding.model = infoModel
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        infoModel.info.observe(this, Observer { info ->
-            logi("info changed: %s", info)
-
-            supportActionBar?.title = info.feedTitle
-
-            invalidateOptionsMenu()
-            binding.invalidateAll()
-
-            binding.text.movementMethod = LinkMovementMethod.getInstance()
-
-            binding.fabOpenInBrowser.apply {
-                setOnClickListener {
-                    val iBrowser = Intent(Intent.ACTION_VIEW, Uri.parse(info.url))
-                    iBrowser.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(iBrowser)
-                }
-            }.show()
-        })
+        initView(binding)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -106,6 +85,30 @@ class NewsInfoActivity : AppCompatActivity() {
             R.id.action_unbookmark -> infoModel.setIsStarred(false)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initView(binding: ActivityNewsInfoBinding) {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        infoModel.info.observe(this, Observer { info ->
+            logi("info changed: %s", info)
+
+            supportActionBar?.title = info.feedTitle
+
+            invalidateOptionsMenu()
+            binding.invalidateAll()
+
+            binding.text.movementMethod = LinkMovementMethod.getInstance()
+
+            binding.fabOpenInBrowser.apply {
+                setOnClickListener {
+                    val iBrowser = Intent(Intent.ACTION_VIEW, Uri.parse(info.url))
+                    iBrowser.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(iBrowser)
+                }
+            }.show()
+        })
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

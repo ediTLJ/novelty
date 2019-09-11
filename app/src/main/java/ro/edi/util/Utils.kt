@@ -17,7 +17,12 @@ package ro.edi.util
 
 import android.content.Context
 import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.AttrRes
+import androidx.core.view.ViewCompat
+import androidx.core.view.updateLayoutParams
+import androidx.databinding.BindingAdapter
 
 /**
  * @return Application's version name from `PackageManager`.
@@ -32,3 +37,96 @@ fun getColorRes(context: Context, @AttrRes attrRes: Int): Int {
     context.theme.resolveAttribute(attrRes, outValue, true)
     return outValue.resourceId
 }
+
+@BindingAdapter(
+    "applyWindowInsetsMarginLeft",
+    "applyWindowInsetsMarginTop",
+    "applyWindowInsetsMarginRight",
+    "applyWindowInsetsMarginBottom",
+    requireAll = false
+)
+fun View.applyWindowInsetsMargin(
+    applyLeft: Boolean,
+    applyTop: Boolean,
+    applyRight: Boolean,
+    applyBottom: Boolean
+) {
+    ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+        val left = if (applyLeft) insets.systemWindowInsetLeft else 0
+        val top = if (applyTop) insets.systemWindowInsetTop else 0
+        val right = if (applyRight) insets.systemWindowInsetRight else 0
+        val bottom = if (applyBottom) insets.systemWindowInsetBottom else 0
+
+        setMargin(
+            left,
+            top,
+            right,
+            bottom
+        )
+
+        // always return the insets, so that children can also use them
+        insets
+    }
+
+    // request some insets
+    // requestApplyInsetsWhenAttached()
+}
+
+@BindingAdapter(
+    "applyWindowInsetsPaddingLeft",
+    "applyWindowInsetsPaddingTop",
+    "applyWindowInsetsPaddingRight",
+    "applyWindowInsetsPaddingBottom",
+    requireAll = false
+)
+fun View.applyWindowInsetsPadding(
+    applyLeft: Boolean,
+    applyTop: Boolean,
+    applyRight: Boolean,
+    applyBottom: Boolean
+) {
+    ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+        val left = if (applyLeft) insets.systemWindowInsetLeft else 0
+        val top = if (applyTop) insets.systemWindowInsetTop else 0
+        val right = if (applyRight) insets.systemWindowInsetRight else 0
+        val bottom = if (applyBottom) insets.systemWindowInsetBottom else 0
+
+        setPadding(
+            left,
+            top,
+            right,
+            bottom
+        )
+
+        // always return the insets, so that children can also use them
+        insets
+    }
+
+    // request some insets
+    // requestApplyInsetsWhenAttached()
+}
+
+//fun View.requestApplyInsetsWhenAttached() {
+//    if (isAttachedToWindow) {
+//        // already attached, just request as normal
+//        requestApplyInsets()
+//    } else {
+//        // not attached to the hierarchy, add a listener to request when it is
+//        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+//            override fun onViewAttachedToWindow(v: View) {
+//                v.removeOnAttachStateChangeListener(this)
+//                v.requestApplyInsets()
+//            }
+//
+//            override fun onViewDetachedFromWindow(v: View) = Unit
+//        })
+//    }
+//}
+
+fun View.setMargin(leftValue: Int, topValue: Int, rightValue: Int, bottomValue: Int) =
+    updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        leftMargin = leftValue
+        topMargin = topValue
+        rightMargin = rightValue
+        bottomMargin = bottomValue
+    }
