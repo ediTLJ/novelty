@@ -34,9 +34,7 @@ import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 import ro.edi.util.getColorRes
-import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
-import timber.log.Timber.w as logw
 
 class MyNewsFragment : Fragment() {
     companion object {
@@ -51,39 +49,46 @@ class MyNewsFragment : Fragment() {
         newsModel = ViewModelProviders.of(this, factory).get(NewsViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding =
-            DataBindingUtil.inflate<FragmentFeedBinding>(inflater, R.layout.fragment_feed, container, false)
+            DataBindingUtil.inflate<FragmentFeedBinding>(
+                inflater,
+                R.layout.fragment_feed,
+                container,
+                false
+            )
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
-        val vEmpty = view.findViewById<TextView>(R.id.empty)
-        val rvNews = view.findViewById<RecyclerView>(R.id.news)
-
-        vRefresh.setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
-        vRefresh.isRefreshing = false
-        vRefresh.isEnabled = false
-
-        vEmpty.setText(R.string.empty_bookmarks)
-
-        // listView.setVelocityScale(2.0f)
-
-        val newsAdapter = NewsAdapter(newsModel).apply {
-            setHasStableIds(true)
+        vRefresh.apply {
+            setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
+            isRefreshing = false
+            isEnabled = false
         }
 
+        val vEmpty = view.findViewById<TextView>(R.id.empty)
+        vEmpty.setText(R.string.empty_bookmarks)
+
+        val rvNews = view.findViewById<RecyclerView>(R.id.news)
         rvNews.apply {
+            // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
-            adapter = newsAdapter
+            adapter = NewsAdapter(newsModel).apply {
+                setHasStableIds(true)
+            }
         }
 
         newsModel.news.observe(viewLifecycleOwner, Observer { newsList ->
             logi("news changed: %d news", newsList.size)
 
-            newsAdapter.submitList(newsList)
+            (rvNews.adapter as NewsAdapter).submitList(newsList)
 
             if (newsList.isEmpty()) {
                 vEmpty.visibility = View.VISIBLE
@@ -92,7 +97,9 @@ class MyNewsFragment : Fragment() {
                 vEmpty.visibility = View.GONE
                 rvNews.visibility = View.VISIBLE
 
-                // FIXME on scroll: update items count in tab bar
+                activity?.apply {
+                    // FIXME on scroll: update items count in tab bar
+                }
             }
         })
     }

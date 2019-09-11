@@ -33,9 +33,7 @@ import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 import ro.edi.util.getColorRes
-import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
-import timber.log.Timber.w as logw
 
 class FeedFragment : Fragment() {
     companion object {
@@ -56,35 +54,45 @@ class FeedFragment : Fragment() {
         newsModel = ViewModelProviders.of(this, factory).get(NewsViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val binding =
-            DataBindingUtil.inflate<FragmentFeedBinding>(inflater, R.layout.fragment_feed, container, false)
+            DataBindingUtil.inflate<FragmentFeedBinding>(
+                inflater,
+                R.layout.fragment_feed,
+                container,
+                false
+            )
         binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
-        val vEmpty = view.findViewById<View>(R.id.empty)
+        vRefresh.apply {
+            setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
+            setOnRefreshListener {
+                newsModel.refresh(arguments?.getInt(ARG_FEED_ID, 0) ?: 0)
+            }
+        }
+
         val rvNews = view.findViewById<RecyclerView>(R.id.news)
-
-        vRefresh.setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
-        vRefresh.setOnRefreshListener {
-            newsModel.refresh(arguments?.getInt(ARG_FEED_ID, 0) ?: 0)
-        }
-
-        // listView.setVelocityScale(2.0f)
-
-        val newsAdapter = NewsAdapter(newsModel).apply {
-            setHasStableIds(true)
-        }
-
         rvNews.apply {
+            // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
-            adapter = newsAdapter
+            adapter = NewsAdapter(newsModel).apply {
+                setHasStableIds(true)
+            }
             // TODO initial prefetch
-            // FIXME on scroll: update new items count in tab bar
+            activity?.apply {
+                // FIXME on scroll: update new items count in tab bar
+            }
         }
+
+        val vEmpty = view.findViewById<View>(R.id.empty)
 
         newsModel.isFetching.observe(viewLifecycleOwner, Observer { isFetching ->
             logi("isFetching changed: %b", isFetching)
@@ -110,13 +118,14 @@ class FeedFragment : Fragment() {
             logi("news changed: %d news", newsList.size)
 
             if (newsList.isEmpty()) {
-                vEmpty.visibility = if (newsModel.isFetching.value == false) View.VISIBLE else View.GONE
+                vEmpty.visibility =
+                    if (newsModel.isFetching.value == false) View.VISIBLE else View.GONE
                 rvNews.visibility = View.GONE
             } else {
                 vEmpty.visibility = View.GONE
                 rvNews.visibility = View.VISIBLE
 
-                newsAdapter.submitList(newsList)
+                (rvNews.adapter as NewsAdapter).submitList(newsList)
 
                 activity?.apply {
                     // FIXME show new items count in tab bar
