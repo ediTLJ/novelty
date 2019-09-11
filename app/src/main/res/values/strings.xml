@@ -55,4 +55,8 @@
     <string name="description_star">Add to favorites</string>
     <string name="description_unstar">Remove from favorites</string>
 
+    <string name="type_atom" translatable="false">Atom</string>
+    <string name="type_rss" translatable="false">RSS</string>
+    <string name="type_none" translatable="false" />
+
 </resources>

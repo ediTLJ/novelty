@@ -40,16 +40,35 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/feed_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/feed_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@{model.getFeed(position).title}"
                 android:textAppearance="@style/App.TextAppearance.Subtitle1"
                 android:textColor="?android:textColorPrimary"
                 tools:text="Feed Title" />
+
+            <TextView
+                android:id="@+id/feed_type"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:lines="1"
+                android:text="@{context.getString(model.getFeedTypeRes(position))}"
+                android:textAppearance="@style/App.TextAppearance.Subtitle1"
+                android:textColor="?android:textColorSecondary"
+                tools:text="RSS" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/feed_url"
