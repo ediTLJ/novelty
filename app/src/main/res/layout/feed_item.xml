@@ -47,9 +47,8 @@
 
             <TextView
                 android:id="@+id/feed_title"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@{model.getFeed(position).title}"
@@ -65,9 +64,8 @@
                 android:lines="1"
                 android:text="@{context.getString(model.getFeedTypeRes(position))}"
                 android:textAppearance="@style/App.TextAppearance.Subtitle1"
-                android:textColor="?android:textColorSecondary"
+                android:textColor="?colorPrimary"
                 tools:text="RSS" />
-
             </LinearLayout>
 
             <TextView
@@ -88,6 +86,7 @@
             android:layout_height="56dp"
             android:contentDescription="@string/description_unstar"
             android:scaleType="centerInside"
-            android:src="@{ContextCompat.getDrawable(context, model.getStarredImageRes(position))}" />
+            android:src="@{ContextCompat.getDrawable(context, model.getStarredImageRes(position))}"
+            tools:src="@drawable/ic_star" />
     </LinearLayout>
 </layout>

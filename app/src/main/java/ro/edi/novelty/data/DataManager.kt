@@ -65,7 +65,10 @@ class DataManager private constructor(application: Application) {
 
     companion object : Singleton<DataManager, Application>(::DataManager) {
         private val REGEX_TAG_IMG =
-            Regex("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*", RegexOption.IGNORE_CASE)
+            Regex(
+                "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*",
+                RegexOption.IGNORE_CASE
+            )
         private val REGEX_TAG_BR = Regex("<\\s*<br\\s*/?>\\s*", RegexOption.IGNORE_CASE)
         // private val REGEX_BR_TAGS = Regex("(\\s*<br\\s*[/]*>\\s*){3,}", RegexOption.IGNORE_CASE)
         private val REGEX_EMPTY_TAGS = Regex("(<[^>]*>\\s*</[^>]*>)+", RegexOption.IGNORE_CASE)
@@ -126,7 +129,8 @@ class DataManager private constructor(application: Application) {
             .optionalEnd()
             .optionalStart()
             .appendOffset("+HHMM", "GMT")
-            .toFormatter().withResolverStyle(ResolverStyle.SMART).withChronology(IsoChronology.INSTANCE)
+            .toFormatter().withResolverStyle(ResolverStyle.SMART)
+            .withChronology(IsoChronology.INSTANCE)
     }
 
     /**
@@ -295,8 +299,8 @@ class DataManager private constructor(application: Application) {
                     url.hashCode(),
                     title,
                     url,
-                    tab,
                     type,
+                    tab,
                     isStarred
                 )
             db.feedDao().insert(dbFeed)
@@ -428,7 +432,8 @@ class DataManager private constructor(application: Application) {
         // FIXME update title, text & date if already in db
         db.runInTransaction {
             db.newsDao().insert(dbNews)
-            db.newsDao().deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
+            db.newsDao()
+                .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
             db.newsDao().deleteAllButLatest(feedId, 100)
         }
         // isFetching.postValue(false)

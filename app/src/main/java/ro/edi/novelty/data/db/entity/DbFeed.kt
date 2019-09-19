@@ -25,7 +25,7 @@ data class DbFeed(
     @PrimaryKey val id: Int,
     val title: String,
     val url: String,
-    val tab: Int,
     val type: Int,
+    val tab: Int,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = true
 )
