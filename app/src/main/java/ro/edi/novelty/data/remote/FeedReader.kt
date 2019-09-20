@@ -24,5 +24,5 @@ interface FeedReader {
     fun readRss(): BaseRssFeed
 
     @Atom(returnClass = BaseAtomFeed::class)
-    fun readAtom(): AtomFeed
+    fun readAtom(): BaseAtomFeed
 }

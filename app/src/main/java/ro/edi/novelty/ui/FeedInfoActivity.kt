@@ -128,10 +128,10 @@ class FeedInfoActivity : AppCompatActivity() {
                             return@setOnClickListener
                         }
 
-                        // FIXME feed type (currently assuming RSS)
+                        // FIXME feed type?
 
                         // if 1 feed found
-                        feedsModel.addFeed(title, url, TYPE_RSS, feeds.size + 2, true)
+                        feedsModel.addFeed(title, url, 0, feeds.size + 2, true)
                     }
 
                     finish()

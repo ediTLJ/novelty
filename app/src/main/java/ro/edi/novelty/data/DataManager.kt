@@ -24,6 +24,7 @@ import androidx.core.text.parseAsHtml
 import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.ouattararomuald.syndication.DeserializationException
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.chrono.IsoChronology
@@ -35,11 +36,14 @@ import ro.edi.novelty.data.db.entity.DbNews
 import ro.edi.novelty.data.remote.FeedService
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.News
+import ro.edi.novelty.model.TYPE_ATOM
+import ro.edi.novelty.model.TYPE_RSS
 import ro.edi.util.AppExecutors
 import ro.edi.util.Singleton
-import timber.log.Timber.d as logd
+import java.lang.reflect.UndeclaredThrowableException
 import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
+import timber.log.Timber.w as logw
 
 /**
  * This class manages the underlying data.
@@ -69,6 +73,7 @@ class DataManager private constructor(application: Application) {
                 "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*",
                 RegexOption.IGNORE_CASE
             )
+        private val REGEX_TAG_SMALL = Regex("<small>.*</small>", RegexOption.IGNORE_CASE)
         private val REGEX_TAG_BR = Regex("<\\s*<br\\s*/?>\\s*", RegexOption.IGNORE_CASE)
         // private val REGEX_BR_TAGS = Regex("(\\s*<br\\s*[/]*>\\s*){3,}", RegexOption.IGNORE_CASE)
         private val REGEX_EMPTY_TAGS = Regex("(<[^>]*>\\s*</[^>]*>)+", RegexOption.IGNORE_CASE)
@@ -222,18 +227,9 @@ class DataManager private constructor(application: Application) {
         return db.newsDao().getInfo(newsId)
     }
 
-    fun updateFeedStarred(feed: Feed, isStarred: Boolean) {
+    fun updateFeedType(feedId: Int, type: Int) {
         AppExecutors.diskIO().execute {
-            val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    feed.type,
-                    feed.tab,
-                    isStarred
-                )
-            db.feedDao().update(dbFeed)
+            db.feedDao().updateType(feedId, type)
         }
     }
 
@@ -251,6 +247,21 @@ class DataManager private constructor(application: Application) {
             db.feedDao().update(dbFeed)
 
             // FIXME update tab for other feeds
+        }
+    }
+
+    fun updateFeedStarred(feed: Feed, isStarred: Boolean) {
+        AppExecutors.diskIO().execute {
+            val dbFeed =
+                DbFeed(
+                    feed.id,
+                    feed.title,
+                    feed.url,
+                    feed.type,
+                    feed.tab,
+                    isStarred
+                )
+            db.feedDao().update(dbFeed)
         }
     }
 
@@ -383,16 +394,111 @@ class DataManager private constructor(application: Application) {
     private fun fetchNews(feedId: Int, feedUrl: String, feedType: Int) {
         logi("fetching $feedType feed: $feedUrl")
 
-        // FIXME support for both RSS & Atom
+        when (feedType) {
+            TYPE_ATOM -> fetchAtomNews(feedId, feedUrl)
+            TYPE_RSS -> fetchRssNews(feedId, feedUrl)
+            else -> if (fetchRssNews(feedId, feedUrl) == TYPE_ATOM) {
+                fetchAtomNews(feedId, feedUrl)
+                updateFeedType(feedId, TYPE_ATOM)
+            }
+        }
+    }
 
-        val rssFeed = runCatching { FeedService(feedUrl).getReader().readRss() }.getOrElse {
-            loge(it, "error fetching or parsing feed")
+    /**
+     * Get all news from the specified Atom feed URL.
+     *
+     * **Don't call this on the main UI thread!**
+     */
+    private fun fetchAtomNews(feedId: Int, feedUrl: String) {
+        logi("fetching Atom feed: $feedUrl")
+
+        val atomFeed = runCatching {
+            FeedService(feedUrl).getReader().readAtom()
+        }.getOrElse {
+            if (it.cause == DeserializationException::class) {
+                logw(it, "error deserializing Atom feed")
+            } else {
+                loge(it, "error fetching or parsing feed")
+            }
+
             // isFetching.postValue(false)
             return
         }
 
-        val news = rssFeed.channel.items
+        val news = atomFeed.items
         news ?: return
+
+        val dbNews = ArrayList<DbNews>(news.size)
+
+        for (item in news) {
+            item.content ?: continue
+
+            // logd("item: $item")
+
+            val id = item.id.plus(feedId).hashCode()
+            val title = item.title.trim { it <= ' ' }
+                .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
+            val pubDate = if (item.pubDate == null) Instant.now().toEpochMilli() else {
+                runCatching {
+                    // logi("published: $item.pubDate")
+                    ZonedDateTime.parse(
+                        item.pubDate,
+                        DateTimeFormatter.ISO_DATE_TIME
+                    ).toEpochSecond() * 1000
+                }.getOrElse {
+                    logi(it, "published parsing error... fallback to now()")
+                    Instant.now().toEpochMilli()
+                }
+            }
+
+            dbNews.add(
+                DbNews(
+                    id,
+                    feedId,
+                    title,
+                    cleanHtml(item.content),
+                    item.author?.name,
+                    pubDate,
+                    item.link?.href,
+                    Instant.now().toEpochMilli()
+                )
+            )
+        }
+
+        // FIXME update title, text & date if already in db
+        db.runInTransaction {
+            db.newsDao().insert(dbNews)
+            db.newsDao()
+                .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
+            db.newsDao().deleteAllButLatest(feedId, 100)
+        }
+        // isFetching.postValue(false)
+    }
+
+    /**
+     * Get all news from the specified RSS feed URL.
+     *
+     * **Don't call this on the main UI thread!**
+     */
+    private fun fetchRssNews(feedId: Int, feedUrl: String): Int {
+        logi("fetching RSS feed: $feedUrl")
+
+        val rssFeed = runCatching {
+            FeedService(feedUrl).getReader().readRss()
+        }.getOrElse {
+            return if (it is UndeclaredThrowableException && it.undeclaredThrowable is DeserializationException) {
+                loge(it, "error deserializing RSS feed")
+                // isFetching.postValue(false)
+                TYPE_ATOM
+            } else {
+                loge(it, "error fetching or parsing feed")
+                // isFetching.postValue(false)
+                0
+            }
+        }
+
+        val news = rssFeed.channel.items
+        news ?: return 0
 
         val dbNews = ArrayList<DbNews>(news.size)
 
@@ -437,14 +543,17 @@ class DataManager private constructor(application: Application) {
             db.newsDao().deleteAllButLatest(feedId, 100)
         }
         // isFetching.postValue(false)
+
+        return TYPE_RSS
     }
 
     private fun cleanHtml(html: String): String {
-        var txt = html.trim { it <= ' ' }
-        txt = txt.replace(REGEX_TAG_IMG, "")
+        var txt = html.replace(REGEX_TAG_IMG, "")
+        txt = txt.replace(REGEX_TAG_SMALL, "")
         txt = txt.replace(REGEX_EMPTY_TAGS, "")
         txt = txt.replace(REGEX_TAG_BR, "\n")
         txt = txt.replace("\r\n", "\n", true)
+        txt = txt.trim { it <= ' ' }
 
         val len = txt.length
 
