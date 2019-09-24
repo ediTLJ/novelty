@@ -24,17 +24,18 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import ro.edi.novelty.R
 import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
+import java.util.*
 import timber.log.Timber.i as logi
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
@@ -50,6 +51,13 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
         setContentView(R.layout.activity_main)
         initView()
+    }
+
+    override fun onDestroy() {
+        val tabs = findViewById<TabLayout>(R.id.tabs)
+        tabs.removeOnTabSelectedListener(this)
+
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -75,26 +83,58 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val adapter = FeedsPagerAdapter(supportFragmentManager, application, feedsModel)
+        val adapter = FeedsPagerAdapter(this, feedsModel)
 
-        val tvEmpty = findViewById<TextView>(R.id.empty)
-
-        val pager = findViewById<ViewPager>(R.id.pager)
+        val pager = findViewById<ViewPager2>(R.id.pager)
         pager.adapter = adapter
-        pager.currentItem = 1
+        pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
+        // 2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
+        pager.setCurrentItem(1, false)
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
-        tabs.selectTab(tabs.getTabAt(1))
+
+        val tabLayoutMediator = TabLayoutMediator(tabs, pager) { tab, page ->
+            when (page) {
+                0 -> {
+                    tab.text = getText(R.string.tab_my_news)
+                    tab.tag = 0
+                }
+                1 -> {
+                    tab.text = getText(R.string.tab_my_feeds)
+                    tab.tag = 1
+                }
+                else -> {
+                    val feed = feedsModel.getFeed(page - 2)
+                    tab.text = feed?.title?.toUpperCase(Locale.getDefault())
+                    tab.tag = feed?.id
+                }
+            }
+        }
+        tabLayoutMediator.attach()
+
         tabs.addOnTabSelectedListener(this)
+
+        val tvEmpty = findViewById<TextView>(R.id.empty)
 
         feedsModel.feeds.observe(this, Observer { feeds ->
             logi("feeds changed: %d feeds", feeds.size)
 
             invalidateOptionsMenu()
 
-            pager.adapter?.notifyDataSetChanged()
-            pager.offscreenPageLimit =
-                2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
+            pager.adapter?.let { adapter ->
+                val page = pager.currentItem
+                val index = feeds.indexOfFirst { it.id == tabs.getTabAt(page)?.tag }
+
+                // FIXME test all possible cases here
+                if (page < 2 || page == index + 2) {
+                    adapter.notifyDataSetChanged()
+                } else {
+                    // tabLayoutMediator.detach()
+                    pager.currentItem = index + 2
+                    adapter.notifyDataSetChanged()
+                    // tabLayoutMediator.attach()
+                }
+            }
 
             if (feeds.isEmpty()) {
                 tabs.visibility = View.GONE
@@ -114,6 +154,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
                     tabs.selectTab(tabs.getTabAt(feeds.size + 1))
                 }
             }
+
         })
     }
 
@@ -122,12 +163,8 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     }
 
     override fun onTabReselected(tab: TabLayout.Tab) {
-        val pager = findViewById<ViewPager>(R.id.pager)
-
-        val f =
-            (pager.adapter as FeedsPagerAdapter).instantiateItem(pager, tab.position) as? Fragment
-        f ?: return
-
+        // TODO don't rely on the tag set by ViewPager2... it might change in future versions
+        val f = supportFragmentManager.findFragmentByTag("f".plus(tab.tag)) ?: return
         val rvNews = f.view?.findViewById<RecyclerView>(R.id.news) ?: return
 
         val layoutManager = rvNews.layoutManager as LinearLayoutManager

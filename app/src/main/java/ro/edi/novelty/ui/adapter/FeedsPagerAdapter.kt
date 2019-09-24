@@ -15,35 +15,50 @@
 */
 package ro.edi.novelty.ui.adapter
 
-import android.app.Application
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import ro.edi.novelty.R
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import ro.edi.novelty.ui.FeedFragment
 import ro.edi.novelty.ui.MyFeedsFragment
 import ro.edi.novelty.ui.MyNewsFragment
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
-class FeedsPagerAdapter(fm: FragmentManager, application: Application, private val feedsModel: FeedsViewModel) :
-    FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-    private val txtMyNews: CharSequence = application.getText(R.string.tab_my_news)
-    private val txtMyFeeds: CharSequence = application.getText(R.string.tab_my_feeds)
+class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewModel) :
+    FragmentStateAdapter(fa) {
 
-    override fun getCount(): Int {
+
+    // FIXME replace getFeed(page - 2) with getFeedByPage(page) ? in theory, it shouldn't be needed (feeds are sorted by page & the query returns livedata)
+
+    override fun getItemId(page: Int): Long {
+        return when (page) {
+            0 -> 0L
+            1 -> 1L
+            else -> feedsModel.getFeed(page - 2)?.id?.toLong() ?: RecyclerView.NO_ID
+        }
+    }
+
+    override fun containsItem(itemId: Long): Boolean {
+        return when (itemId) {
+            0L, 1L -> true
+            else -> feedsModel.feeds.value?.find { it.id.toLong() == itemId } != null
+        }
+    }
+
+    override fun getItemCount(): Int {
         return feedsModel.feeds.value?.size?.plus(2) ?: 2
     }
 
-    override fun getItem(position: Int): Fragment {
-        return when (position) {
+    override fun createFragment(page: Int): Fragment {
+        return when (page) {
             0 -> MyNewsFragment.newInstance()
             1 -> MyFeedsFragment.newInstance()
             else -> {
-//        val feedState = mFeedState[feed.title]
-//        if (feedState == null) {
-//            mFeedState[feed.title] = FEED_STATE_NEEDS_REFRESH
-//        }
-                feedsModel.getFeed(position - 2)?.let {
+                // val feedState = mFeedState[feed.title]
+                // if (feedState == null) {
+                //     mFeedState[feed.title] = FEED_STATE_NEEDS_REFRESH
+                // }
+                feedsModel.getFeed(page - 2)?.let {
                     return FeedFragment.newInstance(it.id)
                 }
 
@@ -51,17 +66,10 @@ class FeedsPagerAdapter(fm: FragmentManager, application: Application, private v
             }
         }
     }
+
 //    companion object {
 //        private const val FEED_STATE_NEEDS_REFRESH = 0
 //        private const val FEED_STATE_REFRESHED = 1
-//    }
-
-//    override fun getItemId(position: Int): Long {
-//        return when (position) {
-//            0 -> -1
-//            1 -> 0
-//            else -> feedsModel.getFeedId(position).toLong()
-//        }
 //    }
 
 //    fun refreshFeed(position: Int) {
@@ -121,12 +129,4 @@ class FeedsPagerAdapter(fm: FragmentManager, application: Application, private v
 //    fun getFragment(position: Int): Fragment {
 //        return mFragments.get(position)
 //    }
-
-    override fun getPageTitle(position: Int): CharSequence? {
-        return when (position) {
-            0 -> txtMyNews
-            1 -> txtMyFeeds
-            else -> feedsModel.getFeed(position - 2)?.title?.toUpperCase()
-        }
-    }
 }
