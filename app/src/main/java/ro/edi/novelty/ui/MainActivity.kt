@@ -35,6 +35,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import ro.edi.novelty.R
 import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
+import ro.edi.util.applyWindowInsetsMargin
 import java.util.*
 import timber.log.Timber.i as logi
 
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        toolbar.applyWindowInsetsMargin(applyLeft = true, applyTop = false, applyRight = true, applyBottom = false)
+
         val adapter = FeedsPagerAdapter(this, feedsModel)
 
         val pager = findViewById<ViewPager2>(R.id.pager)
@@ -92,6 +95,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         pager.setCurrentItem(1, false)
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
+        tabs.applyWindowInsetsMargin(applyLeft = true, applyTop = false, applyRight = true, applyBottom = false)
 
         val tabLayoutMediator = TabLayoutMediator(tabs, pager) { tab, page ->
             when (page) {

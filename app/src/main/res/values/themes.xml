@@ -47,11 +47,4 @@
         <item name="textAppearanceCaption">@style/App.TextAppearance.Caption</item>
         <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
     </style>
-
-    <style name="App.Theme.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
-        <item name="android:background">@color/grey</item>
-
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white_dark</item>
-    </style>
 </resources>

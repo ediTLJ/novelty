@@ -21,8 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,6 +33,7 @@ import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
+import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.i as logi
 
@@ -81,15 +80,12 @@ class MyNewsFragment : Fragment() {
         val rvNews = view.findViewById<RecyclerView>(R.id.news)
 
         rvNews.apply {
-            ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
-                updatePadding(
-                    0,
-                    0,
-                    0,
-                    insets.systemWindowInsetBottom
-                )
-                insets
-            }
+            applyWindowInsetsPadding(
+                applyLeft = true,
+                applyTop = false,
+                applyRight = true,
+                applyBottom = true
+            )
 
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
@@ -115,8 +111,6 @@ class MyNewsFragment : Fragment() {
                 }
             }
         })
-
-        ViewCompat.requestApplyInsets(view)
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

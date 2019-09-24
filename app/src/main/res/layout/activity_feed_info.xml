@@ -18,9 +18,9 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBar"
+            style="@style/App.Toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/App.Theme.Toolbar"
             app:liftOnScroll="true">
 
             <androidx.appcompat.widget.Toolbar

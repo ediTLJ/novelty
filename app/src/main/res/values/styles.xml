@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="App.Toolbar" parent="">
+        <item name="android:background">@color/status_grey</item>
+    </style>
+
     <style name="App.TextAppearance.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>

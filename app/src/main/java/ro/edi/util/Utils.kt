@@ -103,25 +103,25 @@ fun View.applyWindowInsetsPadding(
     }
 
     // request some insets
-    // requestApplyInsetsWhenAttached()
+    requestApplyInsetsWhenAttached()
 }
 
-//fun View.requestApplyInsetsWhenAttached() {
-//    if (isAttachedToWindow) {
-//        // already attached, just request as normal
-//        requestApplyInsets()
-//    } else {
-//        // not attached to the hierarchy, add a listener to request when it is
-//        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-//            override fun onViewAttachedToWindow(v: View) {
-//                v.removeOnAttachStateChangeListener(this)
-//                v.requestApplyInsets()
-//            }
-//
-//            override fun onViewDetachedFromWindow(v: View) = Unit
-//        })
-//    }
-//}
+fun View.requestApplyInsetsWhenAttached() {
+    if (isAttachedToWindow) {
+        // already attached, just request as normal
+        requestApplyInsets()
+    } else {
+        // not attached to the hierarchy, add a listener to request when it is
+        addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                v.removeOnAttachStateChangeListener(this)
+                v.requestApplyInsets()
+            }
+
+            override fun onViewDetachedFromWindow(v: View) = Unit
+        })
+    }
+}
 
 fun View.setMargin(leftValue: Int, topValue: Int, rightValue: Int, bottomValue: Int) =
     updateLayoutParams<ViewGroup.MarginLayoutParams> {

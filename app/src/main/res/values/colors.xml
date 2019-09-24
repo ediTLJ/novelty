@@ -35,6 +35,6 @@
 
     <color name="action_tint">@color/white</color> <!--#CCFFFFFF-->
 
-<!--    <color name="status_grey">#CC292321</color>-->
+    <color name="status_grey">#CC292321</color>
     <color name="nav_grey">#80292321</color>
 </resources>
