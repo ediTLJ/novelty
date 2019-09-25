@@ -397,9 +397,12 @@ class DataManager private constructor(application: Application) {
         when (feedType) {
             TYPE_ATOM -> fetchAtomNews(feedId, feedUrl)
             TYPE_RSS -> fetchRssNews(feedId, feedUrl)
-            else -> if (fetchRssNews(feedId, feedUrl) == TYPE_ATOM) {
-                fetchAtomNews(feedId, feedUrl)
-                updateFeedType(feedId, TYPE_ATOM)
+            else -> when (fetchRssNews(feedId, feedUrl)) {
+                TYPE_ATOM -> {
+                    fetchAtomNews(feedId, feedUrl)
+                    updateFeedType(feedId, TYPE_ATOM)
+                }
+                TYPE_RSS -> updateFeedType(feedId, TYPE_RSS)
             }
         }
     }
@@ -479,6 +482,8 @@ class DataManager private constructor(application: Application) {
      * Get all news from the specified RSS feed URL.
      *
      * **Don't call this on the main UI thread!**
+     *
+     * @return feed type or 0, if error
      */
     private fun fetchRssNews(feedId: Int, feedUrl: String): Int {
         logi("fetching RSS feed: $feedUrl")
