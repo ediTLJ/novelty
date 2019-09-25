@@ -47,8 +47,9 @@
 
             <TextView
                 android:id="@+id/feed_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:lines="1"
                 android:text="@{model.getFeed(position).title}"
@@ -64,7 +65,7 @@
                 android:lines="1"
                 android:text="@{context.getString(model.getFeedTypeRes(position))}"
                 android:textAppearance="@style/App.TextAppearance.Subtitle1"
-                android:textColor="?colorPrimary"
+                android:textColor="?android:textColorSecondary"
                 tools:text="RSS" />
             </LinearLayout>
 

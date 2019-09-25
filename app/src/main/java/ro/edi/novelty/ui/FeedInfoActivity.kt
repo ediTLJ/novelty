@@ -27,7 +27,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedInfoBinding
-import ro.edi.novelty.model.TYPE_RSS
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.i as logi
 
@@ -43,7 +42,8 @@ class FeedInfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityFeedInfoBinding = DataBindingUtil.setContentView(this, R.layout.activity_feed_info)
+        val binding: ActivityFeedInfoBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_feed_info)
         binding.lifecycleOwner = this
         binding.model = feedsModel
 
