@@ -93,6 +93,7 @@ class FeedFragment : Fragment() {
 
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
+            setItemViewCacheSize(20)
             adapter = NewsAdapter(newsModel).apply {
                 setHasStableIds(true)
             }
