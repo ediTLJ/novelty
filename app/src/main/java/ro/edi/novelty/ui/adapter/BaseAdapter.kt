@@ -15,7 +15,9 @@
 */
 package ro.edi.novelty.ui.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -43,7 +45,11 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
         holder.bind(position)
     }
 
-    final override fun onBindViewHolder(holder: BaseViewHolder, position: Int, payloads: MutableList<Any>) {
+    final override fun onBindViewHolder(
+        holder: BaseViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         holder.bind(position, payloads)
     }
 
@@ -53,11 +59,33 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
 
     protected abstract fun getItemLayoutId(position: Int): Int
 
+    protected open fun onItemTouch(
+        itemView: View,
+        event: MotionEvent?,
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ): Boolean {
+        return false
+    }
+
     protected open fun onItemClick(itemView: View, position: Int) {
 
     }
 
     protected open fun onItemLongClick(itemView: View, position: Int): Boolean {
+        return false
+    }
+
+    protected open fun getTouchableViewIds(): IntArray? {
+        return null
+    }
+
+    protected open fun onTouch(
+        v: View,
+        event: MotionEvent?,
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ): Boolean {
         return false
     }
 
@@ -78,9 +106,17 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
     }
 
     inner class BaseViewHolder(private val binding: ViewDataBinding) :
-        RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
+        RecyclerView.ViewHolder(binding.root), View.OnTouchListener, View.OnClickListener,
+        View.OnLongClickListener {
 
         init {
+            itemView.setOnTouchListener(this)
+            getTouchableViewIds()?.let { ids ->
+                for (id in ids) {
+                    itemView.findViewById<View>(id)?.setOnTouchListener(this)
+                }
+            }
+
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
 
@@ -89,6 +125,19 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
                     itemView.findViewById<View>(id)?.setOnClickListener(this)
                 }
             }
+        }
+
+        @SuppressLint("ClickableViewAccessibility")
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            v?.let {
+                return if (v.id == itemView.id) {
+                    onItemTouch(it, event, this, adapterPosition)
+                } else {
+                    onTouch(it, event, this, adapterPosition)
+                }
+            }
+
+            return false
         }
 
         override fun onClick(v: View?) {

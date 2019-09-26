@@ -4,7 +4,7 @@
 
     <color name="grey_dark">#191311</color>
     <color name="grey">#292321</color> <!-- based on grey_900 -->
-    <color name="grey_light">#4A4442</color> <!-- based on grey_800 -->
+    <color name="grey_light">#804A4442</color> <!-- based on grey_800 -->
 
     <color name="white_dark">#A6A09E</color> <!-- based on grey_500 -->
     <!--<color name="white_dark">#99FFFFFF</color>-->

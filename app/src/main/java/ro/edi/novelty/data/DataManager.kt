@@ -233,20 +233,9 @@ class DataManager private constructor(application: Application) {
         }
     }
 
-    fun updateFeedTab(feed: Feed, tab: Int) {
+    fun swapFeedPages(feed1: Feed, feed2: Feed) {
         AppExecutors.diskIO().execute {
-            val dbFeed =
-                DbFeed(
-                    feed.id,
-                    feed.title,
-                    feed.url,
-                    feed.type,
-                    tab,
-                    feed.isStarred
-                )
-            db.feedDao().update(dbFeed)
-
-            // FIXME update tab for other feeds
+            db.feedDao().swapPages(feed1.id, feed1.tab, feed2.id, feed2.tab)
         }
     }
 
@@ -303,7 +292,7 @@ class DataManager private constructor(application: Application) {
         }
     }
 
-    fun insertFeed(title: String, url: String, type: Int, tab: Int, isStarred: Boolean) {
+    fun insertFeed(title: String, url: String, type: Int, page: Int, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
             val dbFeed =
                 DbFeed(
@@ -311,7 +300,7 @@ class DataManager private constructor(application: Application) {
                     title,
                     url,
                     type,
-                    tab,
+                    page,
                     isStarred
                 )
             db.feedDao().insert(dbFeed)

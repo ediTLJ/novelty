@@ -16,21 +16,32 @@
 package ro.edi.novelty.ui.adapter
 
 import android.content.Intent
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FeedItemBinding
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.ui.FeedInfoActivity
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
+import ro.edi.util.getColorRes
+
 
 class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(FeedDiffCallback()) {
     companion object {
         const val FEED_TITLE = "feed_title"
+        const val FEED_URL = "feed_url"
+        const val FEED_TYPE = "feed_type"
         const val FEED_IS_STARRED = "feed_is_starred"
+    }
+
+    val itemTouchHelper by lazy(LazyThreadSafetyMode.NONE) {
+        ItemTouchHelper(FeedTouchCallback())
     }
 
     override fun getModel(): ViewModel {
@@ -50,6 +61,29 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         i.putExtra(FeedInfoActivity.EXTRA_FEED_ID, getItem(position).id)
         itemView.context.startActivity(i)
+    }
+
+    override fun getTouchableViewIds(): IntArray? {
+        val ids = IntArray(1)
+        ids[0] = R.id.feed_drag
+
+        return ids
+    }
+
+    override fun onTouch(
+        v: View,
+        event: MotionEvent?,
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ): Boolean {
+        if (v.id == R.id.feed_drag) {
+            if (event?.actionMasked == MotionEvent.ACTION_DOWN) {
+                itemTouchHelper.startDrag(holder)
+            }
+            return true
+        }
+
+        return false
     }
 
     override fun getClickableViewIds(): IntArray? {
@@ -72,6 +106,9 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         payload.forEach {
             when (it) {
                 FEED_TITLE -> b.feedTitle.text = getItem(position).title
+                FEED_URL -> b.feedUrl.text = getItem(position).url
+                FEED_TYPE -> b.feedType.text =
+                    binding.root.context.getText(feedsModel.getFeedTypeRes(position))
                 FEED_IS_STARRED -> b.feedStar.setImageDrawable(
                     ContextCompat.getDrawable(
                         binding.root.context,
@@ -82,13 +119,20 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
         }
     }
 
+    fun moveItem(oldPosition: Int, newPosition: Int) {
+        feedsModel.moveFeed(oldPosition, newPosition)
+    }
+
     class FeedDiffCallback : DiffUtil.ItemCallback<Feed>() {
         override fun areItemsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
-            return oldItem == newItem
+            return oldItem.title == newItem.title
+                && oldItem.url == newItem.url
+                && oldItem.type == newItem.type
+                && oldItem.isStarred == newItem.isStarred
         }
 
         override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {
@@ -96,6 +140,12 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
 
             if (oldItem.title != newItem.title) {
                 payload.add(FEED_TITLE)
+            }
+            if (oldItem.url != newItem.url) {
+                payload.add(FEED_URL)
+            }
+            if (oldItem.type != newItem.type) {
+                payload.add(FEED_TYPE)
             }
             if (oldItem.isStarred != newItem.isStarred) {
                 payload.add(FEED_IS_STARRED)
@@ -106,6 +156,80 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
             }
 
             return payload
+        }
+    }
+
+    class FeedTouchCallback : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+        0
+    ) {
+        private var colorDrag = -1
+        private var fromPos = -1
+        private var toPos = -1
+
+        override fun isLongPressDragEnabled() = true
+        override fun isItemViewSwipeEnabled() = false
+
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
+            val oldPos = viewHolder.adapterPosition
+            val newPos = target.adapterPosition
+
+            // logi("onMove() oldPos: $oldPos, newPos: $newPos")
+            // logi("onMove() fromPos: $fromPos, newPos: $newPos")
+
+            val adapter = recyclerView.adapter as FeedsAdapter
+
+            if (oldPos != fromPos || newPos != toPos) {
+                // logi("onMove() do notifyItemMoved")
+                // adapter.notifyItemMoved(oldPos, newPos)
+
+                if (oldPos != newPos) {
+                    // logi("onMove() swap pages in db")
+                    adapter.moveItem(oldPos, newPos)
+                }
+            }
+
+            if (fromPos < 0) {
+                fromPos = oldPos
+            }
+            toPos = newPos
+
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+        }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+
+            val itemView = viewHolder?.itemView
+            itemView ?: return
+
+            if (colorDrag < 0) {
+                colorDrag = ContextCompat.getColor(
+                    itemView.context,
+                    getColorRes(itemView.context, R.attr.colorControlHighlight)
+                )
+            }
+
+            if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
+                itemView.setBackgroundColor(colorDrag)
+            }
+        }
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+
+            viewHolder.itemView.setBackgroundColor(0)
+
+            fromPos = -1
+            toPos = -1
         }
     }
 }

@@ -44,9 +44,17 @@ abstract class FeedDao : BaseDao<DbFeed> {
      */
     fun getFeeds(): LiveData<List<Feed>> = queryAll().getDistinct()
 
-    @Transaction
     @Query("UPDATE feeds SET type = :type WHERE id = :feedId")
     abstract fun updateType(feedId: Int, type: Int)
+
+    @Query("UPDATE feeds SET tab = :page WHERE id = :feedId")
+    abstract fun updatePage(feedId: Int, page: Int)
+
+    @Transaction
+    open fun swapPages(feedId1: Int, page1: Int, feedId2: Int, page2: Int) {
+        updatePage(feedId1, page2)
+        updatePage(feedId2, page1)
+    }
 
     @Transaction
     @Query("DELETE FROM feeds")

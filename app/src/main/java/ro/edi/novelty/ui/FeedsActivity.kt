@@ -39,36 +39,12 @@ class FeedsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityFeedsBinding = DataBindingUtil.setContentView(this, R.layout.activity_feeds)
+        val binding: ActivityFeedsBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_feeds)
         binding.lifecycleOwner = this
         binding.model = feedsModel
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        val feedsAdapter = FeedsAdapter(feedsModel).apply {
-            setHasStableIds(true)
-        }
-
-        binding.feeds.apply {
-            setHasFixedSize(true)
-            adapter = feedsAdapter
-        }
-
-        feedsModel.feeds.observe(this, Observer { feeds ->
-            logi("feeds changed: %d feeds", feeds.size)
-
-            if (feeds.isEmpty()) {
-                binding.empty.visibility = View.VISIBLE
-                binding.feeds.visibility = View.GONE
-            } else {
-                binding.empty.visibility = View.GONE
-                binding.feeds.visibility = View.VISIBLE
-
-                feedsAdapter.submitList(feeds)
-            }
-        })
+        initView(binding)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -85,5 +61,33 @@ class FeedsActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initView(binding: ActivityFeedsBinding) {
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.feeds.apply {
+            setHasFixedSize(true)
+            adapter = FeedsAdapter(feedsModel).apply {
+                setHasStableIds(true)
+                itemTouchHelper.attachToRecyclerView(binding.feeds)
+            }
+        }
+
+        feedsModel.feeds.observe(this, Observer { feeds ->
+            logi("feeds changed: %d feeds", feeds.size)
+
+            if (feeds.isEmpty()) {
+                binding.empty.visibility = View.VISIBLE
+                binding.feeds.visibility = View.GONE
+            } else {
+                binding.empty.visibility = View.GONE
+                binding.feeds.visibility = View.VISIBLE
+
+                (binding.feeds.adapter as FeedsAdapter).submitList(feeds)
+            }
+        })
     }
 }

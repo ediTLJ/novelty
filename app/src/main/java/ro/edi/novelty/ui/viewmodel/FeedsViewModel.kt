@@ -66,6 +66,13 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         DataManager.getInstance(getApplication()).updateFeed(feed, title, url)
     }
 
+    fun moveFeed(oldPosition: Int, newPosition: Int) {
+        val oldPositionFeed = getFeed(oldPosition) ?: return
+        val newPositionFeed = getFeed(newPosition) ?: return
+
+        DataManager.getInstance(getApplication()).swapFeedPages(oldPositionFeed, newPositionFeed)
+    }
+
     fun deleteFeed(feed: Feed) {
         DataManager.getInstance(getApplication()).deleteFeed(feed)
     }
