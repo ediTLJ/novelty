@@ -25,19 +25,19 @@ import ro.edi.novelty.model.Feed
 @Dao
 abstract class FeedDao : BaseDao<DbFeed> {
     @Transaction
-    @Query("SELECT * FROM feeds ORDER BY tab ASC")
+    @Query("SELECT * FROM feeds ORDER BY page ASC")
     protected abstract fun queryAll(): LiveData<List<Feed>>
 
     @Transaction
-    @Query("SELECT * FROM feeds WHERE is_starred ORDER BY tab ASC")
+    @Query("SELECT * FROM feeds WHERE is_starred ORDER BY page ASC")
     abstract fun getMyFeeds(): List<Feed>?
 
     @Query("SELECT * FROM feeds WHERE id = :feedId")
     abstract fun getFeed(feedId: Int): Feed?
 
     @Transaction
-    @Query("SELECT * FROM feeds WHERE tab > :tab")
-    abstract fun getFeedsAfter(tab: Int): List<Feed>?
+    @Query("SELECT * FROM feeds WHERE page > :page")
+    abstract fun getFeedsAfter(page: Int): List<Feed>?
 
     /**
      * Get all feeds.
@@ -47,7 +47,7 @@ abstract class FeedDao : BaseDao<DbFeed> {
     @Query("UPDATE feeds SET type = :type WHERE id = :feedId")
     abstract fun updateType(feedId: Int, type: Int)
 
-    @Query("UPDATE feeds SET tab = :page WHERE id = :feedId")
+    @Query("UPDATE feeds SET page = :page WHERE id = :feedId")
     abstract fun updatePage(feedId: Int, page: Int)
 
     @Transaction

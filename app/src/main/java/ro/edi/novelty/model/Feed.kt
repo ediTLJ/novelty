@@ -25,6 +25,6 @@ data class Feed(
     val title: String,
     val url: String,
     val type: Int,
-    val tab: Int,
+    val page: Int,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = true
 )

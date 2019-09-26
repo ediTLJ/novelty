@@ -27,9 +27,6 @@ import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewModel) :
     FragmentStateAdapter(fa) {
 
-
-    // FIXME replace getFeed(page - 2) with getFeedByPage(page) ? in theory, it shouldn't be needed (feeds are sorted by page & the query returns livedata)
-
     override fun getItemId(page: Int): Long {
         return when (page) {
             0 -> 0L
@@ -95,38 +92,5 @@ class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewM
 //            f.refresh()
 //            mFeedState[feedTitle] = FEED_STATE_REFRESHED
 //        }
-//    }
-
-    // FIXME
-//    override fun getItemPosition(@NonNull `object`: Any): Int {
-//        if (`object` is BookmarksFragment) {
-//            return if (mFeedsManager.feedsCount < 2) {
-//                PagerAdapter.POSITION_NONE // the fragment will be re-created
-//            } else PagerAdapter.POSITION_UNCHANGED
-//        }
-//
-//        val f = `object` as FeedFragment
-//        val args = f.arguments
-//            ?: return PagerAdapter.POSITION_NONE // this should never happen
-//
-//        val fPosition = args.getInt("position")
-//        val fTitle = args.getString("feedId")
-//
-//        val feedsManager = FeedsManager.instance
-//        for (k in 1 until FeedsManager.MAX_FEEDS_COUNT + 1) {
-//            val feed = feedsManager.getFeed(k)
-//
-//            if (feed != null && feed.title.equals(fTitle!!, ignoreCase = true)) {
-//                if (k == fPosition) {
-//                    return PagerAdapter.POSITION_UNCHANGED
-//                }
-//            }
-//        }
-//
-//        return PagerAdapter.POSITION_NONE // the fragment will be re-created
-//    }
-//
-//    fun getFragment(position: Int): Fragment {
-//        return mFragments.get(position)
 //    }
 }

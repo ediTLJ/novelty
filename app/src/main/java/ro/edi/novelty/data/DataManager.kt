@@ -235,7 +235,7 @@ class DataManager private constructor(application: Application) {
 
     fun swapFeedPages(feed1: Feed, feed2: Feed) {
         AppExecutors.diskIO().execute {
-            db.feedDao().swapPages(feed1.id, feed1.tab, feed2.id, feed2.tab)
+            db.feedDao().swapPages(feed1.id, feed1.page, feed2.id, feed2.page)
         }
     }
 
@@ -247,7 +247,7 @@ class DataManager private constructor(application: Application) {
                     feed.title,
                     feed.url,
                     feed.type,
-                    feed.tab,
+                    feed.page,
                     isStarred
                 )
             db.feedDao().update(dbFeed)
@@ -316,7 +316,7 @@ class DataManager private constructor(application: Application) {
                         title,
                         feed.url,
                         feed.type,
-                        feed.tab,
+                        feed.page,
                         feed.isStarred
                     )
                 db.feedDao().update(dbFeed)
@@ -330,7 +330,7 @@ class DataManager private constructor(application: Application) {
                         title,
                         url,
                         feed.type,
-                        feed.tab,
+                        feed.page,
                         feed.isStarred
                     )
                 db.feedDao().insert(dbFeedNew)
@@ -341,7 +341,7 @@ class DataManager private constructor(application: Application) {
                         feed.title,
                         feed.url,
                         feed.type,
-                        feed.tab,
+                        feed.page,
                         feed.isStarred
                     )
                 db.feedDao().delete(dbFeedOld)
@@ -354,7 +354,7 @@ class DataManager private constructor(application: Application) {
             db.feedDao().delete(feed.id)
 
             db.runInTransaction {
-                val feeds = db.feedDao().getFeedsAfter(feed.tab)
+                val feeds = db.feedDao().getFeedsAfter(feed.page)
                 feeds?.let {
                     for (f in it) {
                         val dbFeed =
@@ -363,7 +363,7 @@ class DataManager private constructor(application: Application) {
                                 f.title,
                                 f.url,
                                 f.type,
-                                f.tab - 1,
+                                f.page - 1,
                                 f.isStarred
                             )
                         db.feedDao().update(dbFeed)

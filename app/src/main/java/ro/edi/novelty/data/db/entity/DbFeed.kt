@@ -20,12 +20,12 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "feeds", indices = [Index(value = ["title", "is_starred"])])
+@Entity(tableName = "feeds", indices = [Index(value = ["title", "page", "is_starred"])])
 data class DbFeed(
     @PrimaryKey val id: Int,
     val title: String,
     val url: String,
     val type: Int,
-    val tab: Int,
+    val page: Int,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = true
 )
