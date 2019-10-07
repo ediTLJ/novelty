@@ -17,14 +17,24 @@ package ro.edi.novelty.ui.adapter
 
 import android.content.Intent
 import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import ro.edi.novelty.R
+import ro.edi.novelty.databinding.NewsItemBinding
 import ro.edi.novelty.model.News
 import ro.edi.novelty.ui.NewsInfoActivity
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 
 class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(NewsDiffCallback()) {
+    companion object {
+        const val NEWS_PUB_DATE = "news_pub_date"
+        const val NEWS_FEED_TITLE = "news_feed_title"
+        const val NEWS_TITLE = "news_title"
+        const val NEWS_STATE = "news_state"
+    }
+
     override fun getModel(): ViewModel {
         return newsModel
     }
@@ -46,17 +56,62 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         itemView.context.startActivity(i)
     }
 
+    override fun bind(binding: ViewDataBinding, position: Int, payloads: MutableList<Any>) {
+        val b = binding as NewsItemBinding
+
+        val payload = payloads.first() as Set<*>
+        payload.forEach {
+            when (it) {
+                NEWS_PUB_DATE -> b.date.text = newsModel.getNewsDisplayDate(position)
+                NEWS_FEED_TITLE -> b.feed.text = getItem(position).feedTitle
+                NEWS_TITLE -> b.title.text = getItem(position).title
+                NEWS_STATE -> {
+                    val colorInfo = ContextCompat.getColor(
+                        binding.root.context,
+                        newsModel.getInfoTextColorRes(binding.root.context, position)
+                    )
+                    val colorTitle = ContextCompat.getColor(
+                        binding.root.context,
+                        newsModel.getTitleTextColorRes(binding.root.context, position)
+                    )
+
+                    b.feed.setTextColor(colorInfo)
+                    b.title.setTextColor(colorTitle)
+                    b.date.setTextColor(colorInfo)
+                }
+            }
+        }
+    }
+
     class NewsDiffCallback : DiffUtil.ItemCallback<News>() {
         override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: News, newItem: News): Boolean {
-            return oldItem.isRead == newItem.isRead
-                && oldItem.isStarred == newItem.isStarred
-                && oldItem.savedDate == newItem.savedDate
-                && oldItem.title == newItem.title
-                && oldItem.text == newItem.text
+            return false // we do this because we want the shown date to always be updated
+        }
+
+        override fun getChangePayload(oldItem: News, newItem: News): Any? {
+            val payload = mutableSetOf<String>()
+
+            payload.add(NEWS_PUB_DATE) // always add this (because we show the relative date/time in the UI)
+
+            if (oldItem.feedTitle != newItem.feedTitle) {
+                payload.add(NEWS_FEED_TITLE)
+            }
+            if (oldItem.title != newItem.title) {
+                payload.add(NEWS_TITLE)
+            }
+            if (oldItem.isRead != newItem.isRead || oldItem.isStarred != newItem.isStarred) {
+                payload.add(NEWS_STATE)
+            }
+
+            if (payload.isEmpty()) {
+                return null
+            }
+
+            return payload
         }
     }
 }
