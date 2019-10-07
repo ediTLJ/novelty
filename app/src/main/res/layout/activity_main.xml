@@ -36,16 +36,17 @@
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways|snap">
+
             <TextView
                 android:id="@+id/toolbar_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fontFamily="@font/novelty"
-                android:gravity="center_vertical"
+                android:gravity="top"
                 android:includeFontPadding="false"
                 android:text="novelty"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="48dp"
+                android:textSize="44dp"
                 tools:ignore="HardcodedText,SpUsage" />
         </androidx.appcompat.widget.Toolbar>
 
