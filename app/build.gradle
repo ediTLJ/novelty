@@ -78,12 +78,12 @@ dependencies {
     testImplementation 'androidx.room:room-testing:2.1.0'
 
     // Material Design
-    implementation 'com.google.android.material:material:1.1.0-alpha10'
+    implementation 'com.google.android.material:material:1.1.0-beta01'
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
-    implementation 'com.squareup.okio:okio:2.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.okio:okio:2.4.1'
 
     // RSS & Atom library
     implementation 'com.ouattararomuald:syndication:1.1.0'
