@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
         val pager = findViewById<ViewPager2>(R.id.pager)
         pager.adapter = adapter
-        pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT // TODO 2?
+        pager.offscreenPageLimit = 1 // ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
         pager.setCurrentItem(1, false)
 
         val tabs = findViewById<TabLayout>(R.id.tabs)

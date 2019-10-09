@@ -25,8 +25,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
@@ -46,12 +48,39 @@ class FeedFragment : Fragment() {
         }
     }
 
+    private var newestDate = 0L
+
     private lateinit var newsModel: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         newsModel = ViewModelProvider(viewModelStore, factory).get(NewsViewModel::class.java)
+    }
+
+    override fun onPause() {
+        val v = view ?: return
+
+//        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(v.context)
+//        val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+
+        val rvNews = v.findViewById<RecyclerView>(R.id.news)
+        val llManager = rvNews.layoutManager as LinearLayoutManager
+        val pos = llManager.findFirstVisibleItemPosition()
+        val date = newsModel.getNews(pos)?.pubDate ?: 0
+
+//        val sharedPrefsEditor = sharedPrefs.edit()
+
+        if (date > newestDate) {
+            newestDate = date
+            // FIXME if starred feed, put newestDate to sharedPrefs?
+//            logi("saving newest seen date $date")
+//            sharedPrefsEditor
+//                .putLong(KEY_NEWEST_SEEN_DATE, date)
+//                .apply()
+        }
+
+        super.onPause()
     }
 
     override fun onCreateView(
@@ -89,15 +118,43 @@ class FeedFragment : Fragment() {
                 applyBottom = true
             )
 
+            clearOnScrollListeners()
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy < 0) {
+                        val llManager = layoutManager as LinearLayoutManager
+                        val pos = llManager.findFirstVisibleItemPosition()
+                        val date =
+                            (recyclerView.adapter as NewsAdapter).currentList[pos]?.pubDate ?: 0
+
+                        // FIXME if starred feed, get newestDate from sharedPrefs, if it's newer
+                        // newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+
+                        if (date >= newestDate) {
+                            newestDate = date
+                            // FIXME if starred feed, put newestDate to sharedPrefs?
+//                            sharedPrefs
+//                                .edit()
+//                                .putLong(KEY_NEWEST_SEEN_DATE, date)
+//                                .apply()
+                        }
+
+                        if (llManager.findFirstVisibleItemPosition() == 0) {
+                            clearTabBadge()
+                        } else {
+                            if (date > newestDate) {
+                                updateTabBadge(-1)
+                            }
+                        }
+                    }
+                }
+            })
+
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             adapter = NewsAdapter(newsModel).apply {
                 setHasStableIds(true)
-            }
-            // TODO initial prefetch
-            activity?.apply {
-                // FIXME on scroll: update new items count in tab bar
             }
         }
 
@@ -134,13 +191,83 @@ class FeedFragment : Fragment() {
                 vEmpty.visibility = View.GONE
                 rvNews.visibility = View.VISIBLE
 
-                (rvNews.adapter as NewsAdapter).submitList(newsList)
+                val rvAdapter = rvNews.adapter as NewsAdapter
+                val llManager = rvNews.layoutManager as LinearLayoutManager
+                val pos = llManager.findFirstVisibleItemPosition()
+                val date = if (pos < 0) 0 else rvAdapter.currentList[pos]?.pubDate ?: 0
 
-                activity?.apply {
-                    // FIXME show new items count in tab bar
+                // FIXME if starred feed, get newestDate from sharedPrefs, if it's newer
+                // newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+
+                if (date >= newestDate) {
+                    newestDate = date
+                }
+                // logi("newestDate: $newestDate")
+
+                val prevNewsCount = rvAdapter.itemCount
+                logi("prevNewsCount: $prevNewsCount")
+
+                rvAdapter.submitList(newsList)
+
+                // if (prevNewsCount == 0) {
+                //
+                // }
+
+                if (newsList[0].pubDate > newestDate) {
+                    val posNew = newsList.indexOfFirst { it.pubDate <= newestDate }
+                    logi("pos: $posNew")
+
+                    setTabBadge(posNew)
                 }
             }
         })
+    }
+
+    @Suppress("SameParameterValue")
+    private fun updateTabBadge(offset: Int) {
+        val tab = findTabByTag(newsModel.getNews(0)?.feedId) ?: return
+        val badge = tab.badge ?: return
+        badge.number += offset
+
+        logi("tab badge set to ${badge.number}")
+    }
+
+    private fun setTabBadge(count: Int) {
+        val tab = findTabByTag(newsModel.getNews(0)?.feedId) ?: return
+
+        if (count <= 0) {
+            tab.removeBadge()
+
+            logi("tab badge cleared")
+            return
+        }
+
+        val badge = tab.orCreateBadge
+        badge.number = count
+
+        logi("tab badge set to $count")
+    }
+
+    private fun clearTabBadge() {
+        val tab = findTabByTag(newsModel.getNews(0)?.feedId) ?: return
+        tab.removeBadge() // or hide it?
+
+        logi("tab badge removed")
+    }
+
+    private fun findTabByTag(feedId: Int?): TabLayout.Tab? {
+        feedId ?: return null
+
+        val tabs = activity?.findViewById<TabLayout>(R.id.tabs) ?: return null
+
+        for (idx in 2 until tabs.tabCount) {
+            val tab = tabs.getTabAt(idx) ?: continue
+            if (tab.tag == feedId) {
+                return tab
+            }
+        }
+
+        return null
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
