@@ -26,9 +26,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
@@ -47,7 +47,7 @@ class MyNewsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProviders.of(this, factory).get(NewsViewModel::class.java)
+        newsModel = ViewModelProvider(viewModelStore, factory).get(NewsViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -100,16 +100,16 @@ class MyNewsFragment : Fragment() {
 
             (rvNews.adapter as NewsAdapter).submitList(newsList)
 
+            val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(0)
+
             if (newsList.isEmpty()) {
                 vEmpty.visibility = View.VISIBLE
                 rvNews.visibility = View.GONE
+                tab?.removeBadge()
             } else {
                 vEmpty.visibility = View.GONE
                 rvNews.visibility = View.VISIBLE
-
-                activity?.apply {
-                    // FIXME on scroll: update items count in tab bar
-                }
+                tab?.orCreateBadge?.number = newsList.size
             }
         })
     }
