@@ -25,7 +25,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +41,10 @@ import timber.log.Timber.i as logi
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this).get(FeedsViewModel::class.java)
+        ViewModelProvider(
+            viewModelStore,
+            defaultViewModelProviderFactory
+        ).get(FeedsViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,18 +87,27 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar.applyWindowInsetsMargin(applyLeft = true, applyTop = false, applyRight = true, applyBottom = false)
+        toolbar.applyWindowInsetsMargin(
+            applyLeft = true,
+            applyTop = false,
+            applyRight = true,
+            applyBottom = false
+        )
 
         val adapter = FeedsPagerAdapter(this, feedsModel)
 
         val pager = findViewById<ViewPager2>(R.id.pager)
         pager.adapter = adapter
-        pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
-        // 2  // FIXME deleting a feed (while its tab/page is cached) might lead to wrong content for following pages
+        pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT // TODO 2?
         pager.setCurrentItem(1, false)
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
-        tabs.applyWindowInsetsMargin(applyLeft = true, applyTop = false, applyRight = true, applyBottom = false)
+        tabs.applyWindowInsetsMargin(
+            applyLeft = true,
+            applyTop = false,
+            applyRight = true,
+            applyBottom = false
+        )
 
         val tabLayoutMediator = TabLayoutMediator(tabs, pager) { tab, page ->
             when (page) {

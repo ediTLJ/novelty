@@ -16,8 +16,6 @@
 package ro.edi.novelty
 
 import android.app.Application
-import android.app.backup.BackupManager
-import android.preference.PreferenceManager
 import com.jakewharton.threetenabp.AndroidThreeTen
 import ro.edi.util.ReleaseTree
 import timber.log.Timber
@@ -34,10 +32,5 @@ class MyApp : Application() {
             Timber.plant(ReleaseTree())
         }
         AndroidThreeTen.init(this)
-
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        sharedPrefs.registerOnSharedPreferenceChangeListener { _, _ ->
-            BackupManager.dataChanged(packageName)
-        }
     }
 }

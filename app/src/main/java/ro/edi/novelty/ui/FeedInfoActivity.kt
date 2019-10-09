@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedInfoBinding
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
@@ -36,7 +36,10 @@ class FeedInfoActivity : AppCompatActivity() {
     }
 
     private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this).get(FeedsViewModel::class.java)
+        ViewModelProvider(
+            viewModelStore,
+            defaultViewModelProviderFactory
+        ).get(FeedsViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

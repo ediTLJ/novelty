@@ -26,7 +26,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityNewsInfoBinding
 import ro.edi.novelty.ui.viewmodel.NewsInfoViewModel
@@ -38,7 +37,7 @@ class NewsInfoActivity : AppCompatActivity() {
     }
 
     private val infoModel: NewsInfoViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProviders.of(this, factory).get(NewsInfoViewModel::class.java)
+        ViewModelProvider(viewModelStore, factory).get(NewsInfoViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
