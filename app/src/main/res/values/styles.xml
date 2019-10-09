@@ -70,7 +70,7 @@
     <style name="App.Badge" parent="Widget.MaterialComponents.Badge">
         <item name="android:textAppearance">@style/App.TextAppearance.Badge</item>
         <item name="backgroundColor">@android:color/transparent</item>
-        <item name="badgeTextColor">?attr/colorOnPrimary</item>
+        <item name="badgeTextColor">?attr/colorPrimary</item>
         <item name="badgeGravity">TOP_END</item>
         <item name="maxCharacterCount">3</item>
     </style>
