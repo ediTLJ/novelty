@@ -46,5 +46,7 @@
         <item name="textAppearanceButton">@style/App.TextAppearance.Button</item>
         <item name="textAppearanceCaption">@style/App.TextAppearance.Caption</item>
         <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
+
+        <item name="badgeStyle">@style/App.Badge</item>
     </style>
 </resources>

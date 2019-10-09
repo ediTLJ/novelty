@@ -61,4 +61,25 @@
         <item name="fontFamily">@font/fira_sans_condensed</item>
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
     </style>
+
+<!--    <style name="App.TextAppearance.Tab" parent="TextAppearance.MaterialComponents.Button">-->
+<!--        <item name="fontFamily">@font/roboto_condensed_bold</item>-->
+<!--        <item name="android:fontFamily">@font/roboto_condensed_bold</item>-->
+<!--    </style>-->
+
+    <style name="App.Badge" parent="Widget.MaterialComponents.Badge">
+        <item name="android:textAppearance">@style/App.TextAppearance.Badge</item>
+        <item name="backgroundColor">@android:color/transparent</item>
+        <item name="badgeTextColor">?attr/colorOnPrimary</item>
+        <item name="badgeGravity">TOP_END</item>
+        <item name="maxCharacterCount">3</item>
+    </style>
+
+    <style name="App.TextAppearance.Badge" parent="TextAppearance.MaterialComponents.Badge">
+        <item name="fontFamily">@font/fira_sans_condensed</item>
+        <item name="android:fontFamily">@font/fira_sans_condensed</item>
+<!--        <item name="android:textColor">?attr/colorPrimaryVariant</item>-->
+<!--        <item name="android:textSize">14sp</item>-->
+<!--        <item name="android:textStyle">bold</item>-->
+    </style>
 </resources>

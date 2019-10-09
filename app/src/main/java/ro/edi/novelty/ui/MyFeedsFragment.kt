@@ -15,6 +15,7 @@
 */
 package ro.edi.novelty.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,8 +27,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
@@ -39,6 +43,10 @@ import timber.log.Timber.i as logi
 
 class MyFeedsFragment : Fragment() {
     companion object {
+        private const val KEY_NEWEST_SEEN_DATE = "key_my_feeds_newest_date"
+        private const val KEY_LAST_SEEN_DATE = "key_my_feeds_last_date"
+        private const val KEY_LAST_SEEN_OFFSET = "key_my_feeds_last_offset"
+
         fun newInstance() = MyFeedsFragment()
     }
 
@@ -48,6 +56,37 @@ class MyFeedsFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         newsModel = ViewModelProviders.of(this, factory).get(NewsViewModel::class.java)
+    }
+
+    override fun onPause() {
+        val v = view ?: return
+
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(v.context)
+        val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+
+        val rvNews = v.findViewById<RecyclerView>(R.id.news)
+        val llManager = rvNews.layoutManager as LinearLayoutManager
+        val pos = llManager.findFirstVisibleItemPosition()
+        val date = newsModel.getNews(pos)?.pubDate ?: 0
+
+        val sharedPrefsEditor = sharedPrefs.edit()
+
+        if (date > newestDate) {
+            logi("saving newest seen date $date")
+            sharedPrefsEditor
+                .putLong(KEY_NEWEST_SEEN_DATE, date)
+        }
+
+        val offset = rvNews?.getChildAt(0)?.top?.minus(rvNews.paddingTop)
+            ?: -rvNews.paddingTop
+
+        logi("saving last seen date $date and offset $offset")
+        sharedPrefsEditor
+            .putLong(KEY_LAST_SEEN_DATE, date)
+            .putInt(KEY_LAST_SEEN_OFFSET, offset)
+            .apply()
+
+        super.onPause()
     }
 
     override fun onCreateView(
@@ -67,6 +106,7 @@ class MyFeedsFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
         vRefresh.apply {
@@ -76,8 +116,9 @@ class MyFeedsFragment : Fragment() {
             }
         }
 
-        val rvNews = view.findViewById<RecyclerView>(R.id.news)
+        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(view.context)
 
+        val rvNews = view.findViewById<RecyclerView>(R.id.news)
         rvNews.apply {
             applyWindowInsetsPadding(
                 applyLeft = true,
@@ -86,15 +127,38 @@ class MyFeedsFragment : Fragment() {
                 applyBottom = true
             )
 
+            clearOnScrollListeners()
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy < 0) {
+                        val llManager = layoutManager as LinearLayoutManager
+                        val pos = llManager.findFirstVisibleItemPosition()
+                        val date = newsModel.getNews(pos)?.pubDate ?: 0
+
+                        val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+                        if (date >= newestDate) {
+                            sharedPrefs
+                                .edit()
+                                .putLong(KEY_NEWEST_SEEN_DATE, date)
+                                .apply()
+                        }
+
+                        if (llManager.findFirstVisibleItemPosition() == 0) {
+                            clearTabBadge()
+                        } else {
+                            if (date > newestDate) {
+                                updateTabBadge(-1)
+                            }
+                        }
+                    }
+                }
+            })
+
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
             setItemViewCacheSize(20)
             adapter = NewsAdapter(newsModel).apply {
                 setHasStableIds(true)
-            }
-
-            activity?.apply {
-                // FIXME on scroll: update new items count in tab bar
             }
         }
 
@@ -131,13 +195,75 @@ class MyFeedsFragment : Fragment() {
                 vEmpty.visibility = View.GONE
                 rvNews.visibility = View.VISIBLE
 
-                (rvNews.adapter as NewsAdapter).submitList(newsList)
+                val rvAdapter = rvNews.adapter as NewsAdapter
+                val llManager = rvNews.layoutManager as LinearLayoutManager
 
-                activity?.apply {
-                    // FIXME show new items count in tab bar
+                val prevNewsCount = rvAdapter.itemCount
+                logi("prevNewsCount: $prevNewsCount")
+
+                rvAdapter.submitList(newsList)
+
+                if (prevNewsCount == 0) {
+                    val lastDate = sharedPrefs.getLong(KEY_LAST_SEEN_DATE, 0)
+                    logi("lastDate: $lastDate")
+
+                    val pos = newsList.indexOfFirst { it.pubDate <= lastDate }
+                    logi("pos: $pos")
+
+                    llManager.scrollToPositionWithOffset(
+                        if (pos < 0) 0 else pos,
+                        sharedPrefs.getInt(KEY_LAST_SEEN_OFFSET, -rvNews.paddingTop)
+                    )
+                }
+
+                val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+                logi("newestDate: $newestDate")
+
+                if (newsList[0].pubDate > newestDate) {
+                    val pos = newsList.indexOfFirst { it.pubDate <= newestDate }
+                    logi("pos: $pos")
+
+                    setTabBadge(pos)
                 }
             }
         })
+    }
+
+    @Suppress("SameParameterValue")
+    private fun updateTabBadge(offset: Int) {
+        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+        val badge = tab.badge ?: return
+        badge.number += offset
+
+        logi("tab badge set to ${badge.number}")
+    }
+
+    private fun setTabBadge(count: Int) {
+        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+        val badge = tab.orCreateBadge
+        badge.number = count
+
+        logi("tab badge set to $count")
+//            val tabText = tab.text
+//            val idxLastSpace = tabText?.indexOfLast { it == ' ' } ?: -1
+//            val tabTitle =
+//                if (idxLastSpace < 0 || tabText?.getOrNull(idxLastSpace + 1) != '●') tabText
+//                else tabText.subSequence(0, idxLastSpace)
+//
+//            val tabTextNew = tabTitle?.toString()?.plus(' ').plus('●')
+//            logi("new tab text: $tabTextNew")
+//            tab.text = tabTextNew
+    }
+
+    private fun clearTabBadge() {
+        activity?.apply {
+            val tab = findViewById<TabLayout>(R.id.tabs).getTabAt(1) ?: return
+
+            tab.removeBadge() // or hide it?
+
+            logi("tab badge removed")
+            // tab.text = getText(R.string.tab_my_feeds)
+        }
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
