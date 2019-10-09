@@ -381,8 +381,6 @@ class DataManager private constructor(application: Application) {
      * **Don't call this on the main UI thread!**
      */
     private fun fetchNews(feedId: Int, feedUrl: String, feedType: Int) {
-        logi("fetching $feedType feed: $feedUrl")
-
         when (feedType) {
             TYPE_ATOM -> fetchAtomNews(feedId, feedUrl)
             TYPE_RSS -> fetchRssNews(feedId, feedUrl)

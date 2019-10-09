@@ -132,7 +132,8 @@ class MyFeedsFragment : Fragment() {
                     if (dy < 0) {
                         val llManager = layoutManager as LinearLayoutManager
                         val pos = llManager.findFirstVisibleItemPosition()
-                        val date = newsModel.getNews(pos)?.pubDate ?: 0
+                        val date =
+                            (recyclerView.adapter as NewsAdapter).currentList[pos]?.pubDate ?: 0
 
                         val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
                         if (date >= newestDate) {
@@ -239,30 +240,25 @@ class MyFeedsFragment : Fragment() {
 
     private fun setTabBadge(count: Int) {
         val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+
+        if (count <= 0) {
+            tab.removeBadge()
+
+            logi("tab badge cleared")
+            return
+        }
+
         val badge = tab.orCreateBadge
         badge.number = count
 
         logi("tab badge set to $count")
-//            val tabText = tab.text
-//            val idxLastSpace = tabText?.indexOfLast { it == ' ' } ?: -1
-//            val tabTitle =
-//                if (idxLastSpace < 0 || tabText?.getOrNull(idxLastSpace + 1) != '●') tabText
-//                else tabText.subSequence(0, idxLastSpace)
-//
-//            val tabTextNew = tabTitle?.toString()?.plus(' ').plus('●')
-//            logi("new tab text: $tabTextNew")
-//            tab.text = tabTextNew
     }
 
     private fun clearTabBadge() {
-        activity?.apply {
-            val tab = findViewById<TabLayout>(R.id.tabs).getTabAt(1) ?: return
+        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+        tab.removeBadge() // or hide it?
 
-            tab.removeBadge() // or hide it?
-
-            logi("tab badge removed")
-            // tab.text = getText(R.string.tab_my_feeds)
-        }
+        logi("tab badge removed")
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
