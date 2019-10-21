@@ -61,6 +61,8 @@ class FeedInfoActivity : AppCompatActivity() {
 
         binding.inputTitle.requestFocus()
 
+        // FIXME add TextWatcher to clear potential errors on key pressed
+
         binding.editUrl.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 binding.btnAdd.performClick()
@@ -80,6 +82,7 @@ class FeedInfoActivity : AppCompatActivity() {
 
             binding.btnAdd.setOnClickListener { btn ->
                 btn.isEnabled = false
+                binding.loading.show()
 
                 binding.inputTitle.error = ""
                 binding.inputUrl.error = ""
@@ -128,6 +131,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         }
                         if (isDuplicate) {
                             btn.isEnabled = true
+                            binding.loading.hide()
                             return@setOnClickListener
                         }
 
@@ -137,6 +141,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         feedsModel.addFeed(title, url, 0, feeds.size + 2, true)
                     }
 
+                    binding.loading.hide()
                     finish()
 
                     // TODO list of feeds to pick from, if more feeds found
