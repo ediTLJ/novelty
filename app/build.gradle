@@ -13,6 +13,13 @@ android {
         versionCode 10
         versionName '2.0'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.incremental": "true"]
+            }
+        }
     }
 
     buildTypes {
@@ -51,39 +58,39 @@ dependencies {
 
     // Kotlin
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
 
     // AndroidX
     implementation 'androidx.appcompat:appcompat:1.1.0'
     // implementation 'androidx.appcompat:appcompat-resources:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0-alpha04'
+    implementation 'androidx.core:core-ktx:1.2.0-beta01'
     implementation 'androidx.preference:preference-ktx:1.1.0'
     // implementation 'android.arch.work:work-runtime-ktx:2.0.0'
     // androidTestImplementation 'android.arch.work:work-testing:2.0.0'
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
-    implementation "androidx.viewpager2:viewpager2:1.0.0-beta04"
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta05'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
+    implementation "androidx.viewpager2:viewpager2:1.0.0-beta05"
 
     // Architecture Components: LiveData, ViewModel...
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha05'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha05'
-    kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0-alpha05'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-beta01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-beta01'
+    kapt 'androidx.lifecycle:lifecycle-common-java8:2.2.0-beta01'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.2.0-rc01'
-    kapt 'androidx.room:room-compiler:2.2.0-rc01'
-    implementation "androidx.room:room-ktx:2.2.0-rc01"
-    testImplementation 'androidx.room:room-testing:2.2.0-rc01'
+    implementation 'androidx.room:room-runtime:2.2.0'
+    kapt 'androidx.room:room-compiler:2.2.0'
+    implementation "androidx.room:room-ktx:2.2.0"
+    testImplementation 'androidx.room:room-testing:2.2.0'
 
     // Material Design
     implementation 'com.google.android.material:material:1.1.0-beta01'
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
     implementation 'com.squareup.okio:okio:2.4.1'
 
     // RSS & Atom library
