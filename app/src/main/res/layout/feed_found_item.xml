@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="androidx.core.content.ContextCompat" />
+
+        <variable
+            name="position"
+            type="int" />
+
+        <variable
+            name="model"
+            type="ro.edi.novelty.ui.viewmodel.FeedsFoundViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginEnd="@dimen/activity_margin"
+        android:layout_marginBottom="@dimen/activity_margin"
+        android:background="@drawable/bkg_item_grey_light"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/activity_margin"
+        android:paddingEnd="@dimen/activity_margin">
+
+        <TextView
+            android:id="@+id/feed_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@{model.getFeed(position).title}"
+            android:textAppearance="@style/App.TextAppearance.Subtitle1"
+            android:textColor="?android:textColorPrimary"
+            tools:text="Feed Title" />
+
+        <TextView
+            android:id="@+id/feed_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@{model.getFeed(position).url}"
+            android:textAppearance="@style/App.TextAppearance.Body2"
+            android:textColor="?android:textColorSecondary"
+            tools:text="https://www.website.com/feeds/atom/my_news_feed" />
+    </LinearLayout>
+</layout>

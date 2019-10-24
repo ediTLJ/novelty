@@ -25,6 +25,7 @@ import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ouattararomuald.syndication.DeserializationException
+import okhttp3.internal.closeQuietly
 import org.threeten.bp.Instant
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.chrono.IsoChronology
@@ -34,16 +35,19 @@ import ro.edi.novelty.data.db.AppDatabase
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.data.db.entity.DbNews
 import ro.edi.novelty.data.remote.FeedService
+import ro.edi.novelty.data.remote.HttpService
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.News
 import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 import ro.edi.util.AppExecutors
 import ro.edi.util.Singleton
+import java.io.BufferedReader
 import java.lang.reflect.UndeclaredThrowableException
 import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
 import timber.log.Timber.w as logw
+
 
 /**
  * This class manages the underlying data.
@@ -59,9 +63,12 @@ import timber.log.Timber.w as logw
 class DataManager private constructor(application: Application) {
     private val db: AppDatabase by lazy { AppDatabase.getInstance(application) }
 
+    val feedsFound = MutableLiveData<List<Feed>>()
     val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
 
     init {
+        feedsFound.value = null
+
         val isFetching = MutableLiveData<Boolean>()
         isFetching.value = true
         isFetchingArray.put(0, isFetching)
@@ -136,6 +143,24 @@ class DataManager private constructor(application: Application) {
             .appendOffset("+HHMM", "GMT")
             .toFormatter().withResolverStyle(ResolverStyle.SMART)
             .withChronology(IsoChronology.INSTANCE)
+    }
+
+    /**
+     * Get available feeds at specified URL.
+     *
+     * This makes a call to get data from the server.
+     */
+    fun findFeeds(url: String): LiveData<List<Feed>> {
+        feedsFound.value = null
+        AppExecutors.networkIO().execute {
+            feedsFound.postValue(fetchFeeds(url))
+        }
+
+        return feedsFound
+    }
+
+    fun clearFoundFeeds() {
+        feedsFound.value = null
     }
 
     /**
@@ -227,7 +252,7 @@ class DataManager private constructor(application: Application) {
         return db.newsDao().getInfo(newsId)
     }
 
-    fun updateFeedType(feedId: Int, type: Int) {
+    private fun updateFeedType(feedId: Int, type: Int) {
         AppExecutors.diskIO().execute {
             db.feedDao().updateType(feedId, type)
         }
@@ -376,6 +401,207 @@ class DataManager private constructor(application: Application) {
     }
 
     /**
+     * Get all available feeds at the specified URL.
+     *
+     * **Don't call this on the main UI thread!**
+     */
+    private fun fetchFeeds(url: String): List<Feed> {
+        logi("fetching URL: $url")
+
+        val call = HttpService.instance.get(url)
+
+        val response = runCatching { call.execute() }.getOrElse {
+            loge(it, "error fetching or parsing URL")
+            return emptyList()
+        }
+
+        if (response.isSuccessful) {
+            val body = response.body() ?: return emptyList()
+
+            var reader: BufferedReader? = null
+            val feeds: ArrayList<Feed> = ArrayList()
+
+            runCatching {
+                val contentType = body.contentType()
+
+                if (contentType?.type.equals("text", true)
+                    && contentType?.subtype.equals("html", true)
+                ) {
+                    logi("URL points to an HTML page")
+
+                    reader = BufferedReader(body.charStream())
+
+                    var line: String? = null
+                    var idxBody = -1
+                    var idxLink = -1
+                    var hasFeeds = false
+
+                    while (true) {
+                        if (idxLink < 0) {
+                            line = reader?.readLine()
+                            // logi("read line: $line")
+                        }
+
+                        line ?: break
+
+                        if (idxBody < 0) {
+                            idxBody = line.indexOf("<body ", 0, true)
+                        }
+
+                        // this won't work if link attributes are on different lines, but who does that? :)
+
+                        idxLink = line.indexOf("<link ", if (idxLink < 0) 0 else idxLink, true)
+                        if (idxLink < 0) { // no link found
+                            if (idxBody < 0) {
+                                // no body yet either, so keep looking for feeds
+                                continue
+                            } else {
+                                // body reached, stop looking for feeds
+                                break
+                            }
+                        }
+
+                        if (idxBody in 0 until idxLink) {
+                            // link after body, stop looking for feeds
+                            break
+                        }
+
+                        idxLink += 5
+
+                        val idxNextLink = line.indexOf("<link ", idxLink, true)
+
+                        // if current link rel is not alternate, keep looking
+                        var idxRelAlternate = line.indexOf(" rel=\"alternate\"", idxLink, true)
+                        if (idxRelAlternate < 0 || idxNextLink in idxLink until idxRelAlternate) {
+                            idxRelAlternate = line.indexOf(" rel='alternate'", idxLink, true)
+                            if (idxRelAlternate < 0 || idxNextLink in idxLink until idxRelAlternate) {
+                                continue
+                            }
+                        }
+
+                        // if current link type is not rss or atom, keep looking
+                        var idxTypeRss =
+                            line.indexOf(" type=\"application/rss+xml\"", idxLink, true)
+                        if (idxTypeRss < 0 || idxNextLink in idxLink until idxTypeRss) {
+                            idxTypeRss = line.indexOf(" type='application/rss+xml'", idxLink, true)
+                            if (idxTypeRss < 0 || idxNextLink in idxLink until idxTypeRss) {
+                                var idxTypeAtom =
+                                    line.indexOf(" type=\"application/atom+xml\"", idxLink, true)
+                                if (idxTypeAtom < 0 || idxNextLink in idxLink until idxTypeAtom) {
+                                    idxTypeAtom =
+                                        line.indexOf(" type='application/atom+xml'", idxLink, true)
+                                    if (idxTypeAtom < 0 || idxNextLink in idxLink until idxTypeAtom) {
+                                        continue
+                                    }
+                                }
+                            }
+                        }
+
+                        var quote = '\"'
+                        var idxHref = line.indexOf(" href=\"", idxLink, true)
+                        if (idxHref < 0 || idxNextLink in idxLink until idxHref) {
+                            quote = '\''
+                            idxHref = line.indexOf(" href='", idxLink, true)
+                            if (idxHref < 0 || idxNextLink in idxLink until idxHref) {
+                                continue
+                            }
+                        }
+
+                        hasFeeds = true
+
+                        var href = line.substring(idxHref + 7, line.indexOf(quote, idxHref + 9))
+                            .trim { it <= ' ' }
+                            .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
+
+                        if (href.startsWith("/")) {
+                            href = url + href
+                        } else if (!href.startsWith("http://", true)
+                            && !href.startsWith("https://", true)
+                        ) {
+                            href = "$url/$href"
+                        }
+
+                        var hasTitle = true
+
+                        quote = '\"'
+                        var idxTitle = line.indexOf(" title=\"", idxLink, true)
+                        if (idxTitle < 0 || idxNextLink in idxLink until idxTitle) {
+                            quote = '\''
+                            idxTitle = line.indexOf(" title='", idxLink, true)
+                            if (idxTitle < 0 || idxNextLink in idxLink until idxTitle) {
+                                hasTitle = false
+                            }
+                        }
+
+                        val title = if (hasTitle) {
+                            line.substring(idxTitle + 8, line.indexOf(quote, idxTitle + 8))
+                                .trim { it <= ' ' }
+                                .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null)
+                                .toString()
+                        } else {
+                            ""
+                        }
+
+                        logi("found feed: $title - $href")
+
+                        feeds.add(Feed(href.hashCode(), title, href, 0, 0, false))
+                        continue
+                    }
+
+                    reader?.closeQuietly()
+                    body.closeQuietly()
+
+                    if (!hasFeeds) {
+                        logi("no feeds found!")
+                    }
+                } else {
+                    reader = BufferedReader(body.charStream())
+
+                    logi("URL is a feed: $url")
+
+                    var type = 0
+                    while (true) {
+                        val line = reader?.readLine() ?: break
+                        // logi("read line: $line")
+
+                        val idxRss = line.indexOf("<rss ", 0, true)
+                        if (idxRss < 0) {
+                            val idxFeed = line.indexOf("<feed ", 0, true)
+                            if (idxFeed < 0) {
+                                continue
+                            } else {
+                                type = TYPE_ATOM
+                                break
+                            }
+                        } else {
+                            type = TYPE_RSS
+                            break
+                        }
+                    }
+
+                    feeds.add(Feed(url.hashCode(), "", url, type, 0, false))
+                }
+
+                reader?.closeQuietly()
+                body.closeQuietly()
+
+                return feeds
+            }.getOrElse {
+                loge(it)
+
+                reader?.closeQuietly()
+                body.closeQuietly()
+
+                return emptyList()
+            }
+        } else {
+            // ignore errors, for now
+            loge("error fetching URL [%d]: %s", response.code(), response.errorBody())
+            return emptyList()
+        }
+    }
+
+    /**
      * Get all news from the specified feed URL.
      *
      * **Don't call this on the main UI thread!**
@@ -386,8 +612,9 @@ class DataManager private constructor(application: Application) {
             TYPE_RSS -> fetchRssNews(feedId, feedUrl)
             else -> when (fetchRssNews(feedId, feedUrl)) {
                 TYPE_ATOM -> {
-                    fetchAtomNews(feedId, feedUrl)
-                    updateFeedType(feedId, TYPE_ATOM)
+                    if (fetchAtomNews(feedId, feedUrl)) {
+                        updateFeedType(feedId, TYPE_ATOM)
+                    }
                 }
                 TYPE_RSS -> updateFeedType(feedId, TYPE_RSS)
             }
@@ -398,8 +625,10 @@ class DataManager private constructor(application: Application) {
      * Get all news from the specified Atom feed URL.
      *
      * **Don't call this on the main UI thread!**
+     *
+     * @return true if successful, false if error
      */
-    private fun fetchAtomNews(feedId: Int, feedUrl: String) {
+    private fun fetchAtomNews(feedId: Int, feedUrl: String): Boolean {
         logi("fetching Atom feed: $feedUrl")
 
         val atomFeed = runCatching {
@@ -412,11 +641,11 @@ class DataManager private constructor(application: Application) {
             }
 
             // isFetching.postValue(false)
-            return
+            return false
         }
 
         val news = atomFeed.items
-        news ?: return
+        news ?: return false
 
         val dbNews = ArrayList<DbNews>(news.size)
 
@@ -463,6 +692,7 @@ class DataManager private constructor(application: Application) {
             db.newsDao().deleteAllButLatest(feedId, 100)
         }
         // isFetching.postValue(false)
+        return true
     }
 
     /**

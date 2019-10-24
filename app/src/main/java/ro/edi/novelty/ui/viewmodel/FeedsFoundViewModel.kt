@@ -18,38 +18,15 @@ package ro.edi.novelty.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.Feed
-import ro.edi.novelty.model.TYPE_ATOM
-import ro.edi.novelty.model.TYPE_RSS
 
-class AddFeedsViewModel(application: Application) : AndroidViewModel(application) {
+class FeedsFoundViewModel(application: Application) : AndroidViewModel(application) {
     val feeds: LiveData<List<Feed>> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(getApplication()).getFeeds()
+        DataManager.getInstance(getApplication()).feedsFound
     }
 
     fun getFeed(position: Int): Feed? {
         return feeds.value?.getOrNull(position)
-    }
-
-    fun getFeedTypeRes(position: Int): Int {
-        getFeed(position)?.let {
-            return when (it.type) {
-                TYPE_ATOM -> R.string.type_atom
-                TYPE_RSS -> R.string.type_rss
-                else -> R.string.type_none
-            }
-        }
-
-        return R.string.type_none
-    }
-
-    fun addFeed(title: String, url: String, type: Int, tab: Int, isStarred: Boolean) {
-        DataManager.getInstance(getApplication()).insertFeed(title, url, type, tab, isStarred)
-    }
-
-    fun updateFeed(feed: Feed, title: String, url: String) {
-        DataManager.getInstance(getApplication()).updateFeed(feed, title, url)
     }
 }
