@@ -32,11 +32,11 @@
     <string name="feed_title">Title</string>
     <string name="feed_title_too_long">Title too long!</string>
     <string name="feed_title_required">Title is required!</string>
-    <string name="feed_title_duplicate">This title exists already!</string>
+    <string name="feed_title_duplicate">This title already exists!</string>
     <string name="feed_url">URL</string>
     <string name="feed_url_helper">Website or feed URL.</string>
     <string name="feed_url_required">Link is required!</string>
-    <string name="feed_url_duplicate">This feed exists already!</string>
+    <string name="feed_url_duplicate">This feed already exists!</string>
 
     <!-- INFO -->
     <string name="info"><b>Novelty</b> is a simple news reader with a nice &amp; clean UI.
