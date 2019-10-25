@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">rss.cnn.com</domain>
         <domain includeSubdomains="true">feeds.reuters.com</domain>
+        <domain includeSubdomains="true">feeds.feedburner.com</domain>
     </domain-config>
 </network-security-config>
