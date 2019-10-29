@@ -780,15 +780,49 @@ class DataManager private constructor(application: Application) {
                 }
             }
 
+            val author: StringBuilder?
+            if (item.authors.isNullOrEmpty()) {
+                author = null
+            } else {
+                author = StringBuilder(16)
+                for (a in item.authors) {
+                    author.append(a.name)
+                    author.append(',')
+                    author.append(' ')
+                }
+                author.deleteCharAt(author.length - 1)
+                author.deleteCharAt(author.length - 1)
+            }
+
+            var link: String?
+            if (item.links.isNullOrEmpty()) {
+                link = null
+            } else {
+                if (item.links.size == 1) {
+                    val l = item.links.first()
+                    link = l.href ?: l.value
+                } else {
+                    link = null
+                    for (l in item.links) {
+                        if (l.rel == null) {
+                            link = l.href ?: l.value
+                        } else if (l.rel == "alternate") {
+                            link = l.href ?: l.value
+                            break
+                        }
+                    }
+                }
+            }
+
             dbNews.add(
                 DbNews(
                     id,
                     feedId,
                     title,
                     cleanHtml(item.content),
-                    item.author?.name,
+                    author?.toString(),
                     pubDate,
-                    item.link?.href,
+                    link,
                     Instant.now().toEpochMilli()
                 )
             )

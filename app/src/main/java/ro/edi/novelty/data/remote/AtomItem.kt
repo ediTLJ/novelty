@@ -16,6 +16,7 @@
 package ro.edi.novelty.data.remote
 
 import org.simpleframework.xml.Element
+import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 import java.io.Serializable
 
@@ -45,11 +46,11 @@ data class AtomItem(
     @param:Element(name = "content", required = false)
     val content: String? = null,
 
-    @field:Element(name = "link", required = false)
-    @param:Element(name = "link", required = false)
-    val link: AtomLink? = null,
+    @field:ElementList(inline = true, required = false)
+    @param:ElementList(inline = true, required = false)
+    val links: List<AtomLink>? = ArrayList(),
 
-    @field:Element(name = "author", required = false)
-    @param:Element(name = "author", required = false)
-    val author: AtomAuthor? = null
+    @field:ElementList(inline = true, required = false)
+    @param:ElementList(inline = true, required = false)
+    val authors: List<AtomAuthor>? = ArrayList()
 ) : Serializable

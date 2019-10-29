@@ -17,11 +17,20 @@ package ro.edi.novelty.data.remote
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Root
+import org.simpleframework.xml.Text
 import java.io.Serializable
 
 @Root(name = "link", strict = false)
 data class AtomLink(
     @param:Attribute(name = "href", required = false)
     @field:Attribute(name = "href", required = false)
-    val href: String? = null
+    val href: String? = null,
+
+    @param:Attribute(name = "rel", required = false)
+    @field:Attribute(name = "rel", required = false)
+    val rel: String? = null,
+
+    @param:Text(required = false)
+    @field:Text(required = false)
+    val value: String? = null
 ) : Serializable
