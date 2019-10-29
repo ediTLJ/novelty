@@ -108,8 +108,6 @@ class FeedInfoActivity : AppCompatActivity() {
 
                     feed ?: return@FeedsFoundAdapter
 
-                    // TODO get actual feed to check type, if type == 0?
-
                     feedsModel.addFeed(
                         title,
                         feed.url,
@@ -218,16 +216,16 @@ class FeedInfoActivity : AppCompatActivity() {
                 // logi("feeds: $feeds")
 
                 if (feeds.isEmpty()) {
-                    // FIXME show "no valid feeds found" error
+                    // FIXME show "no feeds found" error
                     binding.btnAdd.isEnabled = true
                     binding.loading.hide()
                 } else {
                     val title = binding.editTitle.text.toString().trim { it <= ' ' }
 
                     if (feeds.size == 1) {
-                        val feed = feeds.first()
+                        // FIXME check if already in db
 
-                        // TODO get actual feed to check type, if type == 0?
+                        val feed = feeds.first()
 
                         feedsModel.addFeed(
                             title,
@@ -240,8 +238,6 @@ class FeedInfoActivity : AppCompatActivity() {
                         DataManager.getInstance(application).clearFoundFeeds()
                         finish()
                     } else {
-                        (binding.feeds.adapter as FeedsFoundAdapter).submitList(feeds)
-
                         binding.addFeedContainer.visibility = View.GONE
 
                         val imm =
@@ -251,6 +247,10 @@ class FeedInfoActivity : AppCompatActivity() {
                         binding.header.text = title
                         binding.header.visibility = View.VISIBLE
                         binding.feeds.visibility = View.VISIBLE
+
+                        (binding.feeds.adapter as FeedsFoundAdapter).submitList(feeds)
+
+                        // TODO what about feeds already in db? hide or show them as already added
                     }
                 }
             })

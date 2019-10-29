@@ -427,14 +427,13 @@ class DataManager private constructor(application: Application) {
                 if (contentType?.type.equals("text", true)
                     && contentType?.subtype.equals("html", true)
                 ) {
-                    logi("URL points to an HTML page")
+                    logi("URL seems to be an HTML page")
 
                     reader = BufferedReader(body.charStream())
 
                     var line: String? = null
                     var idxBody = -1
                     var idxLink = -1
-                    var hasFeeds = false
 
                     while (true) {
                         if (idxLink < 0) {
@@ -444,8 +443,13 @@ class DataManager private constructor(application: Application) {
 
                         line ?: break
 
+                        // TODO add check for "<html "/"<html>" too?
+
                         if (idxBody < 0) {
                             idxBody = line.indexOf("<body ", 0, true)
+                            if (idxBody < 0) {
+                                idxBody = line.indexOf("<body>", 0, true)
+                            }
                         }
 
                         // this won't work if link attributes are on different lines, but who does that? :)
@@ -507,8 +511,6 @@ class DataManager private constructor(application: Application) {
                             }
                         }
 
-                        hasFeeds = true
-
                         var href = line.substring(idxHref + 7, line.indexOf(quote, idxHref + 9))
                             .trim { it <= ' ' }
                             .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
@@ -551,13 +553,121 @@ class DataManager private constructor(application: Application) {
                     reader?.closeQuietly()
                     body.closeQuietly()
 
-                    if (!hasFeeds) {
-                        logi("no feeds found!")
+                    if (feeds.isEmpty()) {
+                        // apparently some feeds have text/html content type :|
+
+                        logi("URL seems to be a feed after all: $url")
+
+                        val feedCall = HttpService.instance.get(url)
+                        val feedResponse = runCatching { feedCall.execute() }.getOrNull()
+
+                        if (feedResponse?.isSuccessful == true) {
+                            val feedBody = feedResponse.body() ?: return emptyList()
+                            var feedReader: BufferedReader? = null
+
+                            runCatching {
+                                feedReader = BufferedReader(feedBody.charStream())
+
+                                var feedType = 0
+                                while (true) {
+                                    val feedLine = feedReader?.readLine() ?: break
+                                    // logi("read line: $line")
+
+                                    val idxRss = feedLine.indexOf("<rss ", 0, true)
+                                    if (idxRss < 0) {
+                                        val idxFeed = feedLine.indexOf("<feed ", 0, true)
+                                        if (idxFeed < 0) {
+                                            continue
+                                        } else {
+                                            feedType = TYPE_ATOM
+                                            break
+                                        }
+                                    } else {
+                                        feedType = TYPE_RSS
+                                        break
+                                    }
+                                }
+
+                                if (feedType > 0) {
+                                    feeds.add(Feed(url.hashCode(), "", url, feedType, 0, false))
+                                } else {
+                                    logi("no feeds found!")
+                                }
+                            }.getOrElse {
+                                loge(it)
+
+                                feedReader?.closeQuietly()
+                                feedBody.closeQuietly()
+                            }
+                        } else {
+                            loge("error fetching URL: $url")
+                            loge(
+                                "error fetching URL [%d]: %s",
+                                feedResponse?.code(),
+                                feedResponse?.errorBody()
+                            )
+                        }
+                    } else {
+                        logi("found ${feeds.size} feeds...")
+
+                        for (feed in feeds) {
+                            logi("fetching feed URL: ${feed.url}")
+
+                            val feedCall = HttpService.instance.get(feed.url)
+                            val feedResponse = runCatching { feedCall.execute() }.getOrNull()
+
+                            if (feedResponse?.isSuccessful == true) {
+                                val feedBody = feedResponse.body() ?: continue
+                                var feedReader: BufferedReader? = null
+
+                                // TODO remove feeds with invalid URL or unknown type
+
+                                runCatching {
+                                    feedReader = BufferedReader(feedBody.charStream())
+
+                                    logi("feed URL is valid: ${feed.url}")
+
+                                    while (true) {
+                                        val feedLine = feedReader?.readLine() ?: break
+                                        // logi("read line: $line")
+
+                                        val idxRss = feedLine.indexOf("<rss ", 0, true)
+                                        if (idxRss < 0) {
+                                            val idxFeed = feedLine.indexOf("<feed ", 0, true)
+                                            if (idxFeed < 0) {
+                                                continue
+                                            } else {
+                                                feed.type = TYPE_ATOM
+                                                break
+                                            }
+                                        } else {
+                                            feed.type = TYPE_RSS
+                                            break
+                                        }
+                                    }
+
+                                    feedReader?.closeQuietly()
+                                    feedBody.closeQuietly()
+                                }.getOrElse {
+                                    loge(it)
+
+                                    feedReader?.closeQuietly()
+                                    feedBody.closeQuietly()
+                                }
+                            } else {
+                                loge("error fetching feed URL: ${feed.url}")
+                                loge(
+                                    "error fetching feed URL [%d]: %s",
+                                    feedResponse?.code(),
+                                    feedResponse?.errorBody()
+                                )
+                            }
+                        }
                     }
                 } else {
                     reader = BufferedReader(body.charStream())
 
-                    logi("URL is a feed: $url")
+                    logi("URL seems to be a feed: $url")
 
                     var type = 0
                     while (true) {
@@ -595,7 +705,7 @@ class DataManager private constructor(application: Application) {
                 return emptyList()
             }
         } else {
-            // ignore errors, for now
+            // ignore error
             loge("error fetching URL [%d]: %s", response.code(), response.errorBody())
             return emptyList()
         }

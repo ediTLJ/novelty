@@ -32,6 +32,7 @@ class FeedsFoundAdapter(
     companion object {
         const val FEED_TITLE = "feed_title"
         const val FEED_URL = "feed_url"
+        const val FEED_TYPE = "feed_type"
     }
 
     override fun getModel(): ViewModel {
@@ -58,6 +59,8 @@ class FeedsFoundAdapter(
             when (it) {
                 FEED_TITLE -> b.feedTitle.text = getItem(position).title
                 FEED_URL -> b.feedUrl.text = getItem(position).url
+                FEED_TYPE -> b.feedType.text =
+                    binding.root.context.getText(feedsFoundModel.getFeedTypeRes(position))
             }
         }
     }
@@ -70,6 +73,7 @@ class FeedsFoundAdapter(
         override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.title == newItem.title
                 && oldItem.url == newItem.url
+                && oldItem.type == newItem.type
         }
 
         override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {
@@ -80,6 +84,9 @@ class FeedsFoundAdapter(
             }
             if (oldItem.url != newItem.url) {
                 payload.add(FEED_URL)
+            }
+            if (oldItem.type != newItem.type) {
+                payload.add(FEED_TYPE)
             }
 
             if (payload.isEmpty()) {
