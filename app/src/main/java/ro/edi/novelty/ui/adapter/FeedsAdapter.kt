@@ -108,7 +108,7 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
                 FEED_TITLE -> b.feedTitle.text = getItem(position).title
                 FEED_URL -> b.feedUrl.text = getItem(position).url
                 FEED_TYPE -> b.feedType.text =
-                    binding.root.context.getText(feedsModel.getFeedTypeRes(position))
+                    binding.root.context.getText(feedsModel.getTypeTextRes(position))
                 FEED_IS_STARRED -> b.feedStar.setImageDrawable(
                     ContextCompat.getDrawable(
                         binding.root.context,

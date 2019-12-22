@@ -60,7 +60,7 @@ class FeedsFoundAdapter(
                 FEED_TITLE -> b.feedTitle.text = getItem(position).title
                 FEED_URL -> b.feedUrl.text = getItem(position).url
                 FEED_TYPE -> b.feedType.text =
-                    binding.root.context.getText(feedsFoundModel.getFeedTypeRes(position))
+                    binding.root.context.getText(feedsFoundModel.getTypeTextRes(position))
             }
         }
     }

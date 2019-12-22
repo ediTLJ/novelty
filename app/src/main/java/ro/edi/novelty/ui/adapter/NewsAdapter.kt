@@ -62,7 +62,7 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
         val payload = payloads.first() as Set<*>
         payload.forEach {
             when (it) {
-                NEWS_PUB_DATE -> b.date.text = newsModel.getNewsDisplayDate(position)
+                NEWS_PUB_DATE -> b.date.text = newsModel.getDisplayDate(position)
                 NEWS_FEED_TITLE -> b.feed.text = getItem(position).feedTitle
                 NEWS_TITLE -> b.title.text = getItem(position).title
                 NEWS_STATE -> {

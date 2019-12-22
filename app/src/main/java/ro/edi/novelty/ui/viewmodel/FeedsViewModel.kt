@@ -33,7 +33,7 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
         return feeds.value?.getOrNull(position)
     }
 
-    fun getFeedTypeRes(position: Int): Int {
+    fun getTypeTextRes(position: Int): Int {
         getFeed(position)?.let {
             return when (it.type) {
                 TYPE_ATOM -> R.string.type_atom

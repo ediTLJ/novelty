@@ -64,7 +64,7 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
         return news.value?.getOrNull(position)
     }
 
-    fun getNewsDisplayDate(position: Int): CharSequence? {
+    fun getDisplayDate(position: Int): CharSequence? {
         return getNews(position)?.let {
             DateUtils.getRelativeTimeSpanString(it.pubDate)
         }

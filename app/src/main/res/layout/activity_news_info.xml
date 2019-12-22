@@ -53,7 +53,7 @@
                     android:layout_marginTop="8dp"
                     android:gravity="end"
                     android:maxLines="2"
-                    android:text="@{model.getInfoDisplayDateAndAuthor()}"
+                    android:text="@{model.getDisplayDateAndAuthor()}"
                     android:textAppearance="@style/App.TextAppearance.Body2"
                     android:textColor="?android:attr/textColorSecondary"
                     tools:text="date" />
@@ -75,7 +75,7 @@
                     android:layout_marginTop="24dp"
                     android:clipToPadding="false"
                     android:paddingBottom="@dimen/activity_margin"
-                    android:text="@{model.getInfoDisplayText()}"
+                    android:text="@{model.getDisplayText()}"
                     android:textAppearance="@style/App.TextAppearance.Body"
                     android:textIsSelectable="true"
                     tools:text="Extra! Extra! Read all about it!" />

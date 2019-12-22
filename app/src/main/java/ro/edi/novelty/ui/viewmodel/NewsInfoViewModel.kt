@@ -46,7 +46,7 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         return info.value
     }
 
-    fun getInfoDisplayDateAndAuthor(): CharSequence? {
+    fun getDisplayDateAndAuthor(): CharSequence? {
         return getInfo()?.let {
             val date = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
@@ -58,7 +58,7 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getInfoDisplayText(): CharSequence? {
+    fun getDisplayText(): CharSequence? {
         return getInfo()?.text?.parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, HtmlTagHandler())
     }
 
