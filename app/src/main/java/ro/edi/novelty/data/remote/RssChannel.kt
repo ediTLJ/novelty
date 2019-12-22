@@ -26,6 +26,14 @@ data class RssChannel(
     @param:Element(name = "title")
     val title: String,
 
+    @field:Element(name = "pubDate", required = false)
+    @param:Element(name = "pubDate", required = false)
+    val pubDate: String? = null,
+
+    @field:Element(name = "lastBuildDate", required = false)
+    @param:Element(name = "lastBuildDate", required = false)
+    val updatedDate: String? = null,
+
     @field:ElementList(name = "item", inline = true, required = false)
     @param:ElementList(name = "item", inline = true, required = false)
     val items: List<RssItem>? = ArrayList()

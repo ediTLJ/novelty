@@ -20,7 +20,7 @@ import androidx.room.ForeignKey.CASCADE
 
 @Entity(
     tableName = "news",
-    indices = [Index(value = ["feed_id", "pub_date", "is_starred"])],
+    indices = [Index(value = ["feed_id", "pub_date"])],
     foreignKeys = [ForeignKey(
         entity = DbFeed::class,
         parentColumns = arrayOf("id"),
@@ -35,8 +35,6 @@ data class DbNews(
     val text: String,
     val author: String?,
     @ColumnInfo(name = "pub_date") val pubDate: Long,
-    val url: String?,
-    @ColumnInfo(name = "saved_date") val savedDate: Long,
-    @ColumnInfo(name = "is_read") val isRead: Boolean = false,
-    @ColumnInfo(name = "is_starred") val isStarred: Boolean = false
+    @ColumnInfo(name = "upd_date") val updDate: Long,
+    val url: String?
 )

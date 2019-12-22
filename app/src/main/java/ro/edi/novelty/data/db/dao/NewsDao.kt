@@ -25,15 +25,15 @@ import ro.edi.novelty.model.News
 @Dao
 abstract class NewsDao : BaseDao<DbNews> {
     @Transaction
-    @Query("SELECT news.id, feed_id, news.title, text, author, pub_date, news.url, saved_date, is_read, news.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE news.is_starred ORDER BY pub_date DESC")
+    @Query("SELECT news.id, news.feed_id, news.title, text, author, pub_date, news.url, upd_date, news_state.is_read, news_state.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN news_state ON news.id = news_state.id AND news.feed_id = news_state.feed_id LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE news_state.is_starred ORDER BY pub_date DESC")
     protected abstract fun queryStarred(): LiveData<List<News>>
 
     @Transaction
-    @Query("SELECT news.id, feed_id, news.title, text, author, pub_date, news.url, saved_date, is_read, news.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE feeds.is_starred ORDER BY pub_date DESC")
+    @Query("SELECT news.id, news.feed_id, news.title, text, author, pub_date, news.url, upd_date, news_state.is_read, news_state.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN news_state ON news.id = news_state.id AND news.feed_id = news_state.feed_id LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE feeds.is_starred ORDER BY pub_date DESC")
     protected abstract fun query(): LiveData<List<News>>
 
     @Transaction
-    @Query("SELECT news.id, feed_id, news.title, text, author, pub_date, news.url, saved_date, is_read, news.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE feed_id = :feedId ORDER BY pub_date DESC")
+    @Query("SELECT news.id, news.feed_id, news.title, text, author, pub_date, news.url, upd_date, news_state.is_read, news_state.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN news_state ON news.id = news_state.id AND news.feed_id = news_state.feed_id LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE news.feed_id = :feedId ORDER BY pub_date DESC")
     protected abstract fun query(feedId: Int): LiveData<List<News>>
 
     /**
@@ -41,7 +41,7 @@ abstract class NewsDao : BaseDao<DbNews> {
      *
      * @param newsId news id
      */
-    @Query("SELECT news.id, feed_id, news.title, text, author, pub_date, news.url, saved_date, is_read, news.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE news.id = :newsId")
+    @Query("SELECT news.id, news.feed_id, news.title, text, author, pub_date, news.url, upd_date, news_state.is_read, news_state.is_starred, feeds.title AS feed_title FROM news LEFT OUTER JOIN news_state ON news.id = news_state.id AND news.feed_id = news_state.feed_id LEFT OUTER JOIN feeds ON news.feed_id = feeds.id WHERE news.id = :newsId")
     abstract fun getInfo(newsId: Int): LiveData<News>
 
     /**
@@ -70,10 +70,10 @@ abstract class NewsDao : BaseDao<DbNews> {
     abstract fun deleteAll(feedId: Int)
 
     @Transaction
-    @Query("DELETE FROM news WHERE feed_id = :feedId AND saved_date < :untilDate AND is_starred == 0")
+    @Query("DELETE FROM news WHERE feed_id = :feedId AND upd_date < :untilDate AND id NOT IN (SELECT id FROM news_state WHERE feed_id = :feedId AND is_starred = 1)")
     abstract fun deleteOlder(feedId: Int, untilDate: Long)
 
     @Transaction
-    @Query("DELETE FROM news WHERE feed_id = :feedId AND is_starred == 0 AND pub_date NOT IN (SELECT pub_date FROM news WHERE feed_id = :feedId AND is_starred == 0 ORDER BY pub_date DESC LIMIT :keepCount)")
+    @Query("DELETE FROM news WHERE feed_id = :feedId AND id NOT IN (SELECT id FROM news_state WHERE feed_id = :feedId AND is_starred = 1) AND pub_date NOT IN (SELECT pub_date FROM news LEFT OUTER JOIN news_state ON news.id = news_state.id AND news.feed_id = news_state.feed_id WHERE news.feed_id = :feedId AND news_state.is_starred == 0 ORDER BY pub_date DESC LIMIT :keepCount)")
     abstract fun deleteAllButLatest(feedId: Int, keepCount: Int)
 }

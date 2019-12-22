@@ -13,20 +13,20 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package ro.edi.novelty.model
+package ro.edi.novelty.data.db.dao
 
-import androidx.room.ColumnInfo
+import androidx.room.Dao
+import androidx.room.Query
+import androidx.room.Transaction
+import ro.edi.novelty.data.db.entity.DbNewsState
 
-data class News(
-    val id: Int,
-    @ColumnInfo(name = "feed_id") val feedId: Int,
-    @ColumnInfo(name = "feed_title") val feedTitle: String,
-    val title: String,
-    val text: String,
-    val author: String?,
-    @ColumnInfo(name = "pub_date") val pubDate: Long,
-    val url: String,
-    @ColumnInfo(name = "upd_date") val updDate: Long,
-    @ColumnInfo(name = "is_read") val isRead: Boolean = false,
-    @ColumnInfo(name = "is_starred") val isStarred: Boolean = false
-)
+@Dao
+abstract class NewsStateDao : BaseDao<DbNewsState> {
+    @Transaction
+    @Query("DELETE FROM news_state")
+    abstract fun deleteAll()
+
+    @Transaction
+    @Query("DELETE FROM news_state WHERE feed_id = :feedId")
+    abstract fun deleteAll(feedId: Int)
+}

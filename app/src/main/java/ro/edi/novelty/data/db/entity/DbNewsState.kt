@@ -13,20 +13,23 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package ro.edi.novelty.model
+package ro.edi.novelty.data.db.entity
 
-import androidx.room.ColumnInfo
+import androidx.room.*
 
-data class News(
-    val id: Int,
+@Entity(
+    tableName = "news_state",
+    indices = [Index(value = ["feed_id", "is_starred"])],
+    foreignKeys = [ForeignKey(
+        entity = DbFeed::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("feed_id"),
+        onDelete = ForeignKey.CASCADE
+    )]
+)
+data class DbNewsState(
+    @PrimaryKey val id: Int,
     @ColumnInfo(name = "feed_id") val feedId: Int,
-    @ColumnInfo(name = "feed_title") val feedTitle: String,
-    val title: String,
-    val text: String,
-    val author: String?,
-    @ColumnInfo(name = "pub_date") val pubDate: Long,
-    val url: String,
-    @ColumnInfo(name = "upd_date") val updDate: Long,
     @ColumnInfo(name = "is_read") val isRead: Boolean = false,
     @ColumnInfo(name = "is_starred") val isStarred: Boolean = false
 )

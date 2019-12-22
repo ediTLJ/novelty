@@ -27,6 +27,10 @@ interface BaseDao<T> {
     @Transaction
     fun insert(objList: List<T>): List<Long>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    fun replace(objList: List<T>): List<Long>
+
     @Update
     fun update(obj: T)
 

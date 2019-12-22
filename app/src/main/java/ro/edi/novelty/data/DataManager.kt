@@ -34,6 +34,7 @@ import org.threeten.bp.temporal.ChronoField
 import ro.edi.novelty.data.db.AppDatabase
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.data.db.entity.DbNews
+import ro.edi.novelty.data.db.entity.DbNewsState
 import ro.edi.novelty.data.remote.FeedService
 import ro.edi.novelty.data.remote.HttpService
 import ro.edi.novelty.model.Feed
@@ -281,39 +282,27 @@ class DataManager private constructor(application: Application) {
 
     fun updateNewsStarred(news: News, isStarred: Boolean) {
         AppExecutors.diskIO().execute {
-            val dbNews =
-                DbNews(
+            val dbNewsState =
+                DbNewsState(
                     news.id,
                     news.feedId,
-                    news.title,
-                    news.text,
-                    news.author,
-                    news.pubDate,
-                    news.url,
-                    Instant.now().toEpochMilli(),
                     news.isRead,
                     isStarred
                 )
-            db.newsDao().update(dbNews)
+            db.newsStateDao().update(dbNewsState)
         }
     }
 
     fun updateNewsRead(news: News, isRead: Boolean) {
         AppExecutors.diskIO().execute {
-            val dbNews =
-                DbNews(
+            val dbNewsState =
+                DbNewsState(
                     news.id,
                     news.feedId,
-                    news.title,
-                    news.text,
-                    news.author,
-                    news.pubDate,
-                    news.url,
-                    Instant.now().toEpochMilli(),
                     isRead,
                     news.isStarred
                 )
-            db.newsDao().update(dbNews)
+            db.newsStateDao().update(dbNewsState)
         }
     }
 
@@ -395,8 +384,6 @@ class DataManager private constructor(application: Application) {
                     }
                 }
             }
-
-            db.newsDao().deleteAll(feed.id)
         }
     }
 
@@ -757,6 +744,8 @@ class DataManager private constructor(application: Application) {
         val news = atomFeed.items
         news ?: return false
 
+        val now = Instant.now().toEpochMilli()
+
         val dbNews = ArrayList<DbNews>(news.size)
 
         for (item in news) {
@@ -767,7 +756,21 @@ class DataManager private constructor(application: Application) {
             val id = item.id.plus(feedId).hashCode()
             val title = item.title.trim { it <= ' ' }
                 .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
-            val pubDate = if (item.pubDate == null) Instant.now().toEpochMilli() else {
+
+            val updDate = runCatching {
+                // logi("published: $item.updatedDate")
+                ZonedDateTime.parse(
+                    item.updatedDate,
+                    DateTimeFormatter.ISO_DATE_TIME
+                ).toEpochSecond() * 1000
+            }.getOrElse {
+                logi(it, "updated date parsing error... fallback to now()")
+                now
+            }
+
+            val pubDate = if (item.pubDate == null) {
+                updDate
+            } else {
                 runCatching {
                     // logi("published: $item.pubDate")
                     ZonedDateTime.parse(
@@ -775,8 +778,8 @@ class DataManager private constructor(application: Application) {
                         DateTimeFormatter.ISO_DATE_TIME
                     ).toEpochSecond() * 1000
                 }.getOrElse {
-                    logi(it, "published parsing error... fallback to now()")
-                    Instant.now().toEpochMilli()
+                    logi(it, "published date parsing error... fallback to now()")
+                    now
                 }
             }
 
@@ -822,15 +825,14 @@ class DataManager private constructor(application: Application) {
                     cleanHtml(item.content),
                     author?.toString(),
                     pubDate,
-                    link,
-                    Instant.now().toEpochMilli()
+                    updDate,
+                    link
                 )
             )
         }
 
-        // FIXME update title, text & date if already in db
         db.runInTransaction {
-            db.newsDao().insert(dbNews)
+            db.newsDao().replace(dbNews)
             db.newsDao()
                 .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
             db.newsDao().deleteAllButLatest(feedId, 100)
@@ -866,24 +868,40 @@ class DataManager private constructor(application: Application) {
         val news = rssFeed.channel.items
         news ?: return 0
 
+        val now = Instant.now().toEpochMilli()
+
+        val feedUpdDate = runCatching {
+            logi("feed updated: $rssFeed.channel.updatedDate")
+            ZonedDateTime.parse(
+                rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate,
+                RFC_1123_DATE_TIME
+            ).toEpochSecond() * 1000
+        }.getOrElse {
+            logi(it, "feed date parsing error... fallback to now()")
+            now
+        }
+
         val dbNews = ArrayList<DbNews>(news.size)
 
         for (item in news) {
             item.title ?: continue
             item.description ?: continue
 
-            // logd("item: $item")
+            logi("item: $item")
 
             val id = (item.id ?: (item.link ?: item.title)).plus(feedId).hashCode()
             val title = item.title.trim { it <= ' ' }
                 .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
-            val pubDate = if (item.pubDate == null) Instant.now().toEpochMilli() else {
+
+            val pubDate = if (item.pubDate == null) {
+                feedUpdDate
+            } else {
                 runCatching {
                     // logi("published: $item.pubDate")
                     ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME).toEpochSecond() * 1000
                 }.getOrElse {
-                    logi(it, "published parsing error... fallback to now()")
-                    Instant.now().toEpochMilli()
+                    logi(it, "published date parsing error... fallback to now()")
+                    now
                 }
             }
 
@@ -895,18 +913,19 @@ class DataManager private constructor(application: Application) {
                     cleanHtml(item.description),
                     item.author,
                     pubDate,
-                    item.link,
-                    Instant.now().toEpochMilli()
+                    feedUpdDate,
+                    item.link
                 )
             )
         }
 
-        // FIXME update title, text & date if already in db
+        logi("db items to add: ${dbNews.size}")
+
         db.runInTransaction {
-            db.newsDao().insert(dbNews)
-            db.newsDao()
-                .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
-            db.newsDao().deleteAllButLatest(feedId, 100)
+            db.newsDao().replace(dbNews)
+            //db.newsDao()
+            //    .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
+            //db.newsDao().deleteAllButLatest(feedId, 100)
         }
         // isFetching.postValue(false)
 
