@@ -25,6 +25,7 @@ import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 import ro.edi.util.getColorRes
+import java.util.*
 
 class NewsViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -62,6 +63,14 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getNews(position: Int): News? {
         return news.value?.getOrNull(position)
+    }
+
+    fun getDisplayFeedTitle(position: Int): CharSequence? {
+        if (type == TYPE_FEED) {
+            return null
+        }
+
+        return getNews(position)?.feedTitle?.toUpperCase(Locale.getDefault())
     }
 
     fun getDisplayDate(position: Int): CharSequence? {

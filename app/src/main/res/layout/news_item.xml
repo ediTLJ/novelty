@@ -30,7 +30,7 @@
             android:layout_gravity="start|top"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="@dimen/activity_margin"
-            android:text="@{model.getNews(position).feedTitle}"
+            android:text="@{model.getDisplayFeedTitle(position)}"
             android:textAppearance="@style/App.TextAppearance.Caption"
             android:textColor="@{ContextCompat.getColor(context, model.getInfoTextColorRes(context, position))}"
             tools:text="FEED" />
