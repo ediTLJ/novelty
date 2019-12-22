@@ -747,6 +747,7 @@ class DataManager private constructor(application: Application) {
         val now = Instant.now().toEpochMilli()
 
         val dbNews = ArrayList<DbNews>(news.size)
+        val dbNewsState = ArrayList<DbNewsState>(news.size)
 
         for (item in news) {
             item.content ?: continue
@@ -829,10 +830,18 @@ class DataManager private constructor(application: Application) {
                     link
                 )
             )
+
+            dbNewsState.add(
+                DbNewsState(
+                    id,
+                    feedId
+                )
+            )
         }
 
         db.runInTransaction {
             db.newsDao().replace(dbNews)
+            db.newsStateDao().insert(dbNewsState)
             db.newsDao()
                 .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
             db.newsDao().deleteAllButLatest(feedId, 100)
@@ -882,6 +891,7 @@ class DataManager private constructor(application: Application) {
         }
 
         val dbNews = ArrayList<DbNews>(news.size)
+        val dbNewsState = ArrayList<DbNewsState>(news.size)
 
         for (item in news) {
             item.title ?: continue
@@ -917,15 +927,23 @@ class DataManager private constructor(application: Application) {
                     item.link
                 )
             )
+
+            dbNewsState.add(
+                DbNewsState(
+                    id,
+                    feedId
+                )
+            )
         }
 
         logi("db items to add: ${dbNews.size}")
 
         db.runInTransaction {
             db.newsDao().replace(dbNews)
-            //db.newsDao()
-            //    .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
-            //db.newsDao().deleteAllButLatest(feedId, 100)
+            db.newsStateDao().insert(dbNewsState)
+            db.newsDao()
+                .deleteOlder(feedId, Instant.now().toEpochMilli() - DateUtils.WEEK_IN_MILLIS)
+            db.newsDao().deleteAllButLatest(feedId, 100)
         }
         // isFetching.postValue(false)
 
