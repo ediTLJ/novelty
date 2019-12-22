@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId 'ro.edi.novelty'
-        minSdkVersion 22 // Android 5.1
+        minSdkVersion 23 // Android 6.0
         targetSdkVersion 29 // Android 10
         versionCode 10
         versionName '2.0'
@@ -55,9 +55,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.50'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
 
     // AndroidX
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -69,7 +69,7 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha03'
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     // Architecture Components: LiveData, ViewModel...
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-rc03'
@@ -80,7 +80,7 @@ dependencies {
     // Room
     implementation 'androidx.room:room-runtime:2.2.3'
     kapt 'androidx.room:room-compiler:2.2.3'
-    implementation "androidx.room:room-ktx:2.2.3"
+    implementation 'androidx.room:room-ktx:2.2.3'
     testImplementation 'androidx.room:room-testing:2.2.3'
 
     // Material Design
@@ -89,10 +89,10 @@ dependencies {
     // OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
-    implementation 'com.squareup.okio:okio:2.4.1'
+    implementation 'com.squareup.okio:okio:2.4.3'
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.0'
 
     // RSS & Atom library
     implementation 'com.ouattararomuald:syndication:1.1.0'
