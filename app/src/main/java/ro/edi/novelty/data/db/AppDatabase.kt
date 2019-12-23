@@ -29,14 +29,16 @@ import ro.edi.util.Singleton
 
 const val DB_NAME = "novelty.db"
 
-@Database(entities = [DbFeed::class, DbNews::class, DbNewsState::class], version = 1)
+@Database(entities = [DbFeed::class, DbNews::class, DbNewsState::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     companion object : Singleton<AppDatabase, Application>({
         //val migration12 = object : Migration(1, 2) {
         //    override fun migrate(database: SupportSQLiteDatabase) {
-        //        database.execSQL("INSERT INTO new_table (id, name) SELECT id, name FROM my_table")
-        //        database.execSQL("ALTER TABLE my_table ADD COLUMN date INTEGER")
-        //        database.execSQL("CREATE TABLE new_table (id INTEGER, name TEXT, PRIMARY KEY(id))")
+        //        //database.execSQL("DROP TABLE my_news")
+        //        //database.execSQL("DELETE FROM TABLE news")
+        //        //database.execSQL("INSERT INTO new_table (id, name) SELECT id, name FROM my_table")
+        //        //database.execSQL("ALTER TABLE my_table ADD COLUMN date INTEGER")
+        //        //database.execSQL("CREATE TABLE new_table (id INTEGER, name TEXT, PRIMARY KEY(id))")
         //     }
         //}
 
