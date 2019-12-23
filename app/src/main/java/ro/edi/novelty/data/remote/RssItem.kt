@@ -39,8 +39,8 @@ data class RssItem(
     @param:Element(name = "creator", required = false)
     val author: String? = null,
 
-    @field:Element(name = "id", required = false)
-    @param:Element(name = "id", required = false)
+    @field:Element(name = "guid", required = false)
+    @param:Element(name = "guid", required = false)
     val id: String? = null,
 
     @field:Element(name = "pubDate", required = false)
