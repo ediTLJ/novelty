@@ -62,7 +62,10 @@ class NewsInfoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            // android.R.id.home -> finish()
+            android.R.id.home -> {
+                finish()
+                return true
+            }
             R.id.action_share -> infoModel.info.value?.let {
                 val iShare = Intent(Intent.ACTION_SEND)
                 iShare.type = "text/plain"

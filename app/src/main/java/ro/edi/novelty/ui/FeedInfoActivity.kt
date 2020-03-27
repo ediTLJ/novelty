@@ -76,6 +76,10 @@ class FeedInfoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
             R.id.action_delete -> feedsModel.feeds.value?.let { feeds ->
                 val feed = feeds.find { it.id == intent.getIntExtra(EXTRA_FEED_ID, 0) }
                 feed?.let {
