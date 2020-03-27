@@ -51,6 +51,11 @@ class NewsInfoActivity : AppCompatActivity() {
         initView(binding)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_news_info, menu)
 
@@ -62,10 +67,6 @@ class NewsInfoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
             R.id.action_share -> infoModel.info.value?.let {
                 val iShare = Intent(Intent.ACTION_SEND)
                 iShare.type = "text/plain"

@@ -65,6 +65,11 @@ class FeedInfoActivity : AppCompatActivity() {
         initView(binding)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (intent.hasExtra(EXTRA_FEED_ID)) {
             menuInflater.inflate(R.menu.menu_feed_info, menu)
@@ -76,10 +81,6 @@ class FeedInfoActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
             R.id.action_delete -> feedsModel.feeds.value?.let { feeds ->
                 val feed = feeds.find { it.id == intent.getIntExtra(EXTRA_FEED_ID, 0) }
                 feed?.let {
