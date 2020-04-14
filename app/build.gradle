@@ -87,15 +87,15 @@ dependencies {
     testImplementation 'androidx.room:room-testing:2.2.5'
 
     // Material Design
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.4.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
-    // implementation 'com.squareup.okio:okio:2.4.3'
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.5.0'
+    // implementation 'com.squareup.okio:okio:x.x.x'
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.8.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
 
     // RSS & Atom library
     implementation 'com.ouattararomuald:syndication:1.1.0'
@@ -107,7 +107,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // ThreeTen Android Backport - remove this when reaching minSdkVersion 27 (Android 8)
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
 
     // testing dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
