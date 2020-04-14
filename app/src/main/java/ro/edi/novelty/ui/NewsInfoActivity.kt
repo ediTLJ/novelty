@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -29,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityNewsInfoBinding
 import ro.edi.novelty.ui.viewmodel.NewsInfoViewModel
+import java.util.*
 import timber.log.Timber.i as logi
 
 class NewsInfoActivity : AppCompatActivity() {
@@ -97,7 +99,8 @@ class NewsInfoActivity : AppCompatActivity() {
         infoModel.info.observe(this, Observer { info ->
             logi("info changed: %s", info)
 
-            supportActionBar?.title = info.feedTitle
+            supportActionBar?.title = null
+            findViewById<TextView>(R.id.feed).text = info.feedTitle.toUpperCase(Locale.getDefault())
 
             invalidateOptionsMenu()
             binding.invalidateAll()
