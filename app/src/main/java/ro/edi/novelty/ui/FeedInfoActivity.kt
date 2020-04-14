@@ -27,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.databinding.ActivityFeedInfoBinding
@@ -55,6 +57,23 @@ class FeedInfoActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        findViewById<View>(android.R.id.content).transitionName = "shared_feed_container"
+
+        // attach a callback used to receive the shared elements from Activity a
+        // to be used by the container transform transition
+        setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
+            duration = 200L
+        }
+        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
+            addTarget(android.R.id.content)
+            fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
+            duration = 300L
+        }
+
         super.onCreate(savedInstanceState)
 
         val binding: ActivityFeedInfoBinding =

@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
 import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
@@ -48,6 +49,13 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // attach a callback used to capture the shared elements from this activity
+        // to be used by the container transform transition
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // keep system bars (status bar, navigation bar) persistent throughout the transition
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or

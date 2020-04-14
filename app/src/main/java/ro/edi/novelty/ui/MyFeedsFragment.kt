@@ -157,7 +157,7 @@ class MyFeedsFragment : Fragment() {
             // listView.setVelocityScale(2.0f)
             setHasFixedSize(true)
             setItemViewCacheSize(20)
-            adapter = NewsAdapter(newsModel).apply {
+            adapter = NewsAdapter(activity, newsModel).apply {
                 setHasStableIds(true)
             }
         }

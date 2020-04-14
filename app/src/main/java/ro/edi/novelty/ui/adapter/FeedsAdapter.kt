@@ -15,6 +15,8 @@
 */
 package ro.edi.novelty.ui.adapter
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.view.MotionEvent
 import android.view.View
@@ -32,7 +34,8 @@ import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import ro.edi.util.getColorRes
 
 
-class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(FeedDiffCallback()) {
+class FeedsAdapter(private val activity: Activity, private val feedsModel: FeedsViewModel) :
+    BaseAdapter<Feed>(FeedDiffCallback()) {
     companion object {
         const val FEED_TITLE = "feed_title"
         const val FEED_URL = "feed_url"
@@ -57,10 +60,15 @@ class FeedsAdapter(private val feedsModel: FeedsViewModel) : BaseAdapter<Feed>(F
     }
 
     override fun onItemClick(itemView: View, position: Int) {
-        val i = Intent(itemView.context, FeedInfoActivity::class.java)
+        val i = Intent(activity, FeedInfoActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         i.putExtra(FeedInfoActivity.EXTRA_FEED_ID, getItem(position).id)
-        itemView.context.startActivity(i)
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+            activity,
+            itemView,
+            "shared_feed_container"
+        )
+        activity.startActivity(i, options.toBundle())
     }
 
     override fun getTouchableViewIds(): IntArray? {

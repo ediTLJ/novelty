@@ -25,6 +25,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.transition.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedsBinding
 import ro.edi.novelty.ui.adapter.FeedsAdapter
@@ -40,6 +41,13 @@ class FeedsActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // attach a callback used to capture the shared elements from this activity
+        // to be used by the container transform transition
+        setExitSharedElementCallback(MaterialContainerTransformSharedElementCallback())
+
+        // keep system bars (status bar, navigation bar) persistent throughout the transition
+        window.sharedElementsUseOverlay = false
+
         super.onCreate(savedInstanceState)
 
         val binding: ActivityFeedsBinding =
@@ -78,7 +86,7 @@ class FeedsActivity : AppCompatActivity() {
 
         binding.feeds.apply {
             setHasFixedSize(true)
-            adapter = FeedsAdapter(feedsModel).apply {
+            adapter = FeedsAdapter(this@FeedsActivity, feedsModel).apply {
                 setHasStableIds(true)
                 itemTouchHelper.attachToRecyclerView(binding.feeds)
             }

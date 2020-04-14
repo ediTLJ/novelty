@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="App.Theme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowActivityTransitions">true</item>
         <item name="windowActionModeOverlay">true</item>
 
         <item name="colorPrimary">@color/brown_500</item>
@@ -11,7 +11,9 @@
     </style>
 
     <style name="App.Theme.Dark" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowActivityTransitions">true</item>
         <item name="windowActionModeOverlay">true</item>
+
         <item name="android:statusBarColor">@color/grey</item>
         <item name="android:navigationBarColor">@color/nav_grey</item>
 

@@ -15,6 +15,8 @@
 */
 package ro.edi.novelty.ui.adapter
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -27,7 +29,8 @@ import ro.edi.novelty.model.News
 import ro.edi.novelty.ui.NewsInfoActivity
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 
-class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(NewsDiffCallback()) {
+class NewsAdapter(private val activity: Activity?, private val newsModel: NewsViewModel) :
+    BaseAdapter<News>(NewsDiffCallback()) {
     companion object {
         const val NEWS_PUB_DATE = "news_pub_date"
         const val NEWS_FEED_TITLE = "news_feed_title"
@@ -50,10 +53,15 @@ class NewsAdapter(private val newsModel: NewsViewModel) : BaseAdapter<News>(News
     override fun onItemClick(itemView: View, position: Int) {
         newsModel.setIsRead(position, true)
 
-        val i = Intent(itemView.context, NewsInfoActivity::class.java)
+        val i = Intent(activity, NewsInfoActivity::class.java)
         i.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         i.putExtra(NewsInfoActivity.EXTRA_NEWS_ID, getItem(position).id)
-        itemView.context.startActivity(i)
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+            activity,
+            itemView,
+            "shared_news_container"
+        )
+        activity?.startActivity(i, options.toBundle())
     }
 
     override fun bind(binding: ViewDataBinding, position: Int, payloads: MutableList<Any>) {

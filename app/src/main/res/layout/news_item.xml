@@ -42,7 +42,7 @@
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{model.getNews(position).title}"
+            android:text="@{model.news.get(position).title}"
             android:textAppearance="@style/App.TextAppearance.Subtitle1"
             android:textColor="@{ContextCompat.getColor(context, model.getTitleTextColorRes(context, position))}"
             tools:text="This is a news title!\nIt can have max 2 lines." />
