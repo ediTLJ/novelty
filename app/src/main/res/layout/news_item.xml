@@ -28,8 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|top"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="@dimen/activity_margin"
+            android:layout_marginTop="8dp"
             android:text="@{model.getDisplayFeedTitle(position)}"
             android:textAppearance="@style/App.TextAppearance.Caption"
             android:textColor="@{ContextCompat.getColor(context, model.getInfoTextColorRes(context, position))}"
@@ -53,11 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
-            android:layout_marginStart="@dimen/activity_margin"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:text="@{model.getDisplayDate(position)}"
             android:textAppearance="@style/App.TextAppearance.Caption"
             android:textColor="@{ContextCompat.getColor(context, model.getInfoTextColorRes(context, position))}"
-            tools:text="date" />
+            tools:text="20 hours ago" />
     </FrameLayout>
 </layout>
