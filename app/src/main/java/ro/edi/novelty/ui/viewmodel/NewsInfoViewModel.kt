@@ -22,14 +22,14 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import org.threeten.bp.Instant
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 import org.xml.sax.XMLReader
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class NewsInfoViewModel(application: Application) : AndroidViewModel(application) {
     private var newsId = 0
@@ -48,8 +48,9 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
 
     fun getDisplayDateAndAuthor(): CharSequence? {
         return getInfo()?.let {
-            val date = LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+            val date =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
             if (it.author == null) {
                 date
             } else {
@@ -59,7 +60,11 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getDisplayText(): CharSequence? {
-        return getInfo()?.text?.parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, HtmlTagHandler())
+        return getInfo()?.text?.parseAsHtml(
+            HtmlCompat.FROM_HTML_MODE_COMPACT,
+            null,
+            HtmlTagHandler()
+        )
     }
 
     fun getIsStarred(): Boolean? {

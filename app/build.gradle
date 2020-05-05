@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId 'ro.edi.novelty'
-        minSdkVersion 25 // Android 7.1
+        minSdkVersion 26 // Android 8.0
         targetSdkVersion 29 // Android 10
         versionCode 8
         versionName '2.0-alpha'
@@ -108,9 +108,6 @@ dependencies {
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
-
-    // ThreeTen Android Backport - remove this when reaching minSdkVersion 27 (Android 8)
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
 
     // testing dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'

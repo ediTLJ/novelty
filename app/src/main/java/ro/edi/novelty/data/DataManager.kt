@@ -26,11 +26,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ouattararomuald.syndication.DeserializationException
 import okhttp3.internal.closeQuietly
-import org.threeten.bp.Instant
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.chrono.IsoChronology
-import org.threeten.bp.format.*
-import org.threeten.bp.temporal.ChronoField
 import ro.edi.novelty.data.db.AppDatabase
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.data.db.entity.DbNews
@@ -45,6 +40,11 @@ import ro.edi.util.AppExecutors
 import ro.edi.util.Singleton
 import java.io.BufferedReader
 import java.lang.reflect.UndeclaredThrowableException
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.chrono.IsoChronology
+import java.time.format.*
+import java.time.temporal.ChronoField
 import timber.log.Timber.e as loge
 import timber.log.Timber.i as logi
 import timber.log.Timber.w as logw
@@ -83,6 +83,7 @@ class DataManager private constructor(application: Application) {
             )
         private val REGEX_TAG_SMALL = Regex("<small>.*</small>", RegexOption.IGNORE_CASE)
         private val REGEX_TAG_BR = Regex("<\\s*<br\\s*/?>\\s*", RegexOption.IGNORE_CASE)
+
         // private val REGEX_BR_TAGS = Regex("(\\s*<br\\s*[/]*>\\s*){3,}", RegexOption.IGNORE_CASE)
         private val REGEX_EMPTY_TAGS = Regex("(<[^>]*>\\s*</[^>]*>)+", RegexOption.IGNORE_CASE)
 
@@ -97,6 +98,7 @@ class DataManager private constructor(application: Application) {
             put(6L, "Sat")
             put(7L, "Sun")
         }
+
         @SuppressLint("UseSparseArrays")
         private val moy = HashMap<Long, String>().apply {
             put(1L, "Jan")

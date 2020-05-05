@@ -183,8 +183,8 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
         ): Boolean {
-            val oldPos = viewHolder.adapterPosition
-            val newPos = target.adapterPosition
+            val oldPos = viewHolder.bindingAdapterPosition
+            val newPos = target.bindingAdapterPosition
 
             // logi("onMove() oldPos: $oldPos, newPos: $newPos")
             // logi("onMove() fromPos: $fromPos, newPos: $newPos")

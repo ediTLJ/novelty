@@ -16,7 +16,6 @@
 package ro.edi.novelty
 
 import android.app.Application
-import com.jakewharton.threetenabp.AndroidThreeTen
 import ro.edi.util.ReleaseTree
 import timber.log.Timber
 
@@ -31,6 +30,5 @@ class MyApp : Application() {
         } else {
             Timber.plant(ReleaseTree())
         }
-        AndroidThreeTen.init(this)
     }
 }
