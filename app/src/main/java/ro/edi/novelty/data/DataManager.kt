@@ -752,7 +752,30 @@ class DataManager private constructor(application: Application) {
         val dbNewsState = ArrayList<DbNewsState>(news.size)
 
         for (item in news) {
-            item.content ?: continue
+            var link: String?
+            if (item.links.isNullOrEmpty()) {
+                link = null
+            } else {
+                if (item.links.size == 1) {
+                    val l = item.links.first()
+                    link = l.href ?: l.value
+                } else {
+                    link = null
+                    for (l in item.links) {
+                        if (l.rel == null) {
+                            link = l.href ?: l.value
+                        } else if (l.rel == "alternate") {
+                            link = l.href ?: l.value
+                            break
+                        }
+                    }
+                }
+            }
+
+            if (item.content == null && link == null) {
+                // no content and no links... skip this entry
+                continue
+            }
 
             // logd("item: $item")
 
@@ -800,32 +823,16 @@ class DataManager private constructor(application: Application) {
                 author.deleteCharAt(author.length - 1)
             }
 
-            var link: String?
-            if (item.links.isNullOrEmpty()) {
-                link = null
-            } else {
-                if (item.links.size == 1) {
-                    val l = item.links.first()
-                    link = l.href ?: l.value
-                } else {
-                    link = null
-                    for (l in item.links) {
-                        if (l.rel == null) {
-                            link = l.href ?: l.value
-                        } else if (l.rel == "alternate") {
-                            link = l.href ?: l.value
-                            break
-                        }
-                    }
-                }
-            }
-
             dbNews.add(
                 DbNews(
                     id,
                     feedId,
                     title,
-                    cleanHtml(item.content),
+                    cleanHtml(
+                        item.content ?: link?.let {
+                            "<a href=\"$it\">$it</a>"
+                        } ?: ""
+                    ), // we.ll never reach the "" part (the Kotlin compiler seems to be blind)
                     author?.toString(),
                     pubDate,
                     updDate,
