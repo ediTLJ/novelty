@@ -131,9 +131,9 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
         override fun onTouch(v: View?, event: MotionEvent?): Boolean {
             v?.let {
                 return if (v.id == itemView.id) {
-                    onItemTouch(it, event, this, adapterPosition)
+                    onItemTouch(it, event, this, bindingAdapterPosition)
                 } else {
-                    onTouch(it, event, this, adapterPosition)
+                    onTouch(it, event, this, bindingAdapterPosition)
                 }
             }
 
@@ -143,16 +143,16 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
         override fun onClick(v: View?) {
             v?.let {
                 if (v.id == itemView.id) {
-                    onItemClick(it, adapterPosition)
+                    onItemClick(it, bindingAdapterPosition)
                 } else {
-                    onClick(it, adapterPosition)
+                    onClick(it, bindingAdapterPosition)
                 }
             }
         }
 
         override fun onLongClick(v: View?): Boolean {
             v?.let {
-                return onItemLongClick(it, adapterPosition)
+                return onItemLongClick(it, bindingAdapterPosition)
             }
 
             return false
