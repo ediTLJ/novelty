@@ -50,7 +50,7 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         return getInfo()?.let {
             val date =
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM))
+                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT))
             if (it.author == null) {
                 date
             } else {
