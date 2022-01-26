@@ -24,6 +24,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -34,7 +35,7 @@ import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityNewsInfoBinding
 import ro.edi.novelty.ui.viewmodel.NewsInfoViewModel
 import java.util.*
-import timber.log.Timber.i as logi
+import timber.log.Timber.Forest.i as logi
 
 class NewsInfoActivity : AppCompatActivity() {
     companion object {
@@ -120,7 +121,7 @@ class NewsInfoActivity : AppCompatActivity() {
             logi("info changed: %s", info)
 
             supportActionBar?.title = null
-            findViewById<TextView>(R.id.feed).text = info.feedTitle.toUpperCase(Locale.getDefault())
+            findViewById<TextView>(R.id.feed).text = info.feedTitle.uppercase(Locale.getDefault())
 
             invalidateOptionsMenu()
             binding.invalidateAll()

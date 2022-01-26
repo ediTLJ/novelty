@@ -70,7 +70,7 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
             return null
         }
 
-        return getNews(position)?.feedTitle?.toUpperCase(Locale.getDefault())
+        return getNews(position)?.feedTitle?.uppercase(Locale.getDefault())
     }
 
     fun getDisplayDate(position: Int): CharSequence? {

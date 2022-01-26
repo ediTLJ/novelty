@@ -38,7 +38,7 @@ import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import ro.edi.util.applyWindowInsetsMargin
 import java.util.*
-import timber.log.Timber.i as logi
+import timber.log.Timber.Forest.i as logi
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
                 }
                 else -> {
                     val feed = feedsModel.getFeed(page - 2)
-                    tab.text = feed?.title?.toUpperCase(Locale.getDefault())
+                    tab.text = feed?.title?.uppercase(Locale.getDefault())
                     tab.tag = feed?.id
                 }
             }

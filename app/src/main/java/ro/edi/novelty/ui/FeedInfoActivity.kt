@@ -35,7 +35,7 @@ import ro.edi.novelty.databinding.ActivityFeedInfoBinding
 import ro.edi.novelty.ui.adapter.FeedsFoundAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsFoundViewModel
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
-import timber.log.Timber.i as logi
+import timber.log.Timber.Forest.i as logi
 
 class FeedInfoActivity : AppCompatActivity() {
     companion object {

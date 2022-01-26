@@ -37,7 +37,7 @@ import ro.edi.novelty.ui.adapter.NewsAdapter
 import ro.edi.novelty.ui.viewmodel.NewsViewModel
 import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
-import timber.log.Timber.i as logi
+import timber.log.Timber.Forest.i as logi
 
 
 class MyFeedsFragment : Fragment() {

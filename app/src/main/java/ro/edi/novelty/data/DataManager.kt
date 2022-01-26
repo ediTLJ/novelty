@@ -21,7 +21,6 @@ import android.text.format.DateUtils
 import android.util.SparseArray
 import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml
-import androidx.core.util.contains
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.ouattararomuald.syndication.DeserializationException
@@ -45,9 +44,9 @@ import java.time.ZonedDateTime
 import java.time.chrono.IsoChronology
 import java.time.format.*
 import java.time.temporal.ChronoField
-import timber.log.Timber.e as loge
-import timber.log.Timber.i as logi
-import timber.log.Timber.w as logw
+import timber.log.Timber.Forest.e as loge
+import timber.log.Timber.Forest.i as logi
+import timber.log.Timber.Forest.w as logw
 
 
 /**
@@ -210,7 +209,7 @@ class DataManager private constructor(application: Application) {
             return
         }
 
-        if (isFetchingArray.contains(feedId).not()) {
+        if (isFetchingArray.indexOfKey(feedId) < 0) {
             isFetchingArray.put(feedId, MutableLiveData())
         }
 

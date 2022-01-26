@@ -30,7 +30,7 @@ import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedsBinding
 import ro.edi.novelty.ui.adapter.FeedsAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
-import timber.log.Timber.i as logi
+import timber.log.Timber.Forest.i as logi
 
 class FeedsActivity : AppCompatActivity() {
     private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
