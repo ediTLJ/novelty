@@ -24,7 +24,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
@@ -45,7 +44,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         ViewModelProvider(
             viewModelStore,
             defaultViewModelProviderFactory
-        ).get(FeedsViewModel::class.java)
+        )[FeedsViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         super.onCreate(savedInstanceState)
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         setContentView(R.layout.activity_main)
         initView()
@@ -140,7 +139,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
 
         val tvEmpty = findViewById<TextView>(R.id.empty)
 
-        feedsModel.feeds.observe(this, Observer { feeds ->
+        feedsModel.feeds.observe(this) { feeds ->
             logi("feeds changed: %d feeds", feeds.size)
 
             invalidateOptionsMenu()
@@ -179,7 +178,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
                 }
             }
 
-        })
+        }
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {

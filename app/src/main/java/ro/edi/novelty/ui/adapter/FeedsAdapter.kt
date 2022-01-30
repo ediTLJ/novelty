@@ -71,7 +71,7 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
         activity.startActivity(i, options.toBundle())
     }
 
-    override fun getTouchableViewIds(): IntArray? {
+    override fun getTouchableViewIds(): IntArray {
         val ids = IntArray(1)
         ids[0] = R.id.feed_drag
 
@@ -94,7 +94,7 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
         return false
     }
 
-    override fun getClickableViewIds(): IntArray? {
+    override fun getClickableViewIds(): IntArray {
         val ids = IntArray(1)
         ids[0] = R.id.feed_star
 
@@ -138,9 +138,9 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
 
         override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.title == newItem.title
-                && oldItem.url == newItem.url
-                && oldItem.type == newItem.type
-                && oldItem.isStarred == newItem.isStarred
+                    && oldItem.url == newItem.url
+                    && oldItem.type == newItem.type
+                    && oldItem.isStarred == newItem.isStarred
         }
 
         override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {

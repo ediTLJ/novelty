@@ -23,7 +23,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -47,14 +46,14 @@ class MyNewsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProvider(viewModelStore, factory).get(NewsViewModel::class.java)
+        newsModel = ViewModelProvider(viewModelStore, factory)[NewsViewModel::class.java]
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding =
             DataBindingUtil.inflate<FragmentFeedBinding>(
                 inflater,
@@ -95,7 +94,7 @@ class MyNewsFragment : Fragment() {
             }
         }
 
-        newsModel.news.observe(viewLifecycleOwner, Observer { newsList ->
+        newsModel.news.observe(viewLifecycleOwner) { newsList ->
             logi("news changed: %d news", newsList.size)
 
             (rvNews.adapter as NewsAdapter).submitList(newsList)
@@ -111,7 +110,7 @@ class MyNewsFragment : Fragment() {
                 rvNews.visibility = View.VISIBLE
                 tab?.orCreateBadge?.number = newsList.size
             }
-        })
+        }
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

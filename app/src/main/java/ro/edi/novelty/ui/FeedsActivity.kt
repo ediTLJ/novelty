@@ -23,7 +23,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
@@ -37,7 +36,7 @@ class FeedsActivity : AppCompatActivity() {
         ViewModelProvider(
             viewModelStore,
             defaultViewModelProviderFactory
-        ).get(FeedsViewModel::class.java)
+        )[FeedsViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +91,7 @@ class FeedsActivity : AppCompatActivity() {
             }
         }
 
-        feedsModel.feeds.observe(this, Observer { feeds ->
+        feedsModel.feeds.observe(this) { feeds ->
             logi("feeds changed: %d feeds", feeds.size)
 
             if (feeds.isEmpty()) {
@@ -104,6 +103,6 @@ class FeedsActivity : AppCompatActivity() {
 
                 (binding.feeds.adapter as FeedsAdapter).submitList(feeds)
             }
-        })
+        }
     }
 }

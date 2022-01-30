@@ -22,7 +22,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -55,7 +54,7 @@ class FeedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProvider(viewModelStore, factory).get(NewsViewModel::class.java)
+        newsModel = ViewModelProvider(viewModelStore, factory)[NewsViewModel::class.java]
     }
 
     override fun onPause() {
@@ -87,7 +86,7 @@ class FeedFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding =
             DataBindingUtil.inflate<FragmentFeedBinding>(
                 inflater,
@@ -160,7 +159,7 @@ class FeedFragment : Fragment() {
 
         val vEmpty = view.findViewById<View>(R.id.empty)
 
-        newsModel.isFetching.observe(viewLifecycleOwner, Observer { isFetching ->
+        newsModel.isFetching.observe(viewLifecycleOwner) { isFetching ->
             logi("isFetching changed: %b", isFetching)
 
             if (isFetching) {
@@ -178,9 +177,9 @@ class FeedFragment : Fragment() {
                     rvNews.visibility = View.VISIBLE
                 }
             }
-        })
+        }
 
-        newsModel.news.observe(viewLifecycleOwner, Observer { newsList ->
+        newsModel.news.observe(viewLifecycleOwner) { newsList ->
             logi("news changed: %d news", newsList.size)
 
             if (newsList.isEmpty()) {
@@ -220,7 +219,7 @@ class FeedFragment : Fragment() {
                     setTabBadge(posNew)
                 }
             }
-        })
+        }
     }
 
     @Suppress("SameParameterValue")

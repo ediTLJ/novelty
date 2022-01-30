@@ -72,8 +72,8 @@ class FeedsFoundAdapter(
 
         override fun areContentsTheSame(oldItem: Feed, newItem: Feed): Boolean {
             return oldItem.title == newItem.title
-                && oldItem.url == newItem.url
-                && oldItem.type == newItem.type
+                    && oldItem.url == newItem.url
+                    && oldItem.type == newItem.type
         }
 
         override fun getChangePayload(oldItem: Feed, newItem: Feed): Any? {
