@@ -16,6 +16,7 @@
 package ro.edi.novelty.ui
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
@@ -70,6 +71,7 @@ class FeedInfoActivity : AppCompatActivity() {
                 applicationContext,
                 R.color.grey
             ) // FIXME themed
+            scrimColor = Color.TRANSPARENT
         }
         window.sharedElementReturnTransition = MaterialContainerTransform(this, false).apply {
             addTarget(android.R.id.content)
@@ -78,6 +80,7 @@ class FeedInfoActivity : AppCompatActivity() {
                 applicationContext,
                 R.color.grey
             ) // FIXME themed
+            scrimColor = Color.TRANSPARENT
         }
 
         super.onCreate(savedInstanceState)

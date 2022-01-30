@@ -16,6 +16,7 @@
 package ro.edi.novelty.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
@@ -59,6 +60,7 @@ class NewsInfoActivity : AppCompatActivity() {
                 applicationContext,
                 R.color.grey
             ) // FIXME themed
+            scrimColor = Color.TRANSPARENT
         }
         window.sharedElementReturnTransition = MaterialContainerTransform(this, false).apply {
             addTarget(android.R.id.content)
@@ -67,6 +69,7 @@ class NewsInfoActivity : AppCompatActivity() {
                 applicationContext,
                 R.color.grey
             ) // FIXME themed
+            scrimColor = Color.TRANSPARENT
         }
 
         super.onCreate(savedInstanceState)
