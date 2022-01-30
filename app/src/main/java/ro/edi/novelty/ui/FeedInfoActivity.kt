@@ -101,10 +101,10 @@ class FeedInfoActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (intent.hasExtra(EXTRA_FEED_ID)) {
             menuInflater.inflate(R.menu.menu_feed_info, menu)
-            return true
         }
 
-        return false
+        // return true even if there's no EXTRA_FEED_ID, because we still have the system home/up action
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
