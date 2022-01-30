@@ -26,7 +26,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.platform.MaterialContainerTransform
@@ -43,7 +42,7 @@ class NewsInfoActivity : AppCompatActivity() {
     }
 
     private val infoModel: NewsInfoViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(viewModelStore, factory).get(NewsInfoViewModel::class.java)
+        ViewModelProvider(viewModelStore, factory)[NewsInfoViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,15 +52,21 @@ class NewsInfoActivity : AppCompatActivity() {
         // to be used by the container transform transition
         setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+        window.sharedElementEnterTransition = MaterialContainerTransform(this, true).apply {
             addTarget(android.R.id.content)
             fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
-            duration = 200L
+            containerColor = ContextCompat.getColor(
+                applicationContext,
+                R.color.grey
+            ) // FIXME themed
         }
-        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
+        window.sharedElementReturnTransition = MaterialContainerTransform(this, false).apply {
             addTarget(android.R.id.content)
             fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
-            duration = 300L
+            containerColor = ContextCompat.getColor(
+                applicationContext,
+                R.color.grey
+            ) // FIXME themed
         }
 
         super.onCreate(savedInstanceState)
@@ -117,7 +122,7 @@ class NewsInfoActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        infoModel.info.observe(this, Observer { info ->
+        infoModel.info.observe(this) { info ->
             logi("info changed: %s", info)
 
             supportActionBar?.title = null
@@ -135,7 +140,7 @@ class NewsInfoActivity : AppCompatActivity() {
                     startActivity(iBrowser)
                 }
             }.show()
-        })
+        }
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {

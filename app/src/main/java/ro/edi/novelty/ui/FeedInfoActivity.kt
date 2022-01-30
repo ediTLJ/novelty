@@ -24,6 +24,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -46,14 +47,14 @@ class FeedInfoActivity : AppCompatActivity() {
         ViewModelProvider(
             viewModelStore,
             defaultViewModelProviderFactory
-        ).get(FeedsViewModel::class.java)
+        )[FeedsViewModel::class.java]
     }
 
     private val feedsFoundModel: FeedsFoundViewModel by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProvider(
             viewModelStore,
             defaultViewModelProviderFactory
-        ).get(FeedsFoundViewModel::class.java)
+        )[FeedsFoundViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,15 +64,21 @@ class FeedInfoActivity : AppCompatActivity() {
         // to be used by the container transform transition
         setEnterSharedElementCallback(MaterialContainerTransformSharedElementCallback())
 
-        window.sharedElementEnterTransition = MaterialContainerTransform().apply {
+        window.sharedElementEnterTransition = MaterialContainerTransform(this, true).apply {
             addTarget(android.R.id.content)
-            fadeMode = MaterialContainerTransform.FADE_MODE_IN
-            duration = 200L
+            fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
+            containerColor = ContextCompat.getColor(
+                applicationContext,
+                R.color.grey
+            ) // FIXME themed
         }
-        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
+        window.sharedElementReturnTransition = MaterialContainerTransform(this, false).apply {
             addTarget(android.R.id.content)
-            fadeMode = MaterialContainerTransform.FADE_MODE_OUT
-            duration = 300L
+            fadeMode = MaterialContainerTransform.FADE_MODE_CROSS
+            containerColor = ContextCompat.getColor(
+                applicationContext,
+                R.color.grey
+            ) // FIXME themed
         }
 
         super.onCreate(savedInstanceState)
@@ -164,7 +171,7 @@ class FeedInfoActivity : AppCompatActivity() {
             false
         }
 
-        feedsModel.feeds.observe(this, Observer { feeds ->
+        feedsModel.feeds.observe(this) { feeds ->
             logi("feeds # in db: %d", feeds.size)
 
             val feed = feeds.find { it.id == intent.getIntExtra(EXTRA_FEED_ID, 0) }
@@ -230,11 +237,11 @@ class FeedInfoActivity : AppCompatActivity() {
                     }
                 }
             }
-        })
+        }
 
         if (!intent.hasExtra(EXTRA_FEED_ID)) {
-            feedsFoundModel.feeds.observe(this, Observer { feeds ->
-                feeds ?: return@Observer
+            feedsFoundModel.feeds.observe(this) { feeds ->
+                feeds ?: return@observe
 
                 logi("feeds found: %d", feeds.size)
                 // logi("feeds: $feeds")
@@ -277,7 +284,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         // TODO what about feeds already in db? hide or show them as already added
                     }
                 }
-            })
+            }
         }
     }
 }
