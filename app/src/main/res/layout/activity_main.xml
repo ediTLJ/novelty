@@ -31,7 +31,7 @@
         app:liftOnScroll="true"
         app:liftOnScrollTargetViewId="@id/news">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?actionBarSize"
@@ -48,7 +48,7 @@
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="44dp"
                 tools:ignore="HardcodedText,SpUsage" />
-        </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"

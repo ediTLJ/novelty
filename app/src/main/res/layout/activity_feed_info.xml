@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             app:liftOnScroll="true">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
@@ -45,7 +45,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_title"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/feed_title"
@@ -65,7 +65,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_url"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -90,6 +90,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
+                    <!-- FIXME replace with CircularProgressIndicator-->
                     <androidx.core.widget.ContentLoadingProgressBar
                         android:id="@+id/loading"
                         style="@style/Widget.AppCompat.ProgressBar"
@@ -99,9 +100,9 @@
                         android:indeterminate="true"
                         android:visibility="gone" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btn_add"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/btn_add_feed" />
