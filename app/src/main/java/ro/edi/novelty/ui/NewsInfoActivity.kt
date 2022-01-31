@@ -23,7 +23,6 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -129,7 +128,16 @@ class NewsInfoActivity : AppCompatActivity() {
             logi("info changed: %s", info)
 
             supportActionBar?.title = null
-            findViewById<TextView>(R.id.feed).text = info.feedTitle.uppercase(Locale.getDefault())
+
+            binding.feed.text = info.feedTitle.uppercase(Locale.getDefault())
+            binding.feed.apply {
+                setOnClickListener {
+                    val iFeedInfo = Intent(this@NewsInfoActivity, FeedInfoActivity::class.java)
+                    iFeedInfo.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    iFeedInfo.putExtra(FeedInfoActivity.EXTRA_FEED_ID, info.feedId)
+                    startActivity(iFeedInfo)
+                }
+            }
 
             invalidateOptionsMenu()
             binding.invalidateAll()
