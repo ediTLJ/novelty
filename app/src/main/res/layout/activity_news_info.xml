@@ -37,59 +37,80 @@
             android:scrollbars="vertical"
             app:layout_behavior="ro.edi.util.ui.FABAwareScrollingViewBehavior">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
-                android:orientation="vertical"
                 android:paddingStart="@dimen/activity_margin_small"
+                android:paddingTop="4dp"
                 android:paddingEnd="@dimen/activity_margin">
 
-                <LinearLayout
+                <Button
+                    android:id="@+id/feed"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:minWidth="0dp"
+                    android:textAppearance="@style/App.TextAppearance.Body2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="FEED" />
+
+                <TextView
+                    android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="16dp"
+                    android:gravity="end"
+                    android:lines="1"
+                    android:text="@{model.getDisplayDate()}"
+                    android:textAppearance="@style/App.TextAppearance.Body2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintBaseline_toBaselineOf="@id/feed"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/feed"
+                    tools:text="April 10, 2020 10:00:00" />
 
-                    <Button
-                        android:id="@+id/feed"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="start|center_vertical"
-                        android:lines="1"
-                        android:minWidth="0dp"
-                        android:textAppearance="@style/App.TextAppearance.Body2"
-                        tools:text="FEED" />
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:gravity="end"
+                    android:maxLines="2"
+                    android:text="@{model.getAuthor()}"
+                    android:textAppearance="@style/App.TextAppearance.Body2"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:visibility="@{model.getAuthorVisibility(), default=gone}"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/feed"
+                    app:layout_constraintTop_toBottomOf="@id/date"
+                    tools:text="Author"
+                    tools:visibility="visible" />
 
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:gravity="end|center_vertical"
-                        android:maxLines="2"
-                        android:text="@{model.getDisplayDateAndAuthor()}"
-                        android:textAppearance="@style/App.TextAppearance.Body2"
-                        android:textColor="?android:attr/textColorSecondary"
-                        tools:text="April 10, 2020 10:00:00\nAuthor" />
-                </LinearLayout>
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/header"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierAllowsGoneWidgets="true"
+                    app:barrierDirection="bottom"
+                    app:barrierMargin="4dp"
+                    app:constraint_referenced_ids="feed,date, author" />
 
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="8dp"
                     android:text="@{model.getInfo().title}"
                     android:textAppearance="@style/App.TextAppearance.Title"
                     android:textIsSelectable="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/header"
                     tools:text="News title" />
 
                 <TextView
@@ -103,8 +124,10 @@
                     android:text="@{model.getDisplayText()}"
                     android:textAppearance="@style/App.TextAppearance.Body"
                     android:textIsSelectable="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title"
                     tools:text="Extra! Extra! Read all about it!" />
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

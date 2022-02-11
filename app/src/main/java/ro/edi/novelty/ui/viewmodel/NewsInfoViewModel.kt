@@ -18,6 +18,8 @@ package ro.edi.novelty.ui.viewmodel
 import android.app.Application
 import android.text.Editable
 import android.text.Html
+import android.text.TextUtils
+import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.AndroidViewModel
@@ -46,17 +48,26 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
         return info.value
     }
 
-    fun getDisplayDateAndAuthor(): CharSequence? {
+    fun getDisplayDate(): CharSequence? {
         return getInfo()?.let {
-            val date =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
-                    .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT))
-            if (it.author == null) {
-                date
-            } else {
-                date.plus('\n').plus(it.author)
-            }
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
+                .format(
+                    DateTimeFormatter.ofLocalizedDateTime(
+                        FormatStyle.MEDIUM,
+                        FormatStyle.SHORT
+                    )
+                )
         }
+    }
+
+    fun getAuthor(): CharSequence? {
+        return getInfo()?.author
+    }
+
+    fun getAuthorVisibility(): Int {
+        return getAuthor()?.let {
+            if (it.isEmpty()) View.GONE else View.VISIBLE
+        } ?: View.GONE
     }
 
     fun getDisplayText(): CharSequence? {
