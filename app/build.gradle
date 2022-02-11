@@ -9,8 +9,8 @@ android {
         applicationId 'ro.edi.novelty'
         minSdkVersion 26 // Android 8.0
         targetSdkVersion 31 // Android 12
-        versionCode 8
-        versionName '2.0-alpha'
+        versionCode 9
+        versionName '2.0-beta'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         javaCompileOptions {
             annotationProcessorOptions {
@@ -81,7 +81,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     // implementation 'androidx.appcompat:appcompat-resources:1.4.1'
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
     // implementation 'android.arch.work:work-runtime-ktx:2.0.0'
     // androidTestImplementation 'android.arch.work:work-testing:2.0.0'
 
@@ -90,8 +90,8 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
 
     // Architecture Components: LiveData, ViewModel...
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     // kapt 'androidx.lifecycle:lifecycle-compiler:2.4.0'
     // kapt 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
