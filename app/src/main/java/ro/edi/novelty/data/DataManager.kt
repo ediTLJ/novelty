@@ -65,7 +65,7 @@ import timber.log.Timber.Forest.w as logw
 class DataManager private constructor(application: Application) {
     private val db: AppDatabase by lazy { AppDatabase.getInstance(application) }
 
-    val feedsFound = MutableLiveData<List<Feed>>()
+    val feedsFound = MutableLiveData<List<Feed>?>()
     val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
 
     init {
@@ -212,7 +212,7 @@ class DataManager private constructor(application: Application) {
      *
      * This makes a call to get data from the server.
      */
-    fun findFeeds(url: String): LiveData<List<Feed>> {
+    fun findFeeds(url: String): LiveData<List<Feed>?> {
         feedsFound.value = null
         AppExecutors.networkIO().execute {
             feedsFound.postValue(fetchFeeds(url))

@@ -25,7 +25,7 @@ import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 
 class FeedsFoundViewModel(application: Application) : AndroidViewModel(application) {
-    val feeds: LiveData<List<Feed>> by lazy(LazyThreadSafetyMode.NONE) {
+    val feeds: LiveData<List<Feed>?> by lazy(LazyThreadSafetyMode.NONE) {
         DataManager.getInstance(getApplication()).feedsFound
     }
 
