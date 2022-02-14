@@ -40,10 +40,12 @@ import ro.edi.util.Singleton
 import java.io.BufferedReader
 import java.lang.reflect.UndeclaredThrowableException
 import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.chrono.IsoChronology
 import java.time.format.*
 import java.time.temporal.ChronoField
+import timber.log.Timber.Forest.d as logd
 import timber.log.Timber.Forest.e as loge
 import timber.log.Timber.Forest.i as logi
 import timber.log.Timber.Forest.w as logw
@@ -145,6 +147,64 @@ class DataManager private constructor(application: Application) {
             .appendOffset("+HHMM", "GMT")
             .toFormatter().withResolverStyle(ResolverStyle.SMART)
             .withChronology(IsoChronology.INSTANCE)
+
+        @SuppressLint("UseSparseArrays")
+        private val dowRo = HashMap<Long, String>().apply {
+            put(1L, "Lu")
+            put(2L, "Ma")
+            put(3L, "Mi")
+            put(4L, "Jo")
+            put(5L, "Vi")
+            put(6L, "Sa")
+            put(7L, "Du")
+        }
+
+        @SuppressLint("UseSparseArrays")
+        private val moyRo = HashMap<Long, String>().apply {
+            put(1L, "ian")
+            put(2L, "feb")
+            put(3L, "mar")
+            put(4L, "apr")
+            put(5L, "mai")
+            put(6L, "iun")
+            put(7L, "iul")
+            put(8L, "aug")
+            put(9L, "sep")
+            put(10L, "oct")
+            put(11L, "noi")
+            put(12L, "dec")
+        }
+
+        /**
+         * [DateTimeFormatter.RFC_1123_DATE_TIME] with zone id set to Europe/Bucharest,
+         * day of month & month reversed, and day of week & months in Romanian language.
+         */
+        private val RFC_1123_DATE_TIME_RO = DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .parseLenient()
+            .optionalStart()
+            .appendText(ChronoField.DAY_OF_WEEK, dowRo)
+            .appendLiteral(", ")
+            .optionalEnd()
+            .appendText(ChronoField.MONTH_OF_YEAR, moyRo)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.DAY_OF_MONTH, 1, 2, SignStyle.NOT_NEGATIVE)
+            .appendLiteral(' ')
+            .appendValue(ChronoField.YEAR, 4)  // 2 digit year not handled
+            .appendLiteral(' ')
+            .appendValue(ChronoField.HOUR_OF_DAY, 2)
+            .appendLiteral(':')
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2)
+            .optionalStart()
+            .appendLiteral(':')
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2)
+            .optionalEnd()
+            .appendLiteral(' ')
+            .optionalStart()
+            .appendLiteral("GMT")
+            .toFormatter().withResolverStyle(ResolverStyle.SMART)
+            .withChronology(IsoChronology.INSTANCE)
+            .withZone(ZoneId.of("Europe/Bucharest"))
     }
 
     /**
@@ -783,7 +843,7 @@ class DataManager private constructor(application: Application) {
                 .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
 
             val updDate = runCatching {
-                // logi("published: $item.updatedDate")
+                // logi("published: ${item.updatedDate}")
                 ZonedDateTime.parse(
                     item.updatedDate,
                     DateTimeFormatter.ISO_DATE_TIME
@@ -797,7 +857,7 @@ class DataManager private constructor(application: Application) {
                 updDate
             } else {
                 runCatching {
-                    // logi("published: $item.pubDate")
+                    // logi("published: ${item.pubDate}")
                     ZonedDateTime.parse(
                         item.pubDate,
                         DateTimeFormatter.ISO_DATE_TIME
@@ -887,15 +947,37 @@ class DataManager private constructor(application: Application) {
 
         val now = Instant.now().toEpochMilli()
 
+        // logd("feed channel: ${rssFeed.channel}")
+
         val feedUpdDate = runCatching {
-            logi("feed updated: $rssFeed.channel.updatedDate")
+            // Tue, 3 Jun 2008 11:05:30 GMT
+            // logi("feed updated: ${rssFeed.channel.updatedDate}")
             ZonedDateTime.parse(
                 rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate,
                 RFC_1123_DATE_TIME
             ).toEpochSecond() * 1000
         }.getOrElse {
-            logi(it, "feed date parsing error... fallback to now()")
-            now
+            if (feedUrl.startsWith("https://www.hotnews.ro")
+                || feedUrl.startsWith("http://www.hotnews.ro")
+            ) {
+                // special case for hotnews.ro... because why not :|
+                runCatching {
+                    // Lu, feb 14 2022 22:32:30 GMT
+                    val weirdDate = rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate
+                    // logw("feed date parsing error... fallback to 'almost' RFC 1123")
+                    // logi("feed updated: $weirdDate")
+                    ZonedDateTime.parse(
+                        weirdDate,
+                        RFC_1123_DATE_TIME_RO
+                    ).toEpochSecond() * 1000
+                }.getOrElse {
+                    logw(it, "feed date parsing error... fallback to now()")
+                    now
+                }
+            } else {
+                logw(it, "feed date parsing error... fallback to now()")
+                now
+            }
         }
 
         val dbNews = ArrayList<DbNews>(news.size)
@@ -905,7 +987,7 @@ class DataManager private constructor(application: Application) {
             item.title ?: continue
             item.description ?: continue
 
-            logi("item: $item")
+            logd("item: $item")
 
             val id = (item.id ?: (item.link ?: item.title)).plus(feedId).hashCode()
             val title = item.title.trim { it <= ' ' }
@@ -915,11 +997,28 @@ class DataManager private constructor(application: Application) {
                 feedUpdDate
             } else {
                 runCatching {
-                    // logi("published: $item.pubDate")
+                    // Tue, 3 Jun 2008 11:05:30 GMT
+                    // logi("published: ${item.pubDate}")
                     ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME).toEpochSecond() * 1000
                 }.getOrElse {
-                    logi(it, "published date parsing error... fallback to now()")
-                    now
+                    if (feedUrl.startsWith("https://www.hotnews.ro")
+                        || feedUrl.startsWith("http://www.hotnews.ro")
+                    ) {
+                        // special case for hotnews.ro... because why not :|
+                        runCatching {
+                            // Lu, feb 14 2022 20:22:00 GMT
+                            // logw("published date parsing error... fallback to 'almost' RFC 1123")
+                            // logi("published: ${item.pubDate}")
+                            ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
+                                .toEpochSecond() * 1000
+                        }.getOrElse {
+                            logw(it, "published date parsing error... fallback to now()")
+                            now
+                        }
+                    } else {
+                        logw(it, "feed date parsing error... fallback to now()")
+                        now
+                    }
                 }
             }
 
