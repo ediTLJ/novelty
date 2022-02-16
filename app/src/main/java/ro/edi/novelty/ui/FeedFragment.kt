@@ -117,6 +117,8 @@ class FeedFragment : Fragment() {
                 applyBottom = true
             )
 
+            isNestedScrollingEnabled = true
+
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -125,6 +127,10 @@ class FeedFragment : Fragment() {
                         val pos = llManager.findFirstVisibleItemPosition()
                         val date =
                             (recyclerView.adapter as NewsAdapter).currentList[pos]?.pubDate ?: 0
+
+                        // logi("test pos: $pos")
+                        // logi("test date: $date")
+                        // logi("test newest date: $newestDate")
 
                         // FIXME if starred feed, get newestDate from sharedPrefs, if it's newer
                         // newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
@@ -224,6 +230,8 @@ class FeedFragment : Fragment() {
 
     @Suppress("SameParameterValue")
     private fun updateTabBadge(offset: Int) {
+        // logi("test offset: $offset")
+
         val tab = findTabByTag(newsModel.getNews(0)?.feedId) ?: return
         val badge = tab.badge ?: return
         badge.number += offset
