@@ -945,38 +945,41 @@ class DataManager private constructor(application: Application) {
         val news = rssFeed.channel.items
         news ?: return 0
 
+        val channelDate = rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate
         val now = Instant.now().toEpochMilli()
 
         // logd("feed channel: ${rssFeed.channel}")
 
         val feedUpdDate = runCatching {
             // Tue, 3 Jun 2008 11:05:30 GMT
-            // logi("feed updated: ${rssFeed.channel.updatedDate}")
-            ZonedDateTime.parse(
-                rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate,
-                RFC_1123_DATE_TIME
-            ).toEpochSecond() * 1000
+            // logi("feed updated: $channelDate")
+            ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME).toEpochSecond() * 1000
         }.getOrElse {
-            if (feedUrl.startsWith("https://www.hotnews.ro")
-                || feedUrl.startsWith("http://www.hotnews.ro")
-            ) {
-                // special case for hotnews.ro... because why not :|
-                runCatching {
-                    // Lu, feb 14 2022 22:32:30 GMT
-                    val weirdDate = rssFeed.channel.updatedDate ?: rssFeed.channel.pubDate
-                    // logw("feed date parsing error... fallback to 'almost' RFC 1123")
-                    // logi("feed updated: $weirdDate")
-                    ZonedDateTime.parse(
-                        weirdDate,
-                        RFC_1123_DATE_TIME_RO
-                    ).toEpochSecond() * 1000
-                }.getOrElse {
+            runCatching {
+                // 2022-02-18T14:37:00+02:00
+                // logw("feed date parsing error... fallback to ISO date-time")
+                // logi("feed updated: $channelDate")
+                ZonedDateTime.parse(channelDate, DateTimeFormatter.ISO_DATE_TIME)
+                    .toEpochSecond() * 1000
+            }.getOrElse {
+                if (feedUrl.startsWith("https://www.hotnews.ro")
+                    || feedUrl.startsWith("http://www.hotnews.ro")
+                ) {
+                    // special case for hotnews.ro... because why not :|
+                    runCatching {
+                        // Lu, feb 14 2022 22:32:30 GMT
+                        // logw("feed date parsing error... fallback to 'almost' RFC 1123")
+                        // logi("feed updated: $channelDate")
+                        ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_RO)
+                            .toEpochSecond() * 1000
+                    }.getOrElse {
+                        logw(it, "feed date parsing error... fallback to now()")
+                        now
+                    }
+                } else {
                     logw(it, "feed date parsing error... fallback to now()")
                     now
                 }
-            } else {
-                logw(it, "feed date parsing error... fallback to now()")
-                now
             }
         }
 
@@ -1001,23 +1004,31 @@ class DataManager private constructor(application: Application) {
                     // logi("published: ${item.pubDate}")
                     ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME).toEpochSecond() * 1000
                 }.getOrElse {
-                    if (feedUrl.startsWith("https://www.hotnews.ro")
-                        || feedUrl.startsWith("http://www.hotnews.ro")
-                    ) {
-                        // special case for hotnews.ro... because why not :|
-                        runCatching {
-                            // Lu, feb 14 2022 20:22:00 GMT
-                            // logw("published date parsing error... fallback to 'almost' RFC 1123")
-                            // logi("published: ${item.pubDate}")
-                            ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
-                                .toEpochSecond() * 1000
-                        }.getOrElse {
-                            logw(it, "published date parsing error... fallback to now()")
+                    runCatching {
+                        // 2022-02-18T14:37:00+02:00
+                        // logw("published date parsing error... fallback to ISO date-time")
+                        // logi("published: ${item.pubDate}")
+                        ZonedDateTime.parse(item.pubDate, DateTimeFormatter.ISO_DATE_TIME)
+                            .toEpochSecond() * 1000
+                    }.getOrElse {
+                        if (feedUrl.startsWith("https://www.hotnews.ro")
+                            || feedUrl.startsWith("http://www.hotnews.ro")
+                        ) {
+                            // special case for hotnews.ro... because why not :|
+                            runCatching {
+                                // Lu, feb 14 2022 20:22:00 GMT
+                                // logw("published date parsing error... fallback to 'almost' RFC 1123")
+                                // logi("published: ${item.pubDate}")
+                                ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
+                                    .toEpochSecond() * 1000
+                            }.getOrElse {
+                                logw(it, "published date parsing error... fallback to now()")
+                                now
+                            }
+                        } else {
+                            logw(it, "feed date parsing error... fallback to now()")
                             now
                         }
-                    } else {
-                        logw(it, "feed date parsing error... fallback to now()")
-                        now
                     }
                 }
             }
