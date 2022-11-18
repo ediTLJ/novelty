@@ -3,12 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId 'ro.edi.novelty'
-        minSdkVersion 26 // Android 8.0
-        targetSdkVersion 31 // Android 12
+        minSdkVersion 29 // Android 10
+        targetSdkVersion 33 // Android 13
         versionCode 9
         versionName '2.0-beta'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -64,23 +64,24 @@ android {
             excludes += ['META-INF/atomicfu.kotlin_module']
         }
     }
+    namespace 'ro.edi.novelty'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Java 8+ API desugaring
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.0'
 
     // Kotlin
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // AndroidX
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    // implementation 'androidx.appcompat:appcompat-resources:1.4.1'
-    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    // implementation 'androidx.appcompat:appcompat-resources:1.5.1'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     // implementation 'android.arch.work:work-runtime-ktx:2.0.0'
     // androidTestImplementation 'android.arch.work:work-testing:2.0.0'
@@ -90,25 +91,24 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
 
     // Architecture Components: LiveData, ViewModel...
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
-    // kapt 'androidx.lifecycle:lifecycle-compiler:2.4.0'
-    // kapt 'androidx.lifecycle:lifecycle-common-java8:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    // kapt 'androidx.lifecycle:lifecycle-compiler:2.5.1'
+    // kapt 'androidx.lifecycle:lifecycle-common-java8:2.5.1'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.4.1'
-    kapt 'androidx.room:room-compiler:2.4.1'
-    implementation 'androidx.room:room-ktx:2.4.1'
-    testImplementation 'androidx.room:room-testing:2.4.1'
+    implementation 'androidx.room:room-runtime:2.4.3'
+    kapt 'androidx.room:room-compiler:2.4.3'
+    implementation 'androidx.room:room-ktx:2.4.3'
+    testImplementation 'androidx.room:room-testing:2.4.3'
 
     // Material Design
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
 
     // OkHttp
-    implementation platform('com.squareup.okhttp3:okhttp-bom:4.9.3')
-    implementation 'com.squareup.okhttp3:okhttp'
-    implementation 'com.squareup.okhttp3:logging-interceptor'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.8'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.8'
     // implementation 'com.squareup.okio:okio:x.x.x'
 
     // Retrofit
@@ -124,9 +124,9 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // testing dependencies
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.4.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.0'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     testImplementation 'junit:junit:4.13.2'
 }

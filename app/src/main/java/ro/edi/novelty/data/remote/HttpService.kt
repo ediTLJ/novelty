@@ -25,28 +25,24 @@ import retrofit2.http.GET
 import retrofit2.http.Streaming
 import retrofit2.http.Url
 import ro.edi.novelty.BuildConfig
-import java.io.IOException
 
 interface HttpService {
     companion object {
         val instance: HttpService by lazy {
             val okBuilder = OkHttpClient.Builder()
 
-            okBuilder.addInterceptor(object : Interceptor {
-                @Throws(IOException::class)
-                override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
-                    val original = chain.request()
+            okBuilder.addInterceptor(Interceptor { chain ->
+                val original = chain.request()
 
-                    val builder = original.newBuilder()
+                val builder = original.newBuilder()
 
-                    builder.header("Accept-Charset", "utf-8,*")
-                    builder.header(
-                        "User-Agent",
-                        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36 OPR/64.0.3417.54"
-                    )
+                builder.header("Accept-Charset", "utf-8,*")
+                builder.header(
+                    "User-Agent",
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61/63 Safari/537.36"
+                )
 
-                    return chain.proceed(builder.build())
-                }
+                chain.proceed(builder.build())
             })
 
             // add other interceptors here
