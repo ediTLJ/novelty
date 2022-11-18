@@ -961,7 +961,7 @@ class DataManager private constructor(application: Application) {
                 // logi("feed updated: $channelDate")
                 ZonedDateTime.parse(channelDate, DateTimeFormatter.ISO_DATE_TIME)
                     .toEpochSecond() * 1000
-            }.getOrElse {
+            }.getOrElse { t ->
                 if (feedUrl.startsWith("https://www.hotnews.ro")
                     || feedUrl.startsWith("http://www.hotnews.ro")
                 ) {
@@ -972,12 +972,12 @@ class DataManager private constructor(application: Application) {
                         // logi("feed updated: $channelDate")
                         ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_RO)
                             .toEpochSecond() * 1000
-                    }.getOrElse {
-                        logw(it, "feed date parsing error... fallback to now()")
+                    }.getOrElse { ht ->
+                        logw(ht, "feed date parsing error... fallback to now()")
                         now
                     }
                 } else {
-                    logw(it, "feed date parsing error... fallback to now()")
+                    logw(t, "feed date parsing error... fallback to now()")
                     now
                 }
             }
@@ -1010,23 +1010,24 @@ class DataManager private constructor(application: Application) {
                         // logi("published: ${item.pubDate}")
                         ZonedDateTime.parse(item.pubDate, DateTimeFormatter.ISO_DATE_TIME)
                             .toEpochSecond() * 1000
-                    }.getOrElse {
+                    }.getOrElse { t ->
                         if (feedUrl.startsWith("https://www.hotnews.ro")
                             || feedUrl.startsWith("http://www.hotnews.ro")
                         ) {
                             // special case for hotnews.ro... because why not :|
                             runCatching {
                                 // Lu, feb 14 2022 20:22:00 GMT
+                                logi("@hotnews")
                                 // logw("published date parsing error... fallback to 'almost' RFC 1123")
                                 // logi("published: ${item.pubDate}")
                                 ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
                                     .toEpochSecond() * 1000
-                            }.getOrElse {
-                                logw(it, "published date parsing error... fallback to now()")
+                            }.getOrElse { ht ->
+                                logw(ht, "published date parsing error... fallback to now()")
                                 now
                             }
                         } else {
-                            logw(it, "feed date parsing error... fallback to now()")
+                            logw(t, "feed date parsing error... fallback to now()")
                             now
                         }
                     }

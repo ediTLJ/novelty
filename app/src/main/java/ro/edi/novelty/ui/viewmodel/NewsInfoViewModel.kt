@@ -18,7 +18,6 @@ package ro.edi.novelty.ui.viewmodel
 import android.app.Application
 import android.text.Editable
 import android.text.Html
-import android.text.TextUtils
 import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml

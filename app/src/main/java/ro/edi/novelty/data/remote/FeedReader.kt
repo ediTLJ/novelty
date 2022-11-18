@@ -17,7 +17,6 @@ package ro.edi.novelty.data.remote
 
 import com.ouattararomuald.syndication.Atom
 import com.ouattararomuald.syndication.Rss
-import com.ouattararomuald.syndication.atom.AtomFeed
 
 interface FeedReader {
     @Rss(returnClass = BaseRssFeed::class)
