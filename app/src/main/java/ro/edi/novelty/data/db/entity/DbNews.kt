@@ -16,7 +16,7 @@
 package ro.edi.novelty.data.db.entity
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 
 @Entity(
     tableName = "news",
