@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ fun getColorRes(context: Context, @AttrRes attrRes: Int): Int {
     "applyWindowInsetsMarginBottom",
     requireAll = false
 )
-fun View.applyWindowInsetsMargin(
+fun View.applyWindowInsetsMargins(
     applyLeft: Boolean,
     applyTop: Boolean,
     applyRight: Boolean,
@@ -57,7 +57,7 @@ fun View.applyWindowInsetsMargin(
         val right = if (applyRight) insets.systemWindowInsetRight else 0
         val bottom = if (applyBottom) insets.systemWindowInsetBottom else 0
 
-        setMargin(
+        setMargins(
             left,
             top,
             right,
@@ -123,7 +123,7 @@ fun View.requestApplyInsetsWhenAttached() {
     }
 }
 
-fun View.setMargin(leftValue: Int, topValue: Int, rightValue: Int, bottomValue: Int) =
+fun View.setMargins(leftValue: Int, topValue: Int, rightValue: Int, bottomValue: Int) =
     updateLayoutParams<ViewGroup.MarginLayoutParams> {
         leftMargin = leftValue
         topMargin = topValue

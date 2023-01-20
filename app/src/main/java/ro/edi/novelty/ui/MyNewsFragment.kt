@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ class MyNewsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
+        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.refresh)
         vRefresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             isRefreshing = false
@@ -97,18 +97,26 @@ class MyNewsFragment : Fragment() {
         newsModel.news.observe(viewLifecycleOwner) { newsList ->
             logi("news changed: %d news", newsList.size)
 
-            (rvNews.adapter as NewsAdapter).submitList(newsList)
+            val rvAdapter = rvNews.adapter as NewsAdapter
 
-            val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(0)
+            rvAdapter.submitList(newsList) {
+                if (newsList.isEmpty()) {
+                    vEmpty.visibility = View.VISIBLE
+                    rvNews.visibility = View.GONE
+                } else {
+                    vEmpty.visibility = View.GONE
+                    rvNews.visibility = View.VISIBLE
+                }
 
-            if (newsList.isEmpty()) {
-                vEmpty.visibility = View.VISIBLE
-                rvNews.visibility = View.GONE
-                tab?.removeBadge()
-            } else {
-                vEmpty.visibility = View.GONE
-                rvNews.visibility = View.VISIBLE
-                tab?.orCreateBadge?.number = newsList.size
+                activity?.let {
+                    val tab = it.findViewById<TabLayout>(R.id.tabs)?.getTabAt(0)
+
+                    if (newsList.isEmpty()) {
+                        tab?.removeBadge()
+                    } else {
+                        tab?.orCreateBadge?.number = newsList.size
+                    }
+                }
             }
         }
     }

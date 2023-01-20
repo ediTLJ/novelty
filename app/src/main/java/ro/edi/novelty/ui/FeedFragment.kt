@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ class FeedFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
+        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.refresh)
         vRefresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             setOnRefreshListener {
@@ -117,8 +117,6 @@ class FeedFragment : Fragment() {
                 applyBottom = true
             )
 
-            isNestedScrollingEnabled = true
-
             clearOnScrollListeners()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -135,19 +133,22 @@ class FeedFragment : Fragment() {
                         // FIXME if starred feed, get newestDate from sharedPrefs, if it's newer
                         // newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
 
-                        if (date >= newestDate) {
+                        var shouldUpdateTabBadge = false
+
+                        if (date > newestDate) {
                             newestDate = date
                             // FIXME if starred feed, put newestDate to sharedPrefs?
 //                            sharedPrefs
 //                                .edit()
 //                                .putLong(KEY_NEWEST_SEEN_DATE, date)
 //                                .apply()
+                            shouldUpdateTabBadge = true
                         }
 
                         if (llManager.findFirstVisibleItemPosition() == 0) {
                             clearTabBadge()
                         } else {
-                            if (date > newestDate) {
+                            if (shouldUpdateTabBadge) {
                                 updateTabBadge(-1)
                             }
                         }
@@ -166,7 +167,7 @@ class FeedFragment : Fragment() {
         val vEmpty = view.findViewById<View>(R.id.empty)
 
         newsModel.isFetching.observe(viewLifecycleOwner) { isFetching ->
-            logi("isFetching changed: %b", isFetching)
+            logi("isFetching changed to $isFetching")
 
             if (isFetching) {
                 vRefresh.isRefreshing = true
@@ -212,17 +213,17 @@ class FeedFragment : Fragment() {
                 val prevNewsCount = rvAdapter.itemCount
                 logi("prevNewsCount: $prevNewsCount")
 
-                rvAdapter.submitList(newsList)
+                rvAdapter.submitList(newsList) {
+                    // if (prevNewsCount == 0) {
+                    //
+                    // }
 
-                // if (prevNewsCount == 0) {
-                //
-                // }
+                    if (newsList[0].pubDate > newestDate) {
+                        val posNew = newsList.indexOfFirst { it.pubDate <= newestDate }
+                        logi("pos: $posNew")
 
-                if (newsList[0].pubDate > newestDate) {
-                    val posNew = newsList.indexOfFirst { it.pubDate <= newestDate }
-                    logi("pos: $posNew")
-
-                    setTabBadge(posNew)
+                        setTabBadge(posNew)
+                    }
                 }
             }
         }
@@ -265,12 +266,14 @@ class FeedFragment : Fragment() {
     private fun findTabByTag(feedId: Int?): TabLayout.Tab? {
         feedId ?: return null
 
-        val tabs = activity?.findViewById<TabLayout>(R.id.tabs) ?: return null
+        activity?.let {
+            val tabs = it.findViewById<TabLayout>(R.id.tabs) ?: return null
 
-        for (idx in 2 until tabs.tabCount) {
-            val tab = tabs.getTabAt(idx) ?: continue
-            if (tab.tag == feedId) {
-                return tab
+            for (idx in 2 until tabs.tabCount) {
+                val tab = tabs.getTabAt(idx) ?: continue
+                if (tab.tag == feedId) {
+                    return tab
+                }
             }
         }
 

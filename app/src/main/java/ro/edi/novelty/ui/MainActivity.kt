@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -23,19 +23,19 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
 import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
-import ro.edi.util.applyWindowInsetsMargin
+import ro.edi.util.applyWindowInsetsMargins
 import java.util.*
 import timber.log.Timber.Forest.i as logi
 
@@ -90,11 +90,11 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     }
 
     private fun initView() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        toolbar.applyWindowInsetsMargin(
+        toolbar.applyWindowInsetsMargins(
             applyLeft = true,
             applyTop = false,
             applyRight = true,
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         pager.setCurrentItem(1, false)
 
         val tabs = findViewById<TabLayout>(R.id.tabs)
-        tabs.applyWindowInsetsMargin(
+        tabs.applyWindowInsetsMargins(
             applyLeft = true,
             applyTop = false,
             applyRight = true,

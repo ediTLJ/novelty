@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ class MyFeedsFragment : Fragment() {
 
     @SuppressLint("RestrictedApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh)
+        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.refresh)
         vRefresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             setOnRefreshListener {
@@ -135,7 +135,7 @@ class MyFeedsFragment : Fragment() {
                             (recyclerView.adapter as NewsAdapter).currentList[pos]?.pubDate ?: 0
 
                         val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
-                        if (date >= newestDate) {
+                        if (date > newestDate) {
                             sharedPrefs
                                 .edit()
                                 .putLong(KEY_NEWEST_SEEN_DATE, date)
@@ -164,7 +164,7 @@ class MyFeedsFragment : Fragment() {
         val vEmpty = view.findViewById<View>(R.id.empty)
 
         newsModel.isFetching.observe(viewLifecycleOwner) { isFetching ->
-            logi("isFetching changed: %b", isFetching)
+            logi("isFetching changed: $isFetching")
 
             if (isFetching) {
                 vRefresh.isRefreshing = true
@@ -200,29 +200,29 @@ class MyFeedsFragment : Fragment() {
                 val prevNewsCount = rvAdapter.itemCount
                 logi("prevNewsCount: $prevNewsCount")
 
-                rvAdapter.submitList(newsList)
+                rvAdapter.submitList(newsList) {
+                    if (prevNewsCount == 0) {
+                        val lastDate = sharedPrefs.getLong(KEY_LAST_SEEN_DATE, 0)
+                        logi("lastDate: $lastDate")
 
-                if (prevNewsCount == 0) {
-                    val lastDate = sharedPrefs.getLong(KEY_LAST_SEEN_DATE, 0)
-                    logi("lastDate: $lastDate")
+                        val pos = newsList.indexOfFirst { it.pubDate <= lastDate }
+                        logi("pos: $pos")
 
-                    val pos = newsList.indexOfFirst { it.pubDate <= lastDate }
-                    logi("pos: $pos")
+                        llManager.scrollToPositionWithOffset(
+                            if (pos < 0) 0 else pos,
+                            sharedPrefs.getInt(KEY_LAST_SEEN_OFFSET, -rvNews.paddingTop)
+                        )
+                    }
 
-                    llManager.scrollToPositionWithOffset(
-                        if (pos < 0) 0 else pos,
-                        sharedPrefs.getInt(KEY_LAST_SEEN_OFFSET, -rvNews.paddingTop)
-                    )
-                }
+                    val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+                    logi("newestDate: $newestDate")
 
-                val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
-                logi("newestDate: $newestDate")
+                    if (newsList[0].pubDate > newestDate) {
+                        val pos = newsList.indexOfFirst { it.pubDate <= newestDate }
+                        logi("pos: $pos")
 
-                if (newsList[0].pubDate > newestDate) {
-                    val pos = newsList.indexOfFirst { it.pubDate <= newestDate }
-                    logi("pos: $pos")
-
-                    setTabBadge(pos)
+                        setTabBadge(pos)
+                    }
                 }
             }
         }
@@ -230,34 +230,40 @@ class MyFeedsFragment : Fragment() {
 
     @Suppress("SameParameterValue")
     private fun updateTabBadge(offset: Int) {
-        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
-        val badge = tab.badge ?: return
-        badge.number += offset
+        activity?.let {
+            val tab = it.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+            val badge = tab.badge ?: return
+            badge.number += offset
 
-        logi("tab badge set to ${badge.number}")
+            logi("tab badge set to ${badge.number}")
+        }
     }
 
     private fun setTabBadge(count: Int) {
-        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+        activity?.let {
+            val tab = it.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
 
-        if (count <= 0) {
-            tab.removeBadge()
+            if (count <= 0) {
+                tab.removeBadge()
 
-            logi("tab badge cleared")
-            return
+                logi("tab badge cleared")
+                return
+            }
+
+            val badge = tab.orCreateBadge
+            badge.number = count
+
+            logi("tab badge set to $count")
         }
-
-        val badge = tab.orCreateBadge
-        badge.number = count
-
-        logi("tab badge set to $count")
     }
 
     private fun clearTabBadge() {
-        val tab = activity?.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
-        tab.removeBadge() // or hide it?
+        activity?.let {
+            val tab = it.findViewById<TabLayout>(R.id.tabs)?.getTabAt(1) ?: return
+            tab.removeBadge() // or hide it?
 
-        logi("tab badge removed")
+            logi("tab badge removed")
+        }
     }
 
     private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
