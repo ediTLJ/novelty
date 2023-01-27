@@ -16,12 +16,14 @@
 package ro.edi.novelty.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +39,7 @@ import ro.edi.novelty.ui.adapter.FeedsPagerAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import ro.edi.util.applyWindowInsetsMargins
 import java.util.*
+import timber.log.Timber.Forest.d as logd
 import timber.log.Timber.Forest.i as logi
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
@@ -56,18 +59,50 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         window.sharedElementsUseOverlay = false
 
         super.onCreate(savedInstanceState)
+        logd("onCreate: $savedInstanceState")
 
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
 
         setContentView(R.layout.activity_main)
         initView()
+
+        if (savedInstanceState == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // Android 12 changed back press behavior
+                // let's call finish() when back pressed, for now... to mimic previous behavior
+                onBackPressedDispatcher.addCallback(this, true) {
+                    finish()
+                }
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        logd("onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logd("onResume")
+    }
+
+    override fun onPause() {
+        logd("onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        logd("onStop")
+        super.onStop()
     }
 
     override fun onDestroy() {
         val tabs = findViewById<TabLayout>(R.id.tabs)
         tabs.removeOnTabSelectedListener(this)
 
+        logd("onDestroy")
         super.onDestroy()
     }
 
@@ -177,7 +212,6 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
                     tabs.selectTab(tabs.getTabAt(feeds.size + 1))
                 }
             }
-
         }
     }
 
