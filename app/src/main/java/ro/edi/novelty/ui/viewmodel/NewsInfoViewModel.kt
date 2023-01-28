@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -21,8 +21,9 @@ import android.text.Html
 import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import org.xml.sax.XMLReader
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
@@ -32,15 +33,18 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class NewsInfoViewModel(application: Application) : AndroidViewModel(application) {
-    private var newsId = 0
+class NewsInfoViewModel(
+    private val application: Application,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    var newsId: Int
+        get() = savedStateHandle[KEY_NEWS_ID] ?: 0
+        set(id) {
+            savedStateHandle[KEY_NEWS_ID] = id
+        }
 
     val info: LiveData<News> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(getApplication()).getNewsInfo(newsId)
-    }
-
-    constructor(application: Application, newsId: Int) : this(application) {
-        this.newsId = newsId
+        DataManager.getInstance(application).getNewsInfo(newsId)
     }
 
     private fun getInfo(): News? {
@@ -83,7 +87,7 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
 
     fun setIsStarred(isStarred: Boolean) {
         info.value?.let {
-            DataManager.getInstance(getApplication()).updateNewsStarred(it, isStarred)
+            DataManager.getInstance(application).updateNewsStarred(it, isStarred)
         }
     }
 
@@ -109,6 +113,25 @@ class NewsInfoViewModel(application: Application) : AndroidViewModel(application
                 } else {
                     output.append('\n')
                 }
+            }
+        }
+    }
+
+    companion object {
+        private const val KEY_NEWS_ID = "news-id"
+
+        val FACTORY = viewModelFactory {
+            // the return type of the lambda automatically sets what class this lambda handles
+            initializer {
+                // get the Application object from extras provided to the lambda
+                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+
+                val savedStateHandle = createSavedStateHandle()
+
+                NewsInfoViewModel(
+                    application = application,
+                    savedStateHandle = savedStateHandle
+                )
             }
         }
     }

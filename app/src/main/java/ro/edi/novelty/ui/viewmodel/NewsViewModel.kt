@@ -18,47 +18,56 @@ package ro.edi.novelty.ui.viewmodel
 import android.app.Application
 import android.content.Context
 import android.text.format.DateUtils
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 import ro.edi.util.getColorRes
 import java.util.*
 
-class NewsViewModel(application: Application) : AndroidViewModel(application) {
-    companion object {
-        const val TYPE_MY_NEWS = -1
-        const val TYPE_MY_FEEDS = 0
-        const val TYPE_FEED = 1
-    }
-
-    lateinit var news: LiveData<List<News>>
-    lateinit var isFetching: LiveData<Boolean>
-
-    private var type = TYPE_MY_FEEDS
-    private var feedId = 0
-
-    constructor(application: Application, type: Int, feedId: Int) : this(application) {
-        this.type = type
-
-        if (type == TYPE_MY_NEWS) {
-            news = DataManager.getInstance(getApplication()).getMyNews()
-            return
+class NewsViewModel(
+    private val application: Application,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    var type: Int
+        get() = savedStateHandle[KEY_TYPE] ?: TYPE_MY_FEEDS
+        set(type) {
+            savedStateHandle[KEY_TYPE] = type
         }
 
-        this.feedId = feedId
+    var feedId: Int
+        get() = savedStateHandle[KEY_FEED_ID] ?: 0
+        set(id) {
+            savedStateHandle[KEY_FEED_ID] = id
+        }
 
-        val dataManager = DataManager.getInstance(getApplication())
-        news = dataManager.getNews(feedId)
-        isFetching = dataManager.isFetchingArray.get(feedId, MutableLiveData())
+    val news: LiveData<List<News>> by lazy(LazyThreadSafetyMode.NONE) {
+        // TODO type should be livedata as well
+        savedStateHandle.getLiveData<Int>(KEY_FEED_ID).switchMap { feedId ->
+            if (type == TYPE_MY_NEWS) {
+                return@switchMap DataManager.getInstance(application).getMyNews()
+            }
+
+            // if feedId is 0, it will get news for all my feeds
+            DataManager.getInstance(application).getNews(feedId)
+        }
     }
 
-    fun refresh(feedId: Int) {
+    val isFetching: LiveData<Boolean> =
+        savedStateHandle.getLiveData<Int>(KEY_FEED_ID).switchMap { feedId ->
+            if (type == TYPE_MY_NEWS) {
+                return@switchMap MutableLiveData(false)
+            }
+            DataManager.getInstance(application).isFetchingArray.get(feedId, MutableLiveData(false))
+        }
+
+    fun refresh() {
         if (type == TYPE_MY_NEWS) return
 
-        DataManager.getInstance(getApplication()).refreshNews(feedId)
+        // if feedId is 0, it will fetch news for all my feeds
+        DataManager.getInstance(application).fetchNews(feedId)
     }
 
     fun getNews(position: Int): News? {
@@ -121,7 +130,31 @@ class NewsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setIsRead(position: Int, isRead: Boolean) {
         getNews(position)?.let {
-            DataManager.getInstance(getApplication()).updateNewsRead(it, isRead)
+            DataManager.getInstance(application).updateNewsRead(it, isRead)
+        }
+    }
+
+    companion object {
+        private const val KEY_TYPE = "type"
+        private const val KEY_FEED_ID = "feed-id"
+
+        const val TYPE_MY_NEWS = -1
+        const val TYPE_MY_FEEDS = 0
+        const val TYPE_FEED = 1
+
+        val FACTORY = viewModelFactory {
+            // the return type of the lambda automatically sets what class this lambda handles
+            initializer {
+                // get the Application object from extras provided to the lambda
+                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
+
+                val savedStateHandle = createSavedStateHandle()
+
+                NewsViewModel(
+                    application = application,
+                    savedStateHandle = savedStateHandle
+                )
+            }
         }
     }
 }

@@ -252,7 +252,8 @@ class DataManager private constructor(application: Application) {
      *      else => news for specified feed id
      */
     fun getNews(feedId: Int): LiveData<List<News>> {
-        refreshNews(feedId)
+        logd("getNews($feedId)")
+        fetchNews(feedId)
 
         if (feedId == 0) {
             return db.newsDao().getNews()
@@ -263,18 +264,18 @@ class DataManager private constructor(application: Application) {
 
 
     /**
-     * Refresh news for specified feed.
-     *
+     * Fetch news for specified feed.
      * This makes a call to get latest data from the server.
      */
-    fun refreshNews(feedId: Int) {
+    fun fetchNews(feedId: Int) {
+        logd("fetchNews($feedId)")
         if (feedId == 0) {
-            refreshNews()
+            fetchNews()
             return
         }
 
         if (isFetchingArray.indexOfKey(feedId) < 0) {
-            isFetchingArray.put(feedId, MutableLiveData())
+            isFetchingArray.put(feedId, MutableLiveData(false))
         }
 
         AppExecutors.networkIO().execute {
@@ -291,11 +292,10 @@ class DataManager private constructor(application: Application) {
     }
 
     /**
-     * Refresh news for my feeds only.
-     *
+     * Fetch news for my feeds only.
      * This makes a call to get latest data from the server.
      */
-    private fun refreshNews() {
+    private fun fetchNews() {
         AppExecutors.networkIO().execute {
             val isFetching = isFetchingArray.get(0)
             isFetching.postValue(true)
@@ -895,7 +895,7 @@ class DataManager private constructor(application: Application) {
                         item.content ?: link?.let {
                             "<a href=\"$it\">$it</a>"
                         } ?: ""
-                    ), // we.ll never reach the "" part (the Kotlin compiler seems to be blind)
+                    ), // we'll never reach the "" part (the Kotlin compiler seems to be blind)
                     author?.toString(),
                     pubDate,
                     updDate,
@@ -960,14 +960,14 @@ class DataManager private constructor(application: Application) {
             ZonedDateTime.parse(channelDate, DateTimeFormatter.RFC_1123_DATE_TIME)
                 .toEpochSecond() * 1000
         }.getOrElse {
-            logw(it, "published date parsing error... fallback to RFC_1123_DATE_TIME_ZONE_NAME")
+            // logw(it, "published date parsing error... fallback to RFC_1123_DATE_TIME_ZONE_NAME")
             runCatching {
                 // Tue, 3 Jun 2008 11:05:30 PST
                 // logi("feed updated: $channelDate")
                 ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_ZONE_NAME)
                     .toEpochSecond() * 1000
             }.getOrElse { zt ->
-                logw(zt, "feed date parsing error... fallback to ISO_DATE_TIME")
+                // logw(zt, "feed date parsing error... fallback to ISO_DATE_TIME")
                 runCatching {
                     // 2022-02-18T14:37:00+02:00
                     // logi("feed updated: $channelDate")
@@ -985,11 +985,11 @@ class DataManager private constructor(application: Application) {
                             ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_RO)
                                 .toEpochSecond() * 1000
                         }.getOrElse { ht ->
-                            logw(ht, "feed date parsing error... fallback to now()")
+                            // logw(ht, "feed date parsing error... fallback to now()")
                             now
                         }
                     } else {
-                        logw(t, "feed date parsing error... fallback to now()")
+                        // logw(t, "feed date parsing error... fallback to now()")
                         now
                     }
                 }
@@ -1018,17 +1018,14 @@ class DataManager private constructor(application: Application) {
                     ZonedDateTime.parse(item.pubDate, DateTimeFormatter.RFC_1123_DATE_TIME)
                         .toEpochSecond() * 1000
                 }.getOrElse {
-                    logw(
-                        it,
-                        "published date parsing error... fallback to RFC_1123_DATE_TIME_ZONE_NAME"
-                    )
+                    // logw(it, "published date parsing error... fallback to RFC_1123_DATE_TIME_ZONE_NAME")
                     runCatching {
                         // Tue, 3 Jun 2008 11:05:30 PST
                         // logi("published: ${item.pubDate}")
                         ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_ZONE_NAME)
                             .toEpochSecond() * 1000
                     }.getOrElse { zt ->
-                        logw(zt, "published date parsing error... fallback to ISO_DATE_TIME")
+                        // logw(zt, "published date parsing error... fallback to ISO_DATE_TIME")
                         runCatching {
                             // 2022-02-18T14:37:00+02:00
                             // logi("published: ${item.pubDate}")
@@ -1041,17 +1038,17 @@ class DataManager private constructor(application: Application) {
                                 // special case for hotnews.ro... because why not :|
                                 runCatching {
                                     // Lu, feb 14 2022 20:22:00 GMT
-                                    logi("@hotnews")
+                                    // logd("@hotnews")
                                     // logw("published date parsing error... fallback to 'almost' RFC 1123")
                                     // logi("published: ${item.pubDate}")
                                     ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
                                         .toEpochSecond() * 1000
                                 }.getOrElse { ht ->
-                                    logw(ht, "published date parsing error... fallback to now()")
+                                    // logw(ht, "published date parsing error... fallback to now()")
                                     now
                                 }
                             } else {
-                                logw(t, "feed date parsing error... fallback to now()")
+                                // logw(t, "feed date parsing error... fallback to now()")
                                 now
                             }
                         }

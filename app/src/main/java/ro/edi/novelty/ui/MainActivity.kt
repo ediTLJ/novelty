@@ -24,8 +24,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -43,12 +43,7 @@ import timber.log.Timber.Forest.d as logd
 import timber.log.Timber.Forest.i as logi
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
-    private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(
-            viewModelStore,
-            defaultViewModelProviderFactory
-        )[FeedsViewModel::class.java]
-    }
+    private val feedsModel: FeedsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // attach a callback used to capture the shared elements from this activity

@@ -24,10 +24,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
@@ -43,19 +43,8 @@ class FeedInfoActivity : AppCompatActivity() {
         const val EXTRA_FEED_ID = "ro.edi.novelty.ui.feedinfo.extra_feed_id"
     }
 
-    private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(
-            viewModelStore,
-            defaultViewModelProviderFactory
-        )[FeedsViewModel::class.java]
-    }
-
-    private val feedsFoundModel: FeedsFoundViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(
-            viewModelStore,
-            defaultViewModelProviderFactory
-        )[FeedsFoundViewModel::class.java]
-    }
+    private val feedsModel: FeedsViewModel by viewModels()
+    private val feedsFoundModel: FeedsFoundViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         findViewById<View>(android.R.id.content).transitionName = "shared_feed_container"
@@ -87,8 +76,10 @@ class FeedInfoActivity : AppCompatActivity() {
 
         val binding: ActivityFeedInfoBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_feed_info)
-        binding.lifecycleOwner = this
-        binding.model = feedsModel
+        binding.apply {
+            lifecycleOwner = this@FeedInfoActivity
+            model = feedsModel
+        }
 
         initView(binding)
     }

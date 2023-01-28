@@ -20,11 +20,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,12 +46,15 @@ class MyFeedsFragment : Fragment() {
         fun newInstance() = MyFeedsFragment()
     }
 
-    private lateinit var newsModel: NewsViewModel
+    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProvider(viewModelStore, factory)[NewsViewModel::class.java]
+        newsModel.apply {
+            type = NewsViewModel.TYPE_MY_FEEDS
+            feedId = 0
+        }
     }
 
     override fun onPause() {
@@ -110,7 +111,7 @@ class MyFeedsFragment : Fragment() {
         vRefresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             setOnRefreshListener {
-                newsModel.refresh(0)
+                newsModel.refresh()
             }
         }
 
@@ -263,17 +264,6 @@ class MyFeedsFragment : Fragment() {
             tab.removeBadge() // or hide it?
 
             logi("tab badge removed")
-        }
-    }
-
-    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return NewsViewModel(
-                (activity as AppCompatActivity).application,
-                NewsViewModel.TYPE_MY_FEEDS,
-                0
-            ) as T
         }
     }
 }

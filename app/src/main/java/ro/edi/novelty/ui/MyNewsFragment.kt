@@ -20,11 +20,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.tabs.TabLayout
@@ -41,12 +39,15 @@ class MyNewsFragment : Fragment() {
         fun newInstance() = MyNewsFragment()
     }
 
-    private lateinit var newsModel: NewsViewModel
+    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProvider(viewModelStore, factory)[NewsViewModel::class.java]
+        newsModel.apply {
+            type = NewsViewModel.TYPE_MY_NEWS
+            feedId = 0
+        }
     }
 
     override fun onCreateView(
@@ -118,17 +119,6 @@ class MyNewsFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return NewsViewModel(
-                (activity as AppCompatActivity).application,
-                NewsViewModel.TYPE_MY_NEWS,
-                0
-            ) as T
         }
     }
 }

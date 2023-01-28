@@ -19,11 +19,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -49,12 +47,15 @@ class FeedFragment : Fragment() {
 
     private var newestDate = 0L
 
-    private lateinit var newsModel: NewsViewModel
+    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        newsModel = ViewModelProvider(viewModelStore, factory)[NewsViewModel::class.java]
+        newsModel.apply {
+            type = NewsViewModel.TYPE_FEED
+            feedId = arguments?.getInt(ARG_FEED_ID, 0) ?: 0
+        }
     }
 
     override fun onPause() {
@@ -103,7 +104,7 @@ class FeedFragment : Fragment() {
         vRefresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             setOnRefreshListener {
-                newsModel.refresh(arguments?.getInt(ARG_FEED_ID, 0) ?: 0)
+                newsModel.refresh()
             }
         }
 
@@ -278,16 +279,5 @@ class FeedFragment : Fragment() {
         }
 
         return null
-    }
-
-    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return NewsViewModel(
-                (activity as AppCompatActivity).application,
-                NewsViewModel.TYPE_FEED,
-                arguments?.getInt(ARG_FEED_ID, 0) ?: 0
-            ) as T
-        }
     }
 }

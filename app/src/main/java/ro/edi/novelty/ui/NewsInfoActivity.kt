@@ -23,11 +23,10 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
@@ -41,9 +40,7 @@ class NewsInfoActivity : AppCompatActivity() {
         const val EXTRA_NEWS_ID = "ro.edi.novelty.ui.newsinfo.extra_news_id"
     }
 
-    private val infoModel: NewsInfoViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(viewModelStore, factory)[NewsInfoViewModel::class.java]
-    }
+    private val infoModel: NewsInfoViewModel by viewModels { NewsInfoViewModel.FACTORY }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         findViewById<View>(android.R.id.content).transitionName = "shared_news_container"
@@ -72,6 +69,9 @@ class NewsInfoActivity : AppCompatActivity() {
         }
 
         super.onCreate(savedInstanceState)
+
+        val newsId = intent.getIntExtra(EXTRA_NEWS_ID, 0)
+        infoModel.newsId = newsId
 
         val binding: ActivityNewsInfoBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_news_info)
@@ -151,16 +151,6 @@ class NewsInfoActivity : AppCompatActivity() {
                     startActivity(iBrowser)
                 }
             }.show()
-        }
-    }
-
-    private val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            @Suppress("UNCHECKED_CAST")
-            return NewsInfoViewModel(
-                application,
-                intent.getIntExtra(EXTRA_NEWS_ID, 0)
-            ) as T
         }
     }
 }

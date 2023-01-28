@@ -20,9 +20,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedsBinding
@@ -31,12 +31,7 @@ import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.Forest.i as logi
 
 class FeedsActivity : AppCompatActivity() {
-    private val feedsModel: FeedsViewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(
-            viewModelStore,
-            defaultViewModelProviderFactory
-        )[FeedsViewModel::class.java]
-    }
+    private val feedsModel: FeedsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // attach a callback used to capture the shared elements from this activity
@@ -50,8 +45,10 @@ class FeedsActivity : AppCompatActivity() {
 
         val binding: ActivityFeedsBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_feeds)
-        binding.lifecycleOwner = this
-        binding.model = feedsModel
+        binding.apply {
+            lifecycleOwner = this@FeedsActivity
+            model = feedsModel
+        }
 
         initView(binding)
     }
