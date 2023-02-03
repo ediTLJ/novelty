@@ -69,4 +69,23 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">normal</item>
     </style>
+
+    <style name="App.Widget.Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="materialThemeOverlay">@style/App.ThemeOverlay.Snackbar</item>
+        <item name="backgroundOverlayColorAlpha">1</item>
+        <item name="actionTextColorAlpha">1</item>
+    </style>
+
+    <style name="App.ThemeOverlay.Snackbar" parent="">
+        <item name="colorSurface">?attr/colorOnError</item>
+        <item name="colorOnSurface">?attr/colorOnError</item>
+    </style>
+
+    <style name="App.Widget.SnackbarTextView" parent="Widget.MaterialComponents.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorError</item>
+    </style>
+
+    <!--    <style name="App.Widget.SnackbarButton" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">-->
+    <!--        <item name="android:textColor">?attr/colorPrimary</item>-->
+    <!--    </style>-->
 </resources>

@@ -23,8 +23,8 @@
         <item name="colorSecondary">@color/orange_700</item>
         <item name="colorSecondaryVariant">@color/orange_900</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="colorError">@color/red_900</item>
-        <item name="colorOnError">@color/white</item>
+        <item name="colorError">@color/white</item>
+        <item name="colorOnError">@color/orange_900</item>
         <item name="colorSurface">@color/grey_dark</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="android:colorBackground">@color/grey</item>
@@ -50,5 +50,9 @@
         <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
 
         <item name="badgeStyle">@style/App.Badge</item>
+
+        <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/App.Widget.SnackbarTextView</item>
+        <!--<item name="snackbarButtonStyle">@style/App.Widget.SnackbarButton</item>-->
     </style>
 </resources>

@@ -26,6 +26,7 @@
     <string name="btn_save">SAVE</string>
 
     <!-- SNACKBARS -->
+    <string name="error_no_feeds">No feeds found!</string>
     <string name="error_news">Error getting the news!</string>
 
     <!-- ADD FEED -->

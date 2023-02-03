@@ -28,6 +28,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import ro.edi.novelty.R
@@ -240,7 +241,8 @@ class FeedInfoActivity : AppCompatActivity() {
                 // logi("feeds: $feeds")
 
                 if (feeds.isEmpty()) {
-                    // FIXME show "no feeds found" error
+                    Snackbar.make(binding.coordinator, getText(R.string.error_no_feeds), Snackbar.LENGTH_LONG).show()
+
                     binding.btnAdd.isEnabled = true
                     binding.loading.hide()
                 } else {
