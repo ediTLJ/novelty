@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -567,12 +567,11 @@ class DataManager private constructor(application: Application) {
                             .trim { it <= ' ' }
                             .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT, null, null).toString()
 
-                        if (href.startsWith("/")) {
-                            href = url + href
-                        } else if (!href.startsWith("http://", true)
-                            && !href.startsWith("https://", true)
-                        ) {
-                            href = "$url/$href"
+                        href = when {
+                            href.startsWith("/") -> "$url$href"
+                            href.startsWith("http://", true) -> href.replaceFirst("http://", "https://", true)
+                            href.startsWith("https://", true) -> href
+                            else -> "$url/$href"
                         }
 
                         var hasTitle = true
@@ -966,17 +965,15 @@ class DataManager private constructor(application: Application) {
                 // logi("feed updated: $channelDate")
                 ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_ZONE_NAME)
                     .toEpochSecond() * 1000
-            }.getOrElse { zt ->
+            }.getOrElse {
                 // logw(zt, "feed date parsing error... fallback to ISO_DATE_TIME")
                 runCatching {
                     // 2022-02-18T14:37:00+02:00
                     // logi("feed updated: $channelDate")
                     ZonedDateTime.parse(channelDate, DateTimeFormatter.ISO_DATE_TIME)
                         .toEpochSecond() * 1000
-                }.getOrElse { t ->
-                    if (feedUrl.startsWith("https://www.hotnews.ro")
-                        || feedUrl.startsWith("http://www.hotnews.ro")
-                    ) {
+                }.getOrElse {
+                    if (feedUrl.startsWith("https://www.hotnews.ro")) {
                         // special case for hotnews.ro... because why not :|
                         runCatching {
                             // Lu, feb 14 2022 22:32:30 GMT
@@ -984,7 +981,7 @@ class DataManager private constructor(application: Application) {
                             // logi("feed updated: $channelDate")
                             ZonedDateTime.parse(channelDate, RFC_1123_DATE_TIME_RO)
                                 .toEpochSecond() * 1000
-                        }.getOrElse { ht ->
+                        }.getOrElse {
                             // logw(ht, "feed date parsing error... fallback to now()")
                             now
                         }
@@ -1024,17 +1021,15 @@ class DataManager private constructor(application: Application) {
                         // logi("published: ${item.pubDate}")
                         ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_ZONE_NAME)
                             .toEpochSecond() * 1000
-                    }.getOrElse { zt ->
+                    }.getOrElse {
                         // logw(zt, "published date parsing error... fallback to ISO_DATE_TIME")
                         runCatching {
                             // 2022-02-18T14:37:00+02:00
                             // logi("published: ${item.pubDate}")
                             ZonedDateTime.parse(item.pubDate, DateTimeFormatter.ISO_DATE_TIME)
                                 .toEpochSecond() * 1000
-                        }.getOrElse { t ->
-                            if (feedUrl.startsWith("https://www.hotnews.ro")
-                                || feedUrl.startsWith("http://www.hotnews.ro")
-                            ) {
+                        }.getOrElse {
+                            if (feedUrl.startsWith("https://www.hotnews.ro")) {
                                 // special case for hotnews.ro... because why not :|
                                 runCatching {
                                     // Lu, feb 14 2022 20:22:00 GMT
@@ -1043,7 +1038,7 @@ class DataManager private constructor(application: Application) {
                                     // logi("published: ${item.pubDate}")
                                     ZonedDateTime.parse(item.pubDate, RFC_1123_DATE_TIME_RO)
                                         .toEpochSecond() * 1000
-                                }.getOrElse { ht ->
+                                }.getOrElse {
                                     // logw(ht, "published date parsing error... fallback to now()")
                                     now
                                 }

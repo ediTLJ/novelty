@@ -193,8 +193,8 @@ class FeedInfoActivity : AppCompatActivity() {
                     binding.inputUrl.requestFocus()
                 } else {
                     url = when {
-                        url.startsWith("https://", true) -> url.replaceFirst("https", "https", true)
-                        url.startsWith("http://", true) -> url.replaceFirst("http", "http", true)
+                        url.startsWith("https://", true) -> url.replaceFirst("https://", "https://", true)
+                        url.startsWith("http://", true) -> url.replaceFirst("http://", "https://", true)
                         else -> "https://$url"
                     }
 
