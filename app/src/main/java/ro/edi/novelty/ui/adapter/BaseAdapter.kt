@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -108,7 +108,6 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
     inner class BaseViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnTouchListener, View.OnClickListener,
         View.OnLongClickListener {
-
         init {
             itemView.setOnTouchListener(this)
             getTouchableViewIds()?.let { ids ->
@@ -119,7 +118,6 @@ abstract class BaseAdapter<T>(itemCallback: DiffUtil.ItemCallback<T>) :
 
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
-
             getClickableViewIds()?.let { ids ->
                 for (id in ids) {
                     itemView.findViewById<View>(id)?.setOnClickListener(this)
