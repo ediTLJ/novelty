@@ -124,7 +124,7 @@ class FeedInfoActivity : AppCompatActivity() {
             binding.toolbar.setTitle(R.string.title_edit_feed)
             binding.btnAdd.setText(R.string.btn_save)
         } else {
-            DataManager.getInstance(application).clearFoundFeeds()
+            DataManager.getInstance(application).clearFeedsFound()
 
             val feedsFoundAdapter =
                 FeedsFoundAdapter(feedsFoundModel, itemClickListener = { _, position ->
@@ -141,7 +141,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         true
                     )
 
-                    DataManager.getInstance(application).clearFoundFeeds()
+                    DataManager.getInstance(application).clearFeedsFound()
                     finish()
                 }).apply {
                     setHasStableIds(true)
@@ -261,7 +261,7 @@ class FeedInfoActivity : AppCompatActivity() {
                             true
                         )
 
-                        DataManager.getInstance(application).clearFoundFeeds()
+                        DataManager.getInstance(application).clearFeedsFound()
                         finish()
                     } else {
                         binding.addFeedContainer.visibility = View.GONE

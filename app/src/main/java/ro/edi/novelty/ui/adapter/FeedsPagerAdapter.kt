@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import ro.edi.novelty.ui.FeedFragment
-import ro.edi.novelty.ui.MyFeedsFragment
-import ro.edi.novelty.ui.MyNewsFragment
+import ro.edi.novelty.ui.StarredFeedsFragment
+import ro.edi.novelty.ui.StarredNewsFragment
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 
 class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewModel) :
@@ -48,8 +48,8 @@ class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewM
 
     override fun createFragment(page: Int): Fragment {
         return when (page) {
-            0 -> MyNewsFragment.newInstance()
-            1 -> MyFeedsFragment.newInstance()
+            0 -> StarredNewsFragment.newInstance()
+            1 -> StarredFeedsFragment.newInstance()
             else -> {
                 // val feedState = mFeedState[feed.title]
                 // if (feedState == null) {
@@ -59,7 +59,7 @@ class FeedsPagerAdapter(fa: FragmentActivity, private val feedsModel: FeedsViewM
                     return FeedFragment.newInstance(it.id)
                 }
 
-                return MyNewsFragment.newInstance() // should never happen
+                return StarredNewsFragment.newInstance() // should never happen
             }
         }
     }

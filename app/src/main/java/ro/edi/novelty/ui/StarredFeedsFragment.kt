@@ -31,31 +31,22 @@ import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
-import ro.edi.novelty.ui.viewmodel.NewsViewModel
+import ro.edi.novelty.ui.viewmodel.StarredFeedsViewModel
 import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
 
 
-class MyFeedsFragment : Fragment() {
+class StarredFeedsFragment : Fragment() {
     companion object {
         private const val KEY_NEWEST_SEEN_DATE = "key_my_feeds_newest_date"
         private const val KEY_LAST_SEEN_DATE = "key_my_feeds_last_date"
         private const val KEY_LAST_SEEN_OFFSET = "key_my_feeds_last_offset"
 
-        fun newInstance() = MyFeedsFragment()
+        fun newInstance() = StarredFeedsFragment()
     }
 
-    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        newsModel.apply {
-            type = NewsViewModel.TYPE_MY_FEEDS
-            feedId = 0
-        }
-    }
+    private val newsModel: StarredFeedsViewModel by viewModels { StarredFeedsViewModel.FACTORY }
 
     override fun onPause() {
         val v = view ?: return
@@ -101,7 +92,7 @@ class MyFeedsFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = viewLifecycleOwner
-        logi("onCreateView: %s", binding.root)
+        logi("onCreateView: ${binding.root}")
         return binding.root
     }
 

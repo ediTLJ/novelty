@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import ro.edi.novelty.model.TYPE_RSS
 
 class FeedsFoundViewModel(application: Application) : AndroidViewModel(application) {
     val feeds: LiveData<List<Feed>?> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(getApplication()).feedsFound
+        DataManager.getInstance(getApplication()).getFeedsFound()
     }
 
     fun getFeed(position: Int): Feed? {

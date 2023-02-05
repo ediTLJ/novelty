@@ -29,7 +29,7 @@ import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
-import ro.edi.novelty.ui.viewmodel.NewsViewModel
+import ro.edi.novelty.ui.viewmodel.FeedViewModel
 import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
@@ -47,13 +47,12 @@ class FeedFragment : Fragment() {
 
     private var newestDate = 0L
 
-    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
+    private val newsModel: FeedViewModel by viewModels { FeedViewModel.FACTORY }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         newsModel.apply {
-            type = NewsViewModel.TYPE_FEED
             feedId = arguments?.getInt(ARG_FEED_ID, 0) ?: 0
         }
     }
@@ -96,6 +95,7 @@ class FeedFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = viewLifecycleOwner
+        logi("onCreateView: ${binding.root}")
         return binding.root
     }
 
@@ -168,7 +168,7 @@ class FeedFragment : Fragment() {
         val vEmpty = view.findViewById<View>(R.id.empty)
 
         newsModel.isFetching.observe(viewLifecycleOwner) { isFetching ->
-            logi("isFetching changed to $isFetching")
+            logi("isFetching changed: $isFetching")
 
             if (isFetching) {
                 vRefresh.isRefreshing = true

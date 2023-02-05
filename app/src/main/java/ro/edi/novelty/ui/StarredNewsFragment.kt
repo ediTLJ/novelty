@@ -29,26 +29,17 @@ import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
 import ro.edi.novelty.ui.adapter.NewsAdapter
-import ro.edi.novelty.ui.viewmodel.NewsViewModel
+import ro.edi.novelty.ui.viewmodel.StarredNewsViewModel
 import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
 
-class MyNewsFragment : Fragment() {
+class StarredNewsFragment : Fragment() {
     companion object {
-        fun newInstance() = MyNewsFragment()
+        fun newInstance() = StarredNewsFragment()
     }
 
-    private val newsModel: NewsViewModel by viewModels { NewsViewModel.FACTORY }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        newsModel.apply {
-            type = NewsViewModel.TYPE_MY_NEWS
-            feedId = 0
-        }
-    }
+    private val newsModel: StarredNewsViewModel by viewModels { StarredNewsViewModel.FACTORY }
 
     override fun onCreateView(
         inflater: LayoutInflater,

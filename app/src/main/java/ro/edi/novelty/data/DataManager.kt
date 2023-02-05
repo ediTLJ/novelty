@@ -65,15 +65,12 @@ import timber.log.Timber.Forest.w as logw
 class DataManager private constructor(application: Application) {
     private val db: AppDatabase by lazy { AppDatabase.getInstance(application) }
 
-    val feedsFound = MutableLiveData<List<Feed>?>()
-    val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
+    private val feedsFound = MutableLiveData<List<Feed>?>()
+    private val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
 
     init {
         feedsFound.value = null
-
-        val isFetching = MutableLiveData<Boolean>()
-        isFetching.value = true
-        isFetchingArray.put(0, isFetching)
+        isFetchingArray.put(0, MutableLiveData<Boolean>())
     }
 
     companion object : Singleton<DataManager, Application>(::DataManager) {
@@ -225,7 +222,11 @@ class DataManager private constructor(application: Application) {
         return feedsFound
     }
 
-    fun clearFoundFeeds() {
+    fun getFeedsFound(): MutableLiveData<List<Feed>?> {
+        return feedsFound
+    }
+
+    fun clearFeedsFound() {
         feedsFound.value = null
     }
 
@@ -253,6 +254,7 @@ class DataManager private constructor(application: Application) {
      */
     fun getNews(feedId: Int): LiveData<List<News>> {
         logd("getNews($feedId)")
+
         fetchNews(feedId)
 
         if (feedId == 0) {
@@ -262,6 +264,17 @@ class DataManager private constructor(application: Application) {
         return db.newsDao().getNews(feedId)
     }
 
+    fun isFetching(feedId: Int): LiveData<Boolean> {
+        // logd("isFetching($feedId)")
+
+        val isFetching = isFetchingArray.get(feedId, MutableLiveData<Boolean>())
+
+        if (isFetchingArray.indexOfKey(feedId) < 0) {
+            isFetchingArray.put(feedId, isFetching)
+        }
+
+        return isFetching
+    }
 
     /**
      * Fetch news for specified feed.
@@ -269,19 +282,20 @@ class DataManager private constructor(application: Application) {
      */
     fun fetchNews(feedId: Int) {
         logd("fetchNews($feedId)")
+
         if (feedId == 0) {
             fetchNews()
             return
         }
 
         if (isFetchingArray.indexOfKey(feedId) < 0) {
-            isFetchingArray.put(feedId, MutableLiveData(false))
+            isFetchingArray.put(feedId, MutableLiveData<Boolean>())
         }
 
-        AppExecutors.networkIO().execute {
-            val isFetching = isFetchingArray.get(feedId)
-            isFetching.postValue(true)
+        val isFetching = isFetchingArray.get(feedId)
+        isFetching.value = true
 
+        AppExecutors.networkIO().execute {
             val feed = db.feedDao().getFeed(feedId)
             feed?.let {
                 fetchNews(it.id, it.url, it.type)
@@ -296,10 +310,10 @@ class DataManager private constructor(application: Application) {
      * This makes a call to get latest data from the server.
      */
     private fun fetchNews() {
-        AppExecutors.networkIO().execute {
-            val isFetching = isFetchingArray.get(0)
-            isFetching.postValue(true)
+        val isFetching = isFetchingArray.get(0)
+        isFetching.value = true
 
+        AppExecutors.networkIO().execute {
             val feeds = db.feedDao().getMyFeeds()
             feeds?.let {
                 for (feed in it) {
