@@ -19,12 +19,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
@@ -45,9 +43,14 @@ class FeedFragment : Fragment() {
         }
     }
 
-    private var newestDate = 0L
-
     private val newsModel: FeedViewModel by viewModels { FeedViewModel.FACTORY }
+
+    private var _binding: FragmentFeedBinding? = null
+
+    // this property is only valid between onCreateView and onDestroyView
+    private val binding get() = _binding!!
+
+    private var newestDate = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,60 +60,33 @@ class FeedFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        val v = view ?: return
-
-//        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(v.context)
-//        val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
-
-        val rvNews = v.findViewById<RecyclerView>(R.id.news)
-        val llManager = rvNews.layoutManager as LinearLayoutManager
-        val pos = llManager.findFirstVisibleItemPosition()
-        val date = newsModel.getNews(pos)?.pubDate ?: 0
-
-//        val sharedPrefsEditor = sharedPrefs.edit()
-
-        if (date > newestDate) {
-            newestDate = date
-            // FIXME if starred feed, put newestDate to sharedPrefs?
-//            logi("saving newest seen date $date")
-//            sharedPrefsEditor
-//                .putLong(KEY_NEWEST_SEEN_DATE, date)
-//                .apply()
-        }
-
-        super.onPause()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding =
-            DataBindingUtil.inflate<FragmentFeedBinding>(
-                inflater,
-                R.layout.fragment_feed,
-                container,
-                false
-            )
-        binding.lifecycleOwner = viewLifecycleOwner
-        logi("onCreateView: ${binding.root}")
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            model = newsModel
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.refresh)
-        vRefresh.apply {
+        super.onViewCreated(view, savedInstanceState)
+        // logi("onViewCreated: $savedInstanceState")
+
+        binding.refresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             setOnRefreshListener {
                 newsModel.refresh()
             }
         }
 
-        val rvNews = view.findViewById<RecyclerView>(R.id.news)
-
-        rvNews.apply {
+        binding.news.apply {
             applyWindowInsetsPadding(
                 applyLeft = true,
                 applyTop = false,
@@ -165,24 +141,22 @@ class FeedFragment : Fragment() {
             }
         }
 
-        val vEmpty = view.findViewById<View>(R.id.empty)
-
         newsModel.isFetching.observe(viewLifecycleOwner) { isFetching ->
             logi("isFetching changed: $isFetching")
 
             if (isFetching) {
-                vRefresh.isRefreshing = true
+                binding.refresh.isRefreshing = true
             } else {
-                vRefresh.isRefreshing = false
+                binding.refresh.isRefreshing = false
 
                 if (newsModel.news.value.isNullOrEmpty()) {
                     logi("no news => show empty message")
-                    vEmpty.visibility = View.VISIBLE
-                    rvNews.visibility = View.GONE
+                    binding.empty.visibility = View.VISIBLE
+                    binding.news.visibility = View.GONE
                 } else {
                     logi("we have news! => show them")
-                    vEmpty.visibility = View.GONE
-                    rvNews.visibility = View.VISIBLE
+                    binding.empty.visibility = View.GONE
+                    binding.news.visibility = View.VISIBLE
                 }
             }
         }
@@ -191,15 +165,15 @@ class FeedFragment : Fragment() {
             logi("news changed: %d news", newsList.size)
 
             if (newsList.isEmpty()) {
-                vEmpty.visibility =
+                binding.empty.visibility =
                     if (newsModel.isFetching.value == false) View.VISIBLE else View.GONE
-                rvNews.visibility = View.GONE
+                binding.news.visibility = View.GONE
             } else {
-                vEmpty.visibility = View.GONE
-                rvNews.visibility = View.VISIBLE
+                binding.empty.visibility = View.GONE
+                binding.news.visibility = View.VISIBLE
 
-                val rvAdapter = rvNews.adapter as NewsAdapter
-                val llManager = rvNews.layoutManager as LinearLayoutManager
+                val rvAdapter = binding.news.adapter as NewsAdapter
+                val llManager = binding.news.layoutManager as LinearLayoutManager
                 val pos = llManager.findFirstVisibleItemPosition()
                 val date = if (pos < 0) 0 else rvAdapter.currentList[pos]?.pubDate ?: 0
 
@@ -279,5 +253,36 @@ class FeedFragment : Fragment() {
         }
 
         return null
+    }
+
+    override fun onPause() {
+        // val v = view ?: return
+        // _binding ?: return // shouldn't happen, according to fragment lifecycle
+
+//        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(v.context)
+//        val newestDate = sharedPrefs.getLong(KEY_NEWEST_SEEN_DATE, 0)
+
+        val llManager = binding.news.layoutManager as LinearLayoutManager
+        val pos = llManager.findFirstVisibleItemPosition()
+        val date = newsModel.getNews(pos)?.pubDate ?: 0
+
+//        val sharedPrefsEditor = sharedPrefs.edit()
+
+        if (date > newestDate) {
+            newestDate = date
+            // FIXME if starred feed, put newestDate to sharedPrefs?
+//            logi("saving newest seen date $date")
+//            sharedPrefsEditor
+//                .putLong(KEY_NEWEST_SEEN_DATE, date)
+//                .apply()
+        }
+
+        super.onPause()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+
+        super.onDestroyView()
     }
 }

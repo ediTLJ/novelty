@@ -19,12 +19,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
@@ -41,36 +37,39 @@ class StarredNewsFragment : Fragment() {
 
     private val newsModel: StarredNewsViewModel by viewModels { StarredNewsViewModel.FACTORY }
 
+    private var _binding: FragmentFeedBinding? = null
+
+    // this property is only valid between onCreateView and onDestroyView
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding =
-            DataBindingUtil.inflate<FragmentFeedBinding>(
-                inflater,
-                R.layout.fragment_feed,
-                container,
-                false
-            )
-        binding.lifecycleOwner = viewLifecycleOwner
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            model = newsModel
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val vRefresh = view.findViewById<SwipeRefreshLayout>(R.id.refresh)
-        vRefresh.apply {
+        super.onViewCreated(view, savedInstanceState)
+        // logi("onViewCreated: $savedInstanceState")
+
+        binding.refresh.apply {
             setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
             isRefreshing = false
             isEnabled = false
         }
 
-        val vEmpty = view.findViewById<TextView>(R.id.empty)
-        vEmpty.setText(R.string.empty_bookmarks)
+        binding.empty.setText(R.string.empty_bookmarks)
 
-        val rvNews = view.findViewById<RecyclerView>(R.id.news)
-
-        rvNews.apply {
+        binding.news.apply {
             applyWindowInsetsPadding(
                 applyLeft = true,
                 applyTop = false,
@@ -89,15 +88,15 @@ class StarredNewsFragment : Fragment() {
         newsModel.news.observe(viewLifecycleOwner) { newsList ->
             logi("news changed: %d news", newsList.size)
 
-            val rvAdapter = rvNews.adapter as NewsAdapter
+            val rvAdapter = binding.news.adapter as NewsAdapter
 
             rvAdapter.submitList(newsList) {
                 if (newsList.isEmpty()) {
-                    vEmpty.visibility = View.VISIBLE
-                    rvNews.visibility = View.GONE
+                    binding.empty.visibility = View.VISIBLE
+                    binding.news.visibility = View.GONE
                 } else {
-                    vEmpty.visibility = View.GONE
-                    rvNews.visibility = View.VISIBLE
+                    binding.empty.visibility = View.GONE
+                    binding.news.visibility = View.VISIBLE
                 }
 
                 activity?.let {
@@ -111,5 +110,11 @@ class StarredNewsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+
+        super.onDestroyView()
     }
 }
