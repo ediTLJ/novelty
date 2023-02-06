@@ -67,7 +67,7 @@ class StarredNewsFragment : Fragment() {
             isEnabled = false
         }
 
-        binding.empty.setText(R.string.empty_bookmarks)
+        binding.empty.setText(R.string.no_bookmarks)
 
         binding.news.apply {
             applyWindowInsetsPadding(

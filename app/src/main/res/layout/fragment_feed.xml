@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="@string/empty_news"
+            android:text="@string/no_news"
             android:textAppearance="@style/App.TextAppearance.Body1"
             android:textColor="?android:attr/textColorSecondary"
             android:visibility="gone" />

@@ -16,7 +16,7 @@
 
     <!-- TABS -->
     <string name="tab_my_news">BOOKMARKS</string>
-    <string name="tab_my_feeds">MY NEWS</string>
+    <string name="tab_my_feeds">MY FEEDS</string>
 
     <!-- BUTTONS -->
     <string name="btn_ok">OK</string>
@@ -27,7 +27,7 @@
 
     <!-- SNACKBARS -->
     <string name="error_no_feeds">No feeds found!</string>
-    <string name="error_news">Error getting the news!</string>
+    <string name="error_fetching_news">Error fetching new articles!</string>
 
     <!-- ADD FEED -->
     <string name="feed_title">Title</string>
@@ -40,21 +40,22 @@
     <string name="feed_url_duplicate">This feed already exists!</string>
 
     <!-- INFO -->
-    <string name="info"><b>Novelty</b> is a simple news reader with a nice &amp; clean UI.
-        \n\nThe application has support for RSS 2.0 and Atom 1.0 feeds and can also detect if a website provides such feeds.
+    <string name="info"><b>Novelty</b> is a simple feed reader with a nice &amp; clean UI.
+        \n\nThe application has support for RSS 2.0 and Atom 1.0 feeds and also tries to detect if a website provides such feeds.
         \n\nv%1$s</string>
 
     <!-- EMPTY VIEWS -->
     <string name="loading">Loading…</string>
-    <string name="empty_feeds">Hey, you have no news feeds!\nTap here to add one.</string>
-    <string name="empty_bookmarks">No bookmarked news.</string>
-    <string name="empty_news">No news.\nTry refreshing.</string>
+    <string name="no_feeds">No feeds!\nYou should add some.</string>
+    <string name="no_starred_feeds">Hey, you have no feeds!\nTap here to add one.</string>
+    <string name="no_bookmarks">No articles.\nTry bookmarking some.</string>
+    <string name="no_news">No articles.\nTry refreshing.</string>
 
     <!-- ACCESSIBILITY -->
     <string name="description_open_in_browser">Open in browser</string>
-    <string name="description_drag">Drag the item</string>
-    <string name="description_star">Add to favorites</string>
-    <string name="description_unstar">Remove from favorites</string>
+    <string name="description_drag">Drag the feed</string>
+    <string name="description_star">Add to starred feeds</string>
+    <string name="description_unstar">Remove from starred feeds</string>
 
     <string name="type_atom" translatable="false">Atom</string>
     <string name="type_rss" translatable="false">RSS</string>

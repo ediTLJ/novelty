@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/empty_feeds"
+        android:text="@string/no_starred_feeds"
         android:textAppearance="@style/App.TextAppearance.Body1"
         android:textColor="?android:attr/textColorSecondary"
         android:visibility="gone" />
