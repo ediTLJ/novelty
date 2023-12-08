@@ -80,7 +80,7 @@ class FeedFragment : Fragment() {
         // logi("onViewCreated: $savedInstanceState")
 
         binding.refresh.apply {
-            setColorSchemeResources(getColorRes(view.context, R.attr.colorPrimaryVariant))
+            setColorSchemeResources(getColorRes(view.context, com.google.android.material.R.attr.colorPrimaryVariant))
             setOnRefreshListener {
                 newsModel.refresh()
             }

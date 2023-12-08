@@ -1,25 +1,33 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 33
+    namespace 'ro.edi.novelty'
+    compileSdk 34
 
     defaultConfig {
         applicationId 'ro.edi.novelty'
         minSdkVersion 29 // Android 10
-        targetSdkVersion 33 // Android 13
+        targetSdkVersion 34 // Android 14
         versionCode 9
         versionName '2.0-beta'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                        'room.schemaLocation'  : '$projectDir/schemas'.toString(),
+                        'room.schemaLocation'  : "$projectDir/schemas".toString(),
                         'room.incremental'     : 'true',
                         'room.expandProjection': 'true']
             }
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
+        dataBinding true
+        viewBinding true
     }
 
     buildTypes {
@@ -29,29 +37,25 @@ android {
         release {
             // minifyEnabled true
             // shrinkResources true
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-
-    compileOptions {
-        // enable support for the new language APIs
-        coreLibraryDesugaringEnabled true
-
-        // set Java compatibility to Java 11
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
         jvmTarget = "11"
     }
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
+    compileOptions {
+        // set Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+
+        // enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
     }
 
-    buildFeatures {
-        dataBinding true
-        viewBinding true
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     lint {
@@ -63,57 +67,55 @@ android {
             excludes += ['META-INF/atomicfu.kotlin_module']
         }
     }
-
-    namespace 'ro.edi.novelty'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Java 11+ API desugaring
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     // Kotlin
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 
     // AndroidX
-    implementation 'androidx.activity:activity-ktx:1.7.0-alpha04'
-    implementation 'androidx.appcompat:appcompat:1.7.0-alpha01'
-    // implementation 'androidx.appcompat:appcompat-resources:1.7.0-alpha01'
-    implementation 'androidx.core:core-ktx:1.10.0-alpha02'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0-alpha04'
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.activity:activity-ktx:1.8.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha03'
+    // implementation 'androidx.appcompat:appcompat-resources:1.7.0-alpha03'
+    implementation 'androidx.core:core-ktx:1.13.0-alpha02'
+    implementation 'androidx.fragment:fragment-ktx:1.7.0-alpha07'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
     // implementation 'android.arch.work:work-runtime-ktx:2.0.0'
     // androidTestImplementation 'android.arch.work:work-testing:2.0.0'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha06'
-    implementation 'androidx.recyclerview:recyclerview:1.3.0-rc01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha13'
+    implementation 'androidx.recyclerview:recyclerview:1.4.0-alpha01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01'
-    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-beta02'
 
     // Architecture Components: LiveData, ViewModel...
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.0-alpha05'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha05'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.0-alpha05'
-    // kapt 'androidx.lifecycle:lifecycle-compiler:2.6.0-alpha05'
-    // kapt 'androidx.lifecycle:lifecycle-common-java8:2.6.0-alpha05'
-    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0-rc01'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0-rc01'
+    // ksp 'androidx.lifecycle:lifecycle-compiler:2.7.0-beta01'
+    // ksp 'androidx.lifecycle:lifecycle-common-java8:2.7.0-beta01'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.5.0'
-    kapt 'androidx.room:room-compiler:2.5.0'
-    implementation 'androidx.room:room-ktx:2.5.0'
-    testImplementation 'androidx.room:room-testing:2.5.0'
+    implementation 'androidx.room:room-runtime:2.6.1'
+    ksp 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    testImplementation 'androidx.room:room-testing:2.6.1'
 
     // Material Design
-    implementation 'com.google.android.material:material:1.9.0-alpha01'
+    implementation 'com.google.android.material:material:1.11.0-rc01'
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.11'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11'
-    implementation 'com.squareup.okio:okio:3.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.squareup.okio:okio:3.6.0'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -122,7 +124,7 @@ dependencies {
     implementation 'com.ouattararomuald:syndication:2.1.1'
 
     // Coil
-    // implementation 'io.coil-kt:coil:2.2.2'
+    // implementation 'io.coil-kt:coil:2.5.0'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'

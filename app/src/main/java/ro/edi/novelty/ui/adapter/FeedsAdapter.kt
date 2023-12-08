@@ -178,6 +178,10 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
         override fun isLongPressDragEnabled() = true
         override fun isItemViewSwipeEnabled() = false
 
+        override fun getMoveThreshold(viewHolder: RecyclerView.ViewHolder): Float {
+            return 1f
+        }
+
         override fun onMove(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
@@ -222,7 +226,7 @@ class FeedsAdapter(private val activity: Activity, private val feedsModel: Feeds
             if (colorDrag < 0) {
                 colorDrag = ContextCompat.getColor(
                     itemView.context,
-                    getColorRes(itemView.context, R.attr.colorControlHighlight)
+                    getColorRes(itemView.context, android.R.attr.colorControlHighlight)
                 )
             }
 
