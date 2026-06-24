@@ -1,5 +1,5 @@
 /*
-* Copyright 2019-2023 Eduard Scarlat
+* Copyright 2019-2024 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 package ro.edi.novelty
 
 import android.app.Application
+import android.os.Build
+import android.os.StrictMode
 import ro.edi.util.ReleaseTree
 import timber.log.Timber
 
@@ -24,6 +26,14 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectUnsafeIntentLaunch()
+                    .build()
+            )
+        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

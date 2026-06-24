@@ -15,7 +15,7 @@
 
     <style name="App.TextAppearance.Title" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="android:fontFamily">@font/fira_sans_condensed</item>
-        <!--<item name="android:textSize">22sp</item>-->
+        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="App.TextAppearance.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
@@ -28,7 +28,7 @@
 
     <style name="App.TextAppearance.Body" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:fontFamily">@font/fira_sans</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="App.TextAppearance.Body1" parent="TextAppearance.MaterialComponents.Body1">

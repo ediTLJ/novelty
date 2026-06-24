@@ -1,5 +1,5 @@
 /*
-* Copyright 2019 Eduard Scarlat
+* Copyright 2019-2023 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 
 class FeedsViewModel(application: Application) : AndroidViewModel(application) {
-    val feeds: LiveData<List<Feed>> by lazy(LazyThreadSafetyMode.NONE) {
+    val feeds: LiveData<List<Feed>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         DataManager.getInstance(getApplication()).getFeeds()
     }
 

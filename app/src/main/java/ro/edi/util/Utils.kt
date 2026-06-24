@@ -27,7 +27,7 @@ import androidx.databinding.BindingAdapter
 /**
  * @return Application's version name from `PackageManager`.
  */
-fun getAppVersionName(context: Context): String {
+fun getAppVersionName(context: Context): String? {
     val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
     return packageInfo.versionName
 }
