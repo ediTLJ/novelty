@@ -15,34 +15,20 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 
-class StarredNewsViewModel(application: Application, savedStateHandle: SavedStateHandle) :
-    NewsViewModel(application, savedStateHandle) {
+@HiltViewModel
+class StarredNewsViewModel @Inject constructor(
+    dataManager: DataManager,
+    savedStateHandle: SavedStateHandle
+) : NewsViewModel(dataManager, savedStateHandle) {
 
     override val news: LiveData<List<News>> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(application).getMyNews()
-    }
-
-    companion object {
-        val FACTORY = viewModelFactory {
-            // the return type of the lambda automatically sets what class this lambda handles
-            initializer {
-                // get the Application object from extras provided to the lambda
-                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-
-                val savedStateHandle = createSavedStateHandle()
-
-                StarredNewsViewModel(
-                    application = application,
-                    savedStateHandle = savedStateHandle
-                )
-            }
-        }
+        dataManager.getMyNews()
     }
 }

@@ -21,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -32,6 +33,7 @@ import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class FeedFragment : Fragment() {
     companion object {
         const val ARG_FEED_ID = "ro.edi.novelty.ui.feed.arg_feed_id"
@@ -43,7 +45,7 @@ class FeedFragment : Fragment() {
         }
     }
 
-    private val newsModel: FeedViewModel by viewModels { FeedViewModel.FACTORY }
+    private val newsModel: FeedViewModel by viewModels()
 
     private var _binding: FragmentFeedBinding? = null
 

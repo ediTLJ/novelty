@@ -18,9 +18,11 @@ package ro.edi.novelty
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode
+import dagger.hilt.android.HiltAndroidApp
 import ro.edi.util.ReleaseTree
 import timber.log.Timber
 
+@HiltAndroidApp
 @Suppress("unused")
 class MyApp : Application() {
 

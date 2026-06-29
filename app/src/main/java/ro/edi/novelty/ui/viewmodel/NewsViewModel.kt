@@ -15,17 +15,18 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
 import android.content.Context
 import android.text.format.DateUtils
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 import ro.edi.util.getColorRes
 
 abstract class NewsViewModel(
-    val application: Application,
+    val dataManager: DataManager,
     val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     abstract val news: LiveData<List<News>>
@@ -78,15 +79,9 @@ abstract class NewsViewModel(
         return getColorRes(context, android.R.attr.textColorSecondary)
     }
 
-//    fun setIsStarred(position: Int, isStarred: Boolean) {
-//        getNews(position)?.let {
-//            DataManager.getInstance(getApplication()).updateNewsStarred(it, isStarred)
-//        }
-//    }
-
     fun setIsRead(position: Int, isRead: Boolean) {
         getNews(position)?.let {
-            DataManager.getInstance(application).updateNewsRead(it, isRead)
+            dataManager.updateNewsRead(it, isRead)
         }
     }
 }

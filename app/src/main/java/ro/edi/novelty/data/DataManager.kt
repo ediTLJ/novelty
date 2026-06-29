@@ -16,7 +16,6 @@
 package ro.edi.novelty.data
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.text.format.DateUtils
 import android.util.SparseArray
 import androidx.core.text.HtmlCompat
@@ -36,8 +35,9 @@ import ro.edi.novelty.model.News
 import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 import ro.edi.util.AppExecutors
-import ro.edi.util.Singleton
 import java.io.BufferedReader
+import javax.inject.Inject
+import javax.inject.Singleton
 import java.lang.reflect.UndeclaredThrowableException
 import java.time.Instant
 import java.time.ZoneId
@@ -62,8 +62,8 @@ import timber.log.Timber.Forest.w as logw
  *
  * **This shouldn't expose any of the underlying data to the application layers above.**
  */
-class DataManager private constructor(application: Application) {
-    private val db: AppDatabase by lazy { AppDatabase.getInstance(application) }
+@Singleton
+class DataManager @Inject constructor(private val db: AppDatabase) {
 
     private val feedsFound = MutableLiveData<List<Feed>?>()
     private val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
@@ -73,7 +73,7 @@ class DataManager private constructor(application: Application) {
         isFetchingArray.put(0, MutableLiveData<Boolean>())
     }
 
-    companion object : Singleton<DataManager, Application>(::DataManager) {
+    companion object {
         private val REGEX_TAG_IMG =
             Regex(
                 "<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>([^<]*</img>)*",

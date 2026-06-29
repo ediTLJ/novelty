@@ -15,18 +15,30 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 
-class FeedsFoundViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class FeedsFoundViewModel @Inject constructor(
+    private val dataManager: DataManager
+) : ViewModel() {
     val feeds: LiveData<List<Feed>?> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(getApplication()).getFeedsFound()
+        dataManager.getFeedsFound()
+    }
+
+    fun findFeeds(url: String) {
+        dataManager.findFeeds(url)
+    }
+
+    fun clearFeedsFound() {
+        dataManager.clearFeedsFound()
     }
 
     fun getFeed(position: Int): Feed? {

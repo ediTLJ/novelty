@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,7 @@ import java.util.*
 import timber.log.Timber.Forest.d as logd
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private val feedsModel: FeedsViewModel by viewModels()
 

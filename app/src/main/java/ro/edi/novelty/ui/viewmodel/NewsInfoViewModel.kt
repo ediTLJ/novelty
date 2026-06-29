@@ -15,15 +15,16 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
 import android.text.Editable
 import android.text.Html
 import android.view.View
 import androidx.core.text.HtmlCompat
 import androidx.core.text.parseAsHtml
-import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import org.xml.sax.XMLReader
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
@@ -33,8 +34,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-class NewsInfoViewModel(
-    private val application: Application,
+@HiltViewModel
+class NewsInfoViewModel @Inject constructor(
+    private val dataManager: DataManager,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var newsId: Int
@@ -44,7 +46,7 @@ class NewsInfoViewModel(
         }
 
     val info: LiveData<News> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(application).getNewsInfo(newsId)
+        dataManager.getNewsInfo(newsId)
     }
 
     private fun getInfo(): News? {
@@ -87,7 +89,7 @@ class NewsInfoViewModel(
 
     fun setIsStarred(isStarred: Boolean) {
         info.value?.let {
-            DataManager.getInstance(application).updateNewsStarred(it, isStarred)
+            dataManager.updateNewsStarred(it, isStarred)
         }
     }
 
@@ -118,21 +120,6 @@ class NewsInfoViewModel(
     }
 
     companion object {
-        private const val KEY_NEWS_ID = "news-id"
-
-        val FACTORY = viewModelFactory {
-            // the return type of the lambda automatically sets what class this lambda handles
-            initializer {
-                // get the Application object from extras provided to the lambda
-                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-
-                val savedStateHandle = createSavedStateHandle()
-
-                NewsInfoViewModel(
-                    application = application,
-                    savedStateHandle = savedStateHandle
-                )
-            }
-        }
+        const val KEY_NEWS_ID = "news-id"
     }
 }

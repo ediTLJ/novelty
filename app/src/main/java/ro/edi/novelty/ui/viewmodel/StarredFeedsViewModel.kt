@@ -15,50 +15,35 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
-import androidx.core.util.getOrElse
-import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import java.util.Locale
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
-import java.util.*
 
-class StarredFeedsViewModel(application: Application, savedStateHandle: SavedStateHandle) :
-    NewsViewModel(application, savedStateHandle) {
+@HiltViewModel
+class StarredFeedsViewModel @Inject constructor(
+    dataManager: DataManager,
+    savedStateHandle: SavedStateHandle
+) : NewsViewModel(dataManager, savedStateHandle) {
 
     override val news: LiveData<List<News>> by lazy(LazyThreadSafetyMode.NONE) {
         // if feedId is 0, it will get news for all my feeds
-        DataManager.getInstance(application).getNews(0)
+        dataManager.getNews(0)
     }
 
     val isFetching: LiveData<Boolean> by lazy(LazyThreadSafetyMode.NONE) {
-        DataManager.getInstance(application).isFetching(0)
+        dataManager.isFetching(0)
     }
 
     fun refresh() {
         // if feedId is 0, it will fetch news for all my feeds
-        DataManager.getInstance(application).fetchNews(0)
+        dataManager.fetchNews(0)
     }
 
     override fun getDisplayFeedTitle(position: Int): CharSequence? {
         return getNews(position)?.feedTitle?.uppercase(Locale.getDefault())
-    }
-
-    companion object {
-        val FACTORY = viewModelFactory {
-            // the return type of the lambda automatically sets what class this lambda handles
-            initializer {
-                // get the Application object from extras provided to the lambda
-                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-
-                val savedStateHandle = createSavedStateHandle()
-
-                StarredFeedsViewModel(
-                    application = application,
-                    savedStateHandle = savedStateHandle
-                )
-            }
-        }
     }
 }

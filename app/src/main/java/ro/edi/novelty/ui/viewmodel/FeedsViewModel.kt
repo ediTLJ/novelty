@@ -15,18 +15,22 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
 
-class FeedsViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class FeedsViewModel @Inject constructor(
+    private val dataManager: DataManager
+) : ViewModel() {
     val feeds: LiveData<List<Feed>> by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        DataManager.getInstance(getApplication()).getFeeds()
+        dataManager.getFeeds()
     }
 
     fun getFeed(position: Int): Feed? {
@@ -54,26 +58,26 @@ class FeedsViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setIsStarred(position: Int, isStarred: Boolean) {
         getFeed(position)?.let {
-            DataManager.getInstance(getApplication()).updateFeedStarred(it, isStarred)
+            dataManager.updateFeedStarred(it, isStarred)
         }
     }
 
     fun addFeed(title: String, url: String, type: Int, page: Int, isStarred: Boolean) {
-        DataManager.getInstance(getApplication()).insertFeed(title, url, type, page, isStarred)
+        dataManager.insertFeed(title, url, type, page, isStarred)
     }
 
     fun updateFeed(feed: Feed, title: String, url: String) {
-        DataManager.getInstance(getApplication()).updateFeed(feed, title, url)
+        dataManager.updateFeed(feed, title, url)
     }
 
     fun moveFeed(oldPosition: Int, newPosition: Int) {
         val oldPositionFeed = getFeed(oldPosition) ?: return
         val newPositionFeed = getFeed(newPosition) ?: return
 
-        DataManager.getInstance(getApplication()).swapFeedPages(oldPositionFeed, newPositionFeed)
+        dataManager.swapFeedPages(oldPositionFeed, newPositionFeed)
     }
 
     fun deleteFeed(feed: Feed) {
-        DataManager.getInstance(getApplication()).deleteFeed(feed)
+        dataManager.deleteFeed(feed)
     }
 }

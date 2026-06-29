@@ -15,9 +15,7 @@
 */
 package ro.edi.novelty.data.db
 
-import android.app.Application
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import ro.edi.novelty.data.db.dao.FeedDao
 import ro.edi.novelty.data.db.dao.NewsDao
@@ -25,29 +23,11 @@ import ro.edi.novelty.data.db.dao.NewsStateDao
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.data.db.entity.DbNews
 import ro.edi.novelty.data.db.entity.DbNewsState
-import ro.edi.util.Singleton
 
 const val DB_NAME = "novelty.db"
 
 @Database(entities = [DbFeed::class, DbNews::class, DbNewsState::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
-    companion object : Singleton<AppDatabase, Application>({
-        //val migration12 = object : Migration(1, 2) {
-        //    override fun migrate(database: SupportSQLiteDatabase) {
-        //        //database.execSQL("DROP TABLE my_news")
-        //        //database.execSQL("DELETE FROM TABLE news")
-        //        //database.execSQL("INSERT INTO new_table (id, name) SELECT id, name FROM my_table")
-        //        //database.execSQL("ALTER TABLE my_table ADD COLUMN date INTEGER")
-        //        //database.execSQL("CREATE TABLE new_table (id INTEGER, name TEXT, PRIMARY KEY(id))")
-        //     }
-        //}
-
-        Room.databaseBuilder(it, AppDatabase::class.java, DB_NAME)
-            //.addMigrations(migration12)
-            .fallbackToDestructiveMigration()
-            .build()
-    })
-
     abstract fun feedDao(): FeedDao
 
     abstract fun newsDao(): NewsDao

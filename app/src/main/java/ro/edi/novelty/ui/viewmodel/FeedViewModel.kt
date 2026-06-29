@@ -15,16 +15,19 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.app.Application
-import androidx.core.util.getOrElse
-import androidx.lifecycle.*
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.switchMap
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 
-class FeedViewModel(application: Application, savedStateHandle: SavedStateHandle) :
-    NewsViewModel(application, savedStateHandle) {
+@HiltViewModel
+class FeedViewModel @Inject constructor(
+    dataManager: DataManager,
+    savedStateHandle: SavedStateHandle
+) : NewsViewModel(dataManager, savedStateHandle) {
 
     var feedId: Int
         get() = savedStateHandle[KEY_FEED_ID] ?: 0
@@ -35,37 +38,22 @@ class FeedViewModel(application: Application, savedStateHandle: SavedStateHandle
     override val news: LiveData<List<News>> by lazy(LazyThreadSafetyMode.NONE) {
         savedStateHandle.getLiveData<Int>(KEY_FEED_ID).switchMap { feedId ->
             // if feedId is 0, it will get news for all my feeds
-            DataManager.getInstance(application).getNews(feedId)
+            dataManager.getNews(feedId)
         }
     }
 
     val isFetching: LiveData<Boolean> by lazy(LazyThreadSafetyMode.NONE) {
         savedStateHandle.getLiveData<Int>(KEY_FEED_ID).switchMap { feedId ->
-            DataManager.getInstance(application).isFetching(feedId)
+            dataManager.isFetching(feedId)
         }
     }
 
     fun refresh() {
         // if feedId is 0, it will fetch news for all my feeds
-        DataManager.getInstance(application).fetchNews(feedId)
+        dataManager.fetchNews(feedId)
     }
 
     companion object {
         const val KEY_FEED_ID = "feed-id"
-
-        val FACTORY = viewModelFactory {
-            // the return type of the lambda automatically sets what class this lambda handles
-            initializer {
-                // get the Application object from extras provided to the lambda
-                val application = checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-
-                val savedStateHandle = createSavedStateHandle()
-
-                FeedViewModel(
-                    application = application,
-                    savedStateHandle = savedStateHandle
-                )
-            }
-        }
     }
 }

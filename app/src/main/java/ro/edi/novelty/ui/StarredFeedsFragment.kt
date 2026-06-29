@@ -21,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,7 @@ import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
 
 
+@AndroidEntryPoint
 class StarredFeedsFragment : Fragment() {
     companion object {
         private const val KEY_NEWEST_SEEN_DATE = "key_my_feeds_newest_date"
@@ -43,7 +45,7 @@ class StarredFeedsFragment : Fragment() {
         fun newInstance() = StarredFeedsFragment()
     }
 
-    private val newsModel: StarredFeedsViewModel by viewModels { StarredFeedsViewModel.FACTORY }
+    private val newsModel: StarredFeedsViewModel by viewModels()
 
     private var _binding: FragmentFeedBinding? = null
 

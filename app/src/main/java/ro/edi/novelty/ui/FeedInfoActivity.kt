@@ -31,14 +31,15 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import dagger.hilt.android.AndroidEntryPoint
 import ro.edi.novelty.R
-import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.databinding.ActivityFeedInfoBinding
 import ro.edi.novelty.ui.adapter.FeedsFoundAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsFoundViewModel
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class FeedInfoActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_FEED_ID = "ro.edi.novelty.ui.feedinfo.extra_feed_id"
@@ -124,7 +125,7 @@ class FeedInfoActivity : AppCompatActivity() {
             binding.toolbar.setTitle(R.string.title_edit_feed)
             binding.btnAdd.setText(R.string.btn_save)
         } else {
-            DataManager.getInstance(application).clearFeedsFound()
+            feedsFoundModel.clearFeedsFound()
 
             val feedsFoundAdapter =
                 FeedsFoundAdapter(feedsFoundModel, itemClickListener = { _, position ->
@@ -141,7 +142,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         true
                     )
 
-                    DataManager.getInstance(application).clearFeedsFound()
+                    feedsFoundModel.clearFeedsFound()
                     finish()
                 }).apply {
                     setHasStableIds(true)
@@ -227,7 +228,7 @@ class FeedInfoActivity : AppCompatActivity() {
                         }
 
                         binding.loading.show()
-                        DataManager.getInstance(application).findFeeds(url)
+                        feedsFoundModel.findFeeds(url)
                     }
                 }
             }
@@ -261,7 +262,7 @@ class FeedInfoActivity : AppCompatActivity() {
                             true
                         )
 
-                        DataManager.getInstance(application).clearFeedsFound()
+                        feedsFoundModel.clearFeedsFound()
                         finish()
                     } else {
                         binding.addFeedContainer.visibility = View.GONE

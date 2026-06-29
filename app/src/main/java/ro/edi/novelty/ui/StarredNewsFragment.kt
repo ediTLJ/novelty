@@ -21,6 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.tabs.TabLayout
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.FragmentFeedBinding
@@ -30,12 +31,13 @@ import ro.edi.util.applyWindowInsetsPadding
 import ro.edi.util.getColorRes
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class StarredNewsFragment : Fragment() {
     companion object {
         fun newInstance() = StarredNewsFragment()
     }
 
-    private val newsModel: StarredNewsViewModel by viewModels { StarredNewsViewModel.FACTORY }
+    private val newsModel: StarredNewsViewModel by viewModels()
 
     private var _binding: FragmentFeedBinding? = null
 

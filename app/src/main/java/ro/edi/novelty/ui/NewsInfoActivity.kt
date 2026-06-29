@@ -29,18 +29,20 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import dagger.hilt.android.AndroidEntryPoint
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityNewsInfoBinding
 import ro.edi.novelty.ui.viewmodel.NewsInfoViewModel
 import java.util.*
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class NewsInfoActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_NEWS_ID = "ro.edi.novelty.ui.newsinfo.extra_news_id"
     }
 
-    private val infoModel: NewsInfoViewModel by viewModels { NewsInfoViewModel.FACTORY }
+    private val infoModel: NewsInfoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         findViewById<View>(android.R.id.content).transitionName = "shared_news_container"

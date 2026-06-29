@@ -24,12 +24,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import dagger.hilt.android.AndroidEntryPoint
 import ro.edi.novelty.R
 import ro.edi.novelty.databinding.ActivityFeedsBinding
 import ro.edi.novelty.ui.adapter.FeedsAdapter
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import timber.log.Timber.Forest.i as logi
 
+@AndroidEntryPoint
 class FeedsActivity : AppCompatActivity() {
     private val feedsModel: FeedsViewModel by viewModels()
 
