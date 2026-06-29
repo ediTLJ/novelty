@@ -28,16 +28,20 @@ import ro.edi.novelty.data.db.AppDatabase
 import ro.edi.novelty.data.db.entity.DbFeed
 import ro.edi.novelty.data.db.entity.DbNews
 import ro.edi.novelty.data.db.entity.DbNewsState
-import ro.edi.novelty.data.remote.FeedService
+import ro.edi.novelty.data.remote.FeedServiceFactory
 import ro.edi.novelty.data.remote.HttpService
+import ro.edi.novelty.di.ApplicationScope
+import ro.edi.novelty.di.IoDispatcher
 import ro.edi.novelty.model.Feed
 import ro.edi.novelty.model.News
 import ro.edi.novelty.model.TYPE_ATOM
 import ro.edi.novelty.model.TYPE_RSS
-import ro.edi.util.AppExecutors
 import java.io.BufferedReader
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.lang.reflect.UndeclaredThrowableException
 import java.time.Instant
 import java.time.ZoneId
@@ -63,7 +67,13 @@ import timber.log.Timber.Forest.w as logw
  * **This shouldn't expose any of the underlying data to the application layers above.**
  */
 @Singleton
-class DataManager @Inject constructor(private val db: AppDatabase) {
+class DataManager @Inject constructor(
+    private val db: AppDatabase,
+    private val httpService: HttpService,
+    private val feedServiceFactory: FeedServiceFactory,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @ApplicationScope private val appScope: CoroutineScope
+) {
 
     private val feedsFound = MutableLiveData<List<Feed>?>()
     private val isFetchingArray = SparseArray<MutableLiveData<Boolean>>()
@@ -215,7 +225,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
      */
     fun findFeeds(url: String): LiveData<List<Feed>?> {
         feedsFound.value = null
-        AppExecutors.networkIO().execute {
+        appScope.launch(ioDispatcher) {
             feedsFound.postValue(fetchFeeds(url))
         }
 
@@ -295,7 +305,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
         val isFetching = isFetchingArray.get(feedId)
         isFetching.value = true
 
-        AppExecutors.networkIO().execute {
+        appScope.launch(ioDispatcher) {
             val feed = db.feedDao().getFeed(feedId)
             feed?.let {
                 fetchNews(it.id, it.url, it.type)
@@ -313,7 +323,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
         val isFetching = isFetchingArray.get(0)
         isFetching.value = true
 
-        AppExecutors.networkIO().execute {
+        appScope.launch(ioDispatcher) {
             val feeds = db.feedDao().getMyFeeds()
             feeds?.let {
                 for (feed in it) {
@@ -333,19 +343,19 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     private fun updateFeedType(feedId: Int, type: Int) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             db.feedDao().updateType(feedId, type)
         }
     }
 
     fun swapFeedPages(feed1: Feed, feed2: Feed) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             db.feedDao().swapPages(feed1.id, feed1.page, feed2.id, feed2.page)
         }
     }
 
     fun updateFeedStarred(feed: Feed, isStarred: Boolean) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             val dbFeed =
                 DbFeed(
                     feed.id,
@@ -360,7 +370,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     fun updateNewsStarred(news: News, isStarred: Boolean) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             val dbNewsState =
                 DbNewsState(
                     news.id,
@@ -373,7 +383,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     fun updateNewsRead(news: News, isRead: Boolean) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             val dbNewsState =
                 DbNewsState(
                     news.id,
@@ -386,7 +396,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     fun insertFeed(title: String, url: String, type: Int, page: Int, isStarred: Boolean) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             val dbFeed =
                 DbFeed(
                     url.hashCode(),
@@ -401,7 +411,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     fun updateFeed(feed: Feed, title: String, url: String) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             if (feed.url == url) {
                 val dbFeed =
                     DbFeed(
@@ -413,7 +423,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
                         feed.isStarred
                     )
                 db.feedDao().update(dbFeed)
-                return@execute
+                return@launch
             }
 
             db.runInTransaction {
@@ -443,7 +453,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     }
 
     fun deleteFeed(feed: Feed) {
-        AppExecutors.diskIO().execute {
+        appScope.launch(ioDispatcher) {
             db.feedDao().delete(feed.id)
 
             db.runInTransaction {
@@ -474,7 +484,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
     private fun fetchFeeds(url: String): List<Feed> {
         logi("fetching URL: $url")
 
-        val call = HttpService.instance.get(url)
+        val call = httpService.get(url)
 
         val response = runCatching { call.execute() }.getOrElse {
             loge(it, "error fetching or parsing URL")
@@ -623,7 +633,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
 
                         logi("URL seems to be a feed after all: $url")
 
-                        val feedCall = HttpService.instance.get(url)
+                        val feedCall = httpService.get(url)
                         val feedResponse = runCatching { feedCall.execute() }.getOrNull()
 
                         if (feedResponse?.isSuccessful == true) {
@@ -678,7 +688,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
                         for (feed in feeds) {
                             logi("fetching feed URL: ${feed.url}")
 
-                            val feedCall = HttpService.instance.get(feed.url)
+                            val feedCall = httpService.get(feed.url)
                             val feedResponse = runCatching { feedCall.execute() }.getOrNull()
 
                             if (feedResponse?.isSuccessful == true) {
@@ -807,7 +817,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
         logi("fetching Atom feed: $feedUrl")
 
         val atomFeed = runCatching {
-            FeedService(feedUrl).getReader().readAtom()
+            feedServiceFactory.create(feedUrl).getReader().readAtom()
         }.getOrElse {
             if (it.cause == DeserializationException::class) {
                 logw(it, "error deserializing Atom feed")
@@ -946,7 +956,7 @@ class DataManager @Inject constructor(private val db: AppDatabase) {
         logi("fetching RSS feed: $feedUrl")
 
         val rssFeed = runCatching {
-            FeedService(feedUrl).getReader().readRss()
+            feedServiceFactory.create(feedUrl).getReader().readRss()
         }.getOrElse {
             return if (it is UndeclaredThrowableException && it.undeclaredThrowable is DeserializationException) {
                 loge(it, "error deserializing RSS feed")

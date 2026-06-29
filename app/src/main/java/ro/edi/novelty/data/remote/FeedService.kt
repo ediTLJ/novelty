@@ -17,31 +17,12 @@ package ro.edi.novelty.data.remote
 
 import com.ouattararomuald.syndication.Syndication
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import ro.edi.novelty.BuildConfig
 
-class FeedService(feedUrl: String) {
-    private val syndication: Syndication
-
-    companion object {
-        val okClient: OkHttpClient = OkHttpClient.Builder().apply {
-            // add other interceptors here
-
-            // add logging as last interceptor
-            if (BuildConfig.DEBUG) {
-                val logging = HttpLoggingInterceptor()
-                logging.level = HttpLoggingInterceptor.Level.BODY
-                addInterceptor(logging)
-            }
-        }.build()
-    }
-
-    init {
-        syndication = Syndication(
-            url = feedUrl,
-            httpClient = okClient
-        )
-    }
+class FeedService(feedUrl: String, okClient: OkHttpClient) {
+    private val syndication: Syndication = Syndication(
+        url = feedUrl,
+        httpClient = okClient
+    )
 
     fun getReader(): FeedReader {
         return syndication.create(FeedReader::class.java)
