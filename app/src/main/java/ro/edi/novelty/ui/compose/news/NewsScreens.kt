@@ -9,7 +9,6 @@
 */
 package ro.edi.novelty.ui.compose.news
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,46 +17,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import ro.edi.novelty.R
 import ro.edi.novelty.model.News
-import ro.edi.novelty.ui.NewsInfoActivity
+import ro.edi.novelty.ui.compose.LocalAppNavigator
+import ro.edi.novelty.ui.navigation.NewsInfoKey
 import ro.edi.novelty.ui.viewmodel.FeedViewModel
 import ro.edi.novelty.ui.viewmodel.FeedsViewModel
 import ro.edi.novelty.ui.viewmodel.StarredFeedsViewModel
 import ro.edi.novelty.ui.viewmodel.StarredNewsViewModel
-
-private fun openNewsInfo(context: android.content.Context, item: News) {
-    val intent = Intent(context, NewsInfoActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        putExtra(NewsInfoActivity.EXTRA_NEWS_ID, item.id)
-    }
-    context.startActivity(intent)
-}
 
 /**
  * "My News" — aggregated news across all my feeds (was `StarredFeedsFragment`).
  */
 @Composable
 fun MyNewsScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val navigator = LocalAppNavigator.current
     val vm: StarredFeedsViewModel = hiltViewModel()
     val news by vm.news.observeAsState(initial = emptyList())
     val isFetching by vm.isFetching.observeAsState(initial = false)
@@ -71,7 +59,7 @@ fun MyNewsScreen(modifier: Modifier = Modifier) {
         emptyText = stringResource(R.string.no_news),
         onItemClick = { item ->
             vm.setIsRead(news.indexOf(item), true)
-            openNewsInfo(context, item)
+            navigator.navigate(NewsInfoKey(item.id))
         }
     )
 }
@@ -81,7 +69,7 @@ fun MyNewsScreen(modifier: Modifier = Modifier) {
  */
 @Composable
 fun StarredNewsScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val navigator = LocalAppNavigator.current
     val vm: StarredNewsViewModel = hiltViewModel()
     val news by vm.news.observeAsState(initial = emptyList())
 
@@ -93,7 +81,7 @@ fun StarredNewsScreen(modifier: Modifier = Modifier) {
         emptyText = stringResource(R.string.no_bookmarks),
         onItemClick = { item ->
             vm.setIsRead(news.indexOf(item), true)
-            openNewsInfo(context, item)
+            navigator.navigate(NewsInfoKey(item.id))
         }
     )
 }
@@ -104,7 +92,7 @@ fun StarredNewsScreen(modifier: Modifier = Modifier) {
  */
 @Composable
 fun MyFeedsScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val navigator = LocalAppNavigator.current
     val feedsModel: FeedsViewModel = hiltViewModel()
     val feeds by feedsModel.feeds.observeAsState(initial = emptyList())
 
@@ -120,7 +108,6 @@ fun MyFeedsScreen(modifier: Modifier = Modifier) {
     }
 
     var selectedFeedId by rememberSaveable { mutableStateOf(feeds.first().id) }
-    // Clamp selection to a still-existing feed if the set of feeds changed.
     LaunchedEffect(feeds) {
         if (feeds.none { it.id == selectedFeedId }) {
             selectedFeedId = feeds.first().id
@@ -141,10 +128,9 @@ fun MyFeedsScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        // The FeedViewModel is keyed by selectedFeedId so each feed gets its own VM instance.
         FeedNewsList(
             feedId = selectedFeedId,
-            onItemClick = { item -> openNewsInfo(context, item) }
+            onItemClick = { item -> navigator.navigate(NewsInfoKey(item.id)) }
         )
     }
 }
@@ -160,7 +146,6 @@ private fun FeedNewsList(
     }
     val news by vm.news.observeAsState(initial = emptyList())
     val isFetching by vm.isFetching.observeAsState(initial = false)
-    val context = LocalContext.current
 
     NewsListScreen(
         news = news,
