@@ -18,6 +18,7 @@ package ro.edi.novelty.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import ro.edi.novelty.data.DataManager
@@ -34,9 +35,10 @@ class NewsInfoViewModel @Inject constructor(
             savedStateHandle[KEY_NEWS_ID] = id
         }
 
-    val info: LiveData<News> by lazy(LazyThreadSafetyMode.NONE) {
-        dataManager.getNewsInfo(newsId)
-    }
+    val info: LiveData<News> =
+        savedStateHandle.getLiveData<Int>(KEY_NEWS_ID).switchMap { id ->
+            dataManager.getNewsInfo(id)
+        }
 
     fun setIsStarred(isStarred: Boolean) {
         info.value?.let {

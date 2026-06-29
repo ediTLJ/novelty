@@ -4,7 +4,7 @@
         Activity-level theme used only for window chrome (status / nav bars,
         splash). All actual UI is drawn by Jetpack Compose via NoveltyTheme.
     -->
-    <style name="App.Theme.Dark" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="App.Theme.Dark" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@color/grey</item>
         <item name="android:navigationBarColor">@color/nav_grey</item>
         <item name="android:colorBackground">@color/grey</item>

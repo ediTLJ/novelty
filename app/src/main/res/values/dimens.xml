@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="activity_margin_small">8dp</dimen>
-
-    <!-- FIXME temp, until there's proper support for it in Material library -->
-    <dimen name="mtrl_badge_text_size" tools:override="true">12sp</dimen>
-    <!--<dimen name="mtrl_badge_with_text_radius" tools:override="true">8dp</dimen>-->
 </resources>
