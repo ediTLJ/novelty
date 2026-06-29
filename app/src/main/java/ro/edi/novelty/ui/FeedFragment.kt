@@ -38,10 +38,12 @@ class FeedFragment : Fragment() {
     companion object {
         const val ARG_FEED_ID = "ro.edi.novelty.ui.feed.arg_feed_id"
 
+        fun argsBundle(feedId: Int) = Bundle().apply {
+            putInt(ARG_FEED_ID, feedId)
+        }
+
         fun newInstance(feedId: Int) = FeedFragment().apply {
-            arguments = Bundle().apply {
-                putInt(ARG_FEED_ID, feedId)
-            }
+            arguments = argsBundle(feedId)
         }
     }
 
