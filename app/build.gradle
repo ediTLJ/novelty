@@ -16,8 +16,8 @@ android {
         applicationId 'ro.edi.novelty'
         minSdkVersion libs.versions.minSdk.get().toInteger() // Android 10
         targetSdkVersion libs.versions.targetSdk.get().toInteger() // Android 15
-        versionCode 9
-        versionName '2.0-beta'
+        versionCode 10
+        versionName '3.0-beta'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
