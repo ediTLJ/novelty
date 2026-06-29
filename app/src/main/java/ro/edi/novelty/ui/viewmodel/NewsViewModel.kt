@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 Eduard Scarlat
+* Copyright 2023-2025 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,15 +15,11 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.content.Context
-import android.text.format.DateUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import ro.edi.novelty.R
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
-import ro.edi.util.getColorRes
 
 abstract class NewsViewModel(
     val dataManager: DataManager,
@@ -33,50 +29,6 @@ abstract class NewsViewModel(
 
     fun getNews(position: Int): News? {
         return news.value?.getOrNull(position)
-    }
-
-    open fun getDisplayFeedTitle(position: Int): CharSequence? {
-        return null
-    }
-
-    fun getDisplayDate(position: Int): CharSequence? {
-        return getNews(position)?.let {
-            DateUtils.getRelativeTimeSpanString(it.pubDate)
-        }
-    }
-
-    fun getTitleTextColorRes(context: Context, position: Int): Int {
-        getNews(position)?.let {
-            return if (it.isRead)
-                getColorRes(
-                    context,
-                    if (it.isStarred) R.attr.textColorStarredSecondary else android.R.attr.textColorSecondary
-                )
-            else
-                getColorRes(
-                    context,
-                    if (it.isStarred) R.attr.textColorStarredPrimary else android.R.attr.textColorPrimary
-                )
-        }
-
-        return getColorRes(context, android.R.attr.textColorPrimary)
-    }
-
-    fun getInfoTextColorRes(context: Context, position: Int): Int {
-        getNews(position)?.let {
-            return if (it.isRead)
-                getColorRes(
-                    context,
-                    if (it.isStarred) R.attr.textColorStarredSecondary else android.R.attr.textColorSecondary
-                )
-            else
-                getColorRes(
-                    context,
-                    if (it.isStarred) R.attr.textColorStarredSecondary else android.R.attr.textColorSecondary
-                )
-        }
-
-        return getColorRes(context, android.R.attr.textColorSecondary)
     }
 
     fun setIsRead(position: Int, isRead: Boolean) {

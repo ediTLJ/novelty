@@ -1,5 +1,5 @@
 /*
-* Copyright 2023 Eduard Scarlat
+* Copyright 2023-2025 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import java.util.Locale
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
 
@@ -41,9 +40,5 @@ class StarredFeedsViewModel @Inject constructor(
     fun refresh() {
         // if feedId is 0, it will fetch news for all my feeds
         dataManager.fetchNews(0)
-    }
-
-    override fun getDisplayFeedTitle(position: Int): CharSequence? {
-        return getNews(position)?.feedTitle?.uppercase(Locale.getDefault())
     }
 }

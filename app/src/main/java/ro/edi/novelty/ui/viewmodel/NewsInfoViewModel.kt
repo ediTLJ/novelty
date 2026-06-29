@@ -1,5 +1,5 @@
 /*
-* Copyright 2019-2023 Eduard Scarlat
+* Copyright 2019-2025 Eduard Scarlat
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -15,24 +15,13 @@
 */
 package ro.edi.novelty.ui.viewmodel
 
-import android.text.Editable
-import android.text.Html
-import android.view.View
-import androidx.core.text.HtmlCompat
-import androidx.core.text.parseAsHtml
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import org.xml.sax.XMLReader
 import ro.edi.novelty.data.DataManager
 import ro.edi.novelty.model.News
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @HiltViewModel
 class NewsInfoViewModel @Inject constructor(
@@ -49,73 +38,9 @@ class NewsInfoViewModel @Inject constructor(
         dataManager.getNewsInfo(newsId)
     }
 
-    private fun getInfo(): News? {
-        return info.value
-    }
-
-    fun getDisplayDate(): CharSequence? {
-        return getInfo()?.let {
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(it.pubDate), ZoneId.systemDefault())
-                .format(
-                    DateTimeFormatter.ofLocalizedDateTime(
-                        FormatStyle.MEDIUM,
-                        FormatStyle.SHORT
-                    )
-                )
-        }
-    }
-
-    fun getAuthor(): CharSequence? {
-        return getInfo()?.author
-    }
-
-    fun getAuthorVisibility(): Int {
-        return getAuthor()?.let {
-            if (it.isEmpty()) View.GONE else View.VISIBLE
-        } ?: View.GONE
-    }
-
-    fun getDisplayText(): CharSequence? {
-        return getInfo()?.text?.parseAsHtml(
-            HtmlCompat.FROM_HTML_MODE_COMPACT,
-            null,
-            HtmlTagHandler()
-        )
-    }
-
-    fun getIsStarred(): Boolean? {
-        return info.value?.isStarred
-    }
-
     fun setIsStarred(isStarred: Boolean) {
         info.value?.let {
             dataManager.updateNewsStarred(it, isStarred)
-        }
-    }
-
-    // this adds support for ordered and unordered lists to Html.fromHtml()
-    private inner class HtmlTagHandler : Html.TagHandler {
-        private var index: Int = 0
-
-        override fun handleTag(opening: Boolean, tag: String, output: Editable, reader: XMLReader) {
-            if (opening && tag == "ul") {
-                index = -1
-            } else if (opening && tag == "ol") {
-                index = 1
-            } else if (tag == "li") {
-                if (opening) {
-                    if (index < 0) {
-                        output.append("\t• ")
-                    } else {
-                        output.append("\t")
-                        output.append(index.toString())
-                        output.append(". ")
-                        ++index
-                    }
-                } else {
-                    output.append('\n')
-                }
-            }
         }
     }
 

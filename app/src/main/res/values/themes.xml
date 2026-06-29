@@ -1,58 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="App.Theme.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="windowActionModeOverlay">true</item>
-
-        <item name="colorPrimary">@color/brown_500</item>
-        <item name="colorPrimaryVariant">@color/brown_700</item>
-        <item name="colorSecondary">@color/brown_500</item>
-        <item name="colorControlHighlight">@color/brown_100</item>
-    </style>
-
-    <style name="App.Theme.Dark" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="windowActionModeOverlay">true</item>
-
+    <!--
+        Activity-level theme used only for window chrome (status / nav bars,
+        splash). All actual UI is drawn by Jetpack Compose via NoveltyTheme.
+    -->
+    <style name="App.Theme.Dark" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">@color/grey</item>
         <item name="android:navigationBarColor">@color/nav_grey</item>
-
-        <item name="colorPrimary">@color/orange_500</item>
-        <item name="colorPrimaryVariant">@color/orange_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/orange_700</item>
-        <item name="colorSecondaryVariant">@color/orange_900</item>
-        <item name="colorOnSecondary">@color/white</item>
-        <item name="colorError">@color/white</item>
-        <item name="colorOnError">@color/orange_900</item>
-        <item name="colorSurface">@color/grey_dark</item>
-        <item name="colorOnSurface">@color/white</item>
         <item name="android:colorBackground">@color/grey</item>
-        <item name="colorOnBackground">@color/orange_500</item>
-
-        <!--<item name="colorControlNormal">@color/orange_500</item>-->
-        <!--<item name="colorControlActivated">@color/orange_500</item>-->
-        <item name="colorControlHighlight">@color/grey_light</item>
-
-        <item name="android:textColorPrimary">@color/white</item>
-        <item name="android:textColorSecondary">@color/white_dark</item>
-        <item name="textColorStarredPrimary">@color/orange_300</item>
-        <item name="textColorStarredSecondary">@color/orange_400</item>
-
-        <item name="textAppearanceHeadline5">@style/App.TextAppearance.Headline5</item>
-        <item name="textAppearanceHeadline6">@style/App.TextAppearance.Headline6</item>
-        <item name="textAppearanceSubtitle1">@style/App.TextAppearance.Subtitle1</item>
-        <item name="textAppearanceSubtitle2">@style/App.TextAppearance.Subtitle2</item>
-        <item name="textAppearanceBody1">@style/App.TextAppearance.Body1</item>
-        <item name="textAppearanceBody2">@style/App.TextAppearance.Body2</item>
-        <item name="textAppearanceButton">@style/App.TextAppearance.Button</item>
-        <item name="textAppearanceCaption">@style/App.TextAppearance.Caption</item>
-        <item name="textAppearanceOverline">@style/App.TextAppearance.Overline</item>
-
-        <item name="badgeStyle">@style/App.Badge</item>
-
-        <item name="snackbarStyle">@style/App.Widget.Snackbar</item>
-        <item name="snackbarTextViewStyle">@style/App.Widget.SnackbarTextView</item>
-        <!--<item name="snackbarButtonStyle">@style/App.Widget.SnackbarButton</item>-->
     </style>
 </resources>

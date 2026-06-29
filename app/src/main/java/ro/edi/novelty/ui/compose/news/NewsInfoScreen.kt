@@ -62,7 +62,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +75,7 @@ fun NewsInfoScreen(newsId: Int, modifier: Modifier = Modifier) {
 
     val info by vm.info.observeAsState()
     val appName = stringResource(R.string.app_name)
+    val shareChooserTitle = stringResource(R.string.action_share)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -115,7 +115,7 @@ fun NewsInfoScreen(newsId: Int, modifier: Modifier = Modifier) {
                                     putExtra(Intent.EXTRA_TEXT, text)
                                 }
                                 context.startActivity(
-                                    Intent.createChooser(iShare, context.getText(R.string.action_share))
+                                    Intent.createChooser(iShare, shareChooserTitle)
                                 )
                             }
                         },
@@ -165,7 +165,7 @@ fun NewsInfoScreen(newsId: Int, modifier: Modifier = Modifier) {
                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = article.feedTitle.uppercase(Locale.getDefault()),
+                        text = article.feedTitle.uppercase(),
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
