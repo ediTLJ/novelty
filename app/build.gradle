@@ -136,6 +136,9 @@ dependencies {
     // Fragment-in-Compose interop (temporary, until screens are migrated)
     implementation 'androidx.fragment:fragment-compose:1.8.5'
 
+    // Drag-to-reorder lists in Compose
+    implementation 'sh.calvin.reorderable:reorderable:2.4.0'
+
     // Room
     implementation 'androidx.room:room-runtime:2.6.1'
     ksp 'androidx.room:room-compiler:2.6.1'

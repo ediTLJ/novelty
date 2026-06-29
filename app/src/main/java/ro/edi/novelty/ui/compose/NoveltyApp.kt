@@ -9,8 +9,6 @@
 */
 package ro.edi.novelty.ui.compose
 
-import android.content.Intent
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,18 +24,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.fragment.app.FragmentActivity
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import ro.edi.novelty.R
-import ro.edi.novelty.ui.FeedsActivity
-import ro.edi.novelty.ui.InfoDialogFragment
+import ro.edi.novelty.ui.compose.feeds.FeedInfoScreen
+import ro.edi.novelty.ui.compose.feeds.FeedsScreen
 import ro.edi.novelty.ui.compose.news.NewsInfoScreen
 import ro.edi.novelty.ui.navigation.FeedInfoKey
 import ro.edi.novelty.ui.navigation.FeedsManageKey
@@ -50,7 +49,6 @@ import ro.edi.novelty.ui.navigation.TopLevelDestination
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoveltyApp() {
-    val context = LocalContext.current
     val backStack = rememberNavBackStack(MyNewsKey)
 
     val navigator = remember(backStack) {
@@ -64,6 +62,8 @@ fun NoveltyApp() {
             }
         }
     }
+
+    var showInfoDialog by remember { mutableStateOf(false) }
 
     val rootKey: NavKey? = backStack.firstOrNull()
     val currentKey: NavKey? = backStack.lastOrNull()
@@ -81,19 +81,13 @@ fun NoveltyApp() {
                             Text(stringResource(titleRes))
                         },
                         actions = {
-                            IconButton(onClick = {
-                                context.startActivity(Intent(context, FeedsActivity::class.java))
-                            }) {
+                            IconButton(onClick = { navigator.navigate(FeedsManageKey) }) {
                                 Icon(
                                     Icons.Outlined.Settings,
                                     contentDescription = stringResource(R.string.action_feeds)
                                 )
                             }
-                            IconButton(onClick = {
-                                val fm = (context as? FragmentActivity)?.supportFragmentManager
-                                    ?: return@IconButton
-                                InfoDialogFragment().show(fm, "dialog_info")
-                            }) {
+                            IconButton(onClick = { showInfoDialog = true }) {
                                 Icon(
                                     Icons.Outlined.Info,
                                     contentDescription = stringResource(R.string.action_info)
@@ -134,27 +128,15 @@ fun NoveltyApp() {
                     entry<MyNewsKey> { MyNewsRoute() }
                     entry<MyFeedsKey> { MyFeedsRoute() }
                     entry<StarredKey> { StarredRoute() }
-                    entry<FeedsManageKey> {
-                        PlaceholderScreen(stringResource(R.string.title_feeds))
-                    }
-                    entry<FeedInfoKey> { key ->
-                        PlaceholderScreen(
-                            if (key.feedId == null) stringResource(R.string.title_add_feed)
-                            else stringResource(R.string.title_edit_feed)
-                        )
-                    }
-                    entry<NewsInfoKey> { key ->
-                        NewsInfoScreen(newsId = key.newsId)
-                    }
+                    entry<FeedsManageKey> { FeedsScreen() }
+                    entry<FeedInfoKey> { key -> FeedInfoScreen(feedId = key.feedId) }
+                    entry<NewsInfoKey> { key -> NewsInfoScreen(newsId = key.newsId) }
                 }
             )
         }
-    }
-}
 
-@Composable
-private fun PlaceholderScreen(title: String) {
-    Box(Modifier.fillMaxSize()) {
-        Text(title)
+        if (showInfoDialog) {
+            InfoDialog(onDismiss = { showInfoDialog = false })
+        }
     }
 }
