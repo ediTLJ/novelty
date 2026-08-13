@@ -81,7 +81,7 @@ fun NewsInfoScreen(newsId: Int, modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("") },
+                title = { },
                 navigationIcon = {
                     IconButton(onClick = { navigator.goBack() }) {
                         Icon(
