@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-        Activity-level theme used only for window chrome (status / nav bars,
-        splash). All actual UI is drawn by Jetpack Compose via NoveltyTheme.
+        Activity-level theme used only for the launch window chrome and
+        the initial background color. All actual UI is drawn by Jetpack
+        Compose via NoveltyTheme, and the status/navigation bars are
+        made transparent at runtime via `enableEdgeToEdge()` so the app
+        draws edge-to-edge behind the system bars.
     -->
     <style name="App.Theme.Dark" parent="@android:style/Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">@color/grey</item>
-        <item name="android:navigationBarColor">@color/nav_grey</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
         <item name="android:colorBackground">@color/grey</item>
     </style>
 </resources>

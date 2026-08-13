@@ -9,6 +9,7 @@
 */
 package ro.edi.novelty.ui.compose
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -71,6 +73,11 @@ fun NoveltyApp() {
 
     CompositionLocalProvider(LocalAppNavigator provides navigator) {
         Scaffold(
+            contentWindowInsets = if (isTopLevel) {
+                ScaffoldDefaults.contentWindowInsets
+            } else {
+                WindowInsets(0)
+            },
             topBar = {
                 if (isTopLevel) {
                     CenterAlignedTopAppBar(

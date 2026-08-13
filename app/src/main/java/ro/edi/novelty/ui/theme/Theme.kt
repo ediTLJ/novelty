@@ -9,17 +9,11 @@
 */
 package ro.edi.novelty.ui.theme
 
-import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
 
 private val NoveltyDarkColors = darkColorScheme(
     primary = Orange500,
@@ -71,17 +65,6 @@ fun NoveltyTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (useDarkTheme) NoveltyDarkColors else NoveltyLightColors
-
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val activity = view.context as? ComponentActivity ?: return@SideEffect
-            activity.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(Grey.toArgb()),
-                navigationBarStyle = SystemBarStyle.dark(Grey.copy(alpha = 0.5f).toArgb())
-            )
-        }
-    }
 
     androidx.compose.runtime.CompositionLocalProvider(
         LocalNoveltyExtraColors provides NoveltyExtraColors(
